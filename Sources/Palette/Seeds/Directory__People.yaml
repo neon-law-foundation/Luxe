@@ -1,0 +1,8 @@
+---
+lookup_fields:
+  - email
+records:
+  - email: admin@neonlaw.com
+    name: Admin User
+    accounts__user:
+      email: admin@neonlaw.com

@@ -1,0 +1,23 @@
+# Configuration for markdownlint-cli2
+# https://github.com/DavidAnson/markdownlint-cli2
+
+# Define glob patterns to match markdown files
+globs:
+  - "**/*.md"
+
+# Define glob patterns to exclude
+ignores:
+  - "node_modules/**"
+  - ".build/**"
+  - "vendor/**"
+  - "**/node_modules/**"
+  - "**/.build/**"
+  - "**/vendor/**"
+
+# Don't search dot files/folders
+noDotFiles: true
+
+# Fix errors automatically when possible (for markdownlint-cli2-fix)
+fix: false
+
+# Don't specify output formatters - use default

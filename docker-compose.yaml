@@ -1,0 +1,73 @@
+---
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: luxe
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  dex:
+    image: ghcr.io/dexidp/dex:latest
+    ports:
+      - "127.0.0.1:2222:8080"
+    volumes:
+      - ./dex-config.yaml:/etc/dex/config.yaml
+      - dex_data:/var/dex
+    command: ["dex", "serve", "/etc/dex/config.yaml"]
+    environment:
+      - GITHUB_ACTIONS_CLIENT_ID=${GITHUB_ACTIONS_CLIENT_ID:-github-actions}
+      - GITHUB_ACTIONS_CLIENT_SECRET=${GITHUB_ACTIONS_CLIENT_SECRET:-github-actions-secret}
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  localstack:
+    image: localstack/localstack:3.8.1
+    container_name: localstack
+    environment:
+      SERVICES: sqs,s3
+      DEBUG: 0
+      AWS_DEFAULT_REGION: us-west-2
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+    ports:
+      - "127.0.0.1:4566:4566"
+    volumes:
+      - ./scripts/localstack-init.sh:/etc/localstack/init/ready.d/init.sh
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    command: redis-server --appendonly yes --appendfsync everysec
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  postgres_data: {}
+  dex_data: {}
+  redis_data: {}

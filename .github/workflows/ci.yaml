@@ -1,0 +1,184 @@
+---
+name: Continuous Integration
+
+on:
+  pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    runs-on:
+      - ubuntu-large
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: luxe
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+      dex:
+        image: ghcr.io/neon-law-foundation/luxe-dex:latest
+        ports:
+          - 2222:8080
+        options: >-
+          --health-cmd "nc -z localhost 8080 || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: "actions/checkout@v4"
+
+      - name: Start LocalStack
+        uses: LocalStack/setup-localstack@v0.2.4
+        with:
+          image-tag: 'latest'
+          install-awslocal: 'true'
+          configuration: |
+            SERVICES=sqs,s3
+            DEBUG=1
+            AWS_DEFAULT_REGION=us-west-2
+            AWS_ACCESS_KEY_ID=test
+            AWS_SECRET_ACCESS_KEY=test
+            LOCALSTACK_HOST=localhost
+            SKIP_SSL_CERT_DOWNLOAD=1
+            PERSISTENCE=0
+            DATA_DIR=/tmp/localstack_data
+            LAMBDA_EXECUTOR=local
+            DOCKER_LAMBDA_EXECUTOR=0
+            EAGER_SERVICE_LOADING=1
+            HOSTNAME_EXTERNAL=localhost
+            DISABLE_CORS_HEADERS=1
+            DISABLE_CUSTOM_CORS_S3=1
+            DISABLE_CUSTOM_CORS=1
+            USE_SSL=0
+            DEFAULT_REGION=us-west-2
+
+      - uses: "actions/setup-python@v5"
+        with:
+          python-version: "3.11"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "latest"
+
+      - name: Install markdownlint-cli2
+        run: npm install -g markdownlint-cli2
+
+      - name: Install SQLFluff
+        run: pip install sqlfluff
+
+      - name: Lint migrations
+        run: sqlfluff lint --dialect postgres .
+
+      - name: Lint markdown
+        run: ./scripts/validate-markdown.sh
+
+      - name: Initialize SQS queues
+        run: |
+          echo "Creating SQS queues..."
+
+          # Create queues using awslocal (automatically configured by LocalStack action)
+          awslocal sqs create-queue --queue-name bazaar-jobs
+          awslocal sqs create-queue --queue-name bazaar-jobs-dlq
+          awslocal sqs create-queue --queue-name bazaar-jobs-priority
+
+          # Verify queues
+          echo "Available queues:"
+          awslocal sqs list-queues
+
+      - name: Install Swift toolchain
+        uses: vapor/swiftly-action@v0.2
+        with:
+          toolchain: latest
+
+      - name: Run Swift Format Lint
+        run: |
+          swift format lint --strict --recursive --parallel --no-color-diagnostics .
+
+      - name: Cache Swift Package Manager dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            .build
+            ~/.cache/org.swift.swiftpm
+          key: spm-${{ runner.os }}-${{ hashFiles('Package.swift', 'Package.resolved') }}
+          restore-keys: |
+            spm-${{ runner.os }}-
+
+      - name: Run Swift Build
+        run: |
+          swift build
+
+      - name: Run Database Migrations
+        run: |
+          swift run Palette migrate
+        env:
+          DATABASE_URL: postgres://postgres@localhost:5432/luxe?sslmode=disable
+          REDIS_URL: redis://localhost:6379
+
+      - name: Run tests
+        run: |
+          swift test --no-parallel
+        env:
+          DATABASE_URL: postgres://postgres@localhost:5432/luxe?sslmode=disable
+          DEX_ISSUER: http://localhost:2222/dex
+          DEX_CLIENT_ID: luxe-client
+          DEX_JWKS_URL: http://localhost:2222/dex/keys
+          DEX_BASE_URL: http://localhost:2222
+          DEX_CALLBACK_URL: http://localhost:8080/auth/dex/callback
+          ENV: TEST
+          DISABLE_LEAK_DETECTION: true
+          REDIS_URL: redis://localhost:6379
+
+      - name: Enable auto-merge for PR
+        uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pull-request-number: ${{ github.event.pull_request.number }}
+          merge-method: squash
+
+      - name: Set squash commit message
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: pullRequest } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number
+            });
+
+            const title = pullRequest.title;
+            const body = pullRequest.body || '';
+
+            // Update PR to set the squash commit message
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              title: title,
+              body: `${body}\n\n---\n\nSquash commit message will be:\n**${title}**\n\n${body}`
+            });

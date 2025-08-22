@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <!-- Open Graph image 1200x630 -->
+  <rect width="1200" height="630" fill="#0a0a0a"/>
+  
+  <!-- Grid background pattern -->
+  <defs>
+    <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#00ff41" stroke-width="0.5" opacity="0.1"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  
+  <!-- Main content -->
+  <g transform="translate(600, 250)">
+    <!-- 1337 in large tech font -->
+    <g transform="translate(-150, -50) scale(3)">
+      <!-- Number 1 -->
+      <rect x="0" y="0" width="8" height="40" fill="#00ff41"/>
+      <rect x="0" y="32" width="16" height="8" fill="#00ff41"/>
+      
+      <!-- Number 3 -->
+      <rect x="24" y="0" width="20" height="8" fill="#00ff41"/>
+      <rect x="36" y="8" width="8" height="8" fill="#00ff41"/>
+      <rect x="24" y="16" width="20" height="8" fill="#00ff41"/>
+      <rect x="36" y="24" width="8" height="8" fill="#00ff41"/>
+      <rect x="24" y="32" width="20" height="8" fill="#00ff41"/>
+      
+      <!-- Number 3 -->
+      <rect x="52" y="0" width="20" height="8" fill="#00ff41"/>
+      <rect x="64" y="8" width="8" height="8" fill="#00ff41"/>
+      <rect x="52" y="16" width="20" height="8" fill="#00ff41"/>
+      <rect x="64" y="24" width="8" height="8" fill="#00ff41"/>
+      <rect x="52" y="32" width="20" height="8" fill="#00ff41"/>
+      
+      <!-- Number 7 -->
+      <rect x="80" y="0" width="20" height="8" fill="#00ff41"/>
+      <rect x="92" y="8" width="8" height="32" fill="#00ff41"/>
+    </g>
+  </g>
+  
+  <!-- LAWYERS text -->
+  <text x="600" y="380" font-family="monospace" font-size="48" fill="#00ff41" text-anchor="middle" font-weight="bold">LAWYERS</text>
+  
+  <!-- Tagline -->
+  <text x="600" y="440" font-family="monospace" font-size="24" fill="#00ff41" text-anchor="middle" opacity="0.8">Elite Legal Services for the Digital Age</text>
+  
+  <!-- Tech decoration -->
+  <g opacity="0.3">
+    <circle cx="100" cy="100" r="3" fill="#00ff41"/>
+    <circle cx="1100" cy="100" r="3" fill="#00ff41"/>
+    <circle cx="100" cy="530" r="3" fill="#00ff41"/>
+    <circle cx="1100" cy="530" r="3" fill="#00ff41"/>
+    <line x1="103" y1="100" x2="150" y2="100" stroke="#00ff41" stroke-width="1"/>
+    <line x1="1050" y1="100" x2="1097" y2="100" stroke="#00ff41" stroke-width="1"/>
+    <line x1="103" y1="530" x2="150" y2="530" stroke="#00ff41" stroke-width="1"/>
+    <line x1="1050" y1="530" x2="1097" y2="530" stroke="#00ff41" stroke-width="1"/>
+  </g>
+</svg>

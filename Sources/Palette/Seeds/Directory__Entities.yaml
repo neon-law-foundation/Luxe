@@ -1,0 +1,44 @@
+lookup_fields:
+  - name
+  - legal_entity_type_id
+records:
+  - name: Shook Law LLC
+    legal__entity_type:
+      name: Multi Member LLC
+      legal__jurisdiction:
+        name: Nevada
+  - name: Gene Geniuses
+    legal__entity_type:
+      name: 501(c)(3) Non-Profit
+      legal__jurisdiction:
+        name: Nevada
+  - name: Neon Law
+    legal__entity_type:
+      name: Multi Member LLC
+      legal__jurisdiction:
+        name: Nevada
+  - name: Neon Law Foundation
+    legal__entity_type:
+      name: 501(c)(3) Non-Profit
+      legal__jurisdiction:
+        name: Nevada
+  - name: shook.family
+    legal__entity_type:
+      name: Family Trust
+      legal__jurisdiction:
+        name: Nevada
+  - name: Nicholas Shook
+    legal__entity_type:
+      name: Human
+      legal__jurisdiction:
+        name: Washington
+  - name: Widdix
+    legal__entity_type:
+      name: Foreign Company
+      legal__jurisdiction:
+        name: Germany
+  - name: Sagebrush Services LLC
+    legal__entity_type:
+      name: Multi Member LLC
+      legal__jurisdiction:
+        name: Nevada

@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Civil Rights Advocacy - Neon Law Foundation</title>
+    <meta name="description" content="Fighting for equal treatment and access to justice. Neon Law Foundation provides civil rights advocacy resources and support.">
+    <meta name="keywords" content="civil rights, equal treatment, justice, discrimination, legal resources, advocacy">
+    <meta property="og:title" content="Civil Rights Advocacy - Neon Law Foundation">
+    <meta property="og:description" content="Fighting for equal treatment and access to justice through advocacy and legal resources.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://neonlawfoundation.org/civil-rights.html">
+    <link rel="canonical" href="https://neonlawfoundation.org/civil-rights.html">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #fff;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: #000;
+            color: #fff;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .logo a {
+            color: #fff;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.5rem 0;
+            transition: opacity 0.3s;
+        }
+        
+        .nav-links a:hover,
+        .nav-links a.active {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+        
+        /* Service Hero Section */
+        .service-hero {
+            background-color: #8B4513;
+            color: #fff;
+            padding: 4rem 0;
+            text-align: center;
+        }
+        
+        .service-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .service-hero p {
+            font-size: 1.25rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* Service Overview Section */
+        .service-overview {
+            padding: 4rem 0;
+            background-color: #f8f9fa;
+        }
+        
+        .service-overview h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .principles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .principle-card {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .principle-card h3 {
+            color: #8B4513;
+            margin-bottom: 1rem;
+        }
+        
+        /* Services Section */
+        .services-section {
+            padding: 4rem 0;
+        }
+        
+        .services-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+        }
+        
+        .service-item {
+            text-align: center;
+        }
+        
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            background-color: #8B4513;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+        }
+        
+        .service-item h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+        
+        .service-item ul {
+            list-style: none;
+            text-align: left;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        
+        .service-item li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        
+        .service-item li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #8B4513;
+            font-weight: bold;
+        }
+        
+        /* Getting Started Section */
+        .getting-started {
+            padding: 4rem 0;
+            background-color: #f8f9fa;
+        }
+        
+        .getting-started h2 {
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+        
+        .steps-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+        }
+        
+        .step-number {
+            background-color: #8B4513;
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 1.5rem;
+            flex-shrink: 0;
+        }
+        
+        .step-content h3 {
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            padding: 4rem 0;
+            background-color: #8B4513;
+            color: #fff;
+            text-align: center;
+        }
+        
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .cta-section p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background-color: #fff;
+            color: #8B4513;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        /* Footer Styles */
+        footer {
+            background-color: #000;
+            color: #fff;
+            padding: 3rem 0 1rem;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 1rem;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.25rem 0;
+            display: inline-block;
+            transition: opacity 0.3s;
+        }
+        
+        .footer-section a:hover {
+            opacity: 0.8;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #333;
+            margin-top: 2rem;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .service-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .service-hero p {
+                font-size: 1.1rem;
+            }
+            
+            .services-section h2,
+            .service-overview h2,
+            .getting-started h2,
+            .cta-section h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="container">
+            <div class="logo">
+                <a href="index.html">Neon Law Foundation</a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="privacy-rights.html">Privacy Rights</a></li>
+                <li><a href="digital-security.html">Digital Security</a></li>
+                <li><a href="civil-rights.html" class="active">Civil Rights</a></li>
+                <li><a href="education.html">Education</a></li>
+                <li><a href="challenges.html">Courses</a></li>
+                <li><a href="blog.html">Blog</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Service Hero Section -->
+    <section class="service-hero">
+        <div class="container">
+            <h1>Civil Rights Advocacy</h1>
+            <p>Fighting for equal treatment and access to justice for all. We provide resources, support, and advocacy to protect your fundamental rights.</p>
+        </div>
+    </section>
+
+    <!-- Service Overview -->
+    <section class="service-overview">
+        <div class="container">
+            <h2>Our Approach to Civil Rights</h2>
+            <p style="text-align: center; font-size: 1.25rem; margin-bottom: 3rem; max-width: 800px; margin-left: auto; margin-right: auto;">
+                We believe that civil rights are fundamental to a just society. Our advocacy focuses on ensuring equal treatment, fighting discrimination, and promoting access to justice for all individuals.
+            </p>
+            
+            <div class="principles-grid">
+                <div class="principle-card">
+                    <h3>⚖️ Equal Treatment</h3>
+                    <p>Everyone deserves to be treated with dignity and respect, regardless of their background, identity, or circumstances.</p>
+                </div>
+                <div class="principle-card">
+                    <h3>🛡️ Anti-Discrimination</h3>
+                    <p>We actively fight against discrimination in all its forms, working to create a more inclusive and equitable society.</p>
+                </div>
+                <div class="principle-card">
+                    <h3>📚 Legal Education</h3>
+                    <p>Knowledge is power. We provide resources to help you understand your rights and how to protect them.</p>
+                </div>
+                <div class="principle-card">
+                    <h3>🤝 Community Support</h3>
+                    <p>Building strong communities through mutual support, advocacy, and collective action for civil rights.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services-section">
+        <div class="container">
+            <h2>Our Civil Rights Services</h2>
+            
+            <div class="services-grid">
+                <div class="service-item">
+                    <div class="service-icon">📋</div>
+                    <h3>Legal Resource Navigation</h3>
+                    <ul>
+                        <li>Know Your Rights guides</li>
+                        <li>Legal resource directories</li>
+                        <li>Self-help legal tools</li>
+                        <li>Referral services</li>
+                    </ul>
+                </div>
+                
+                <div class="service-item">
+                    <div class="service-icon">⚔️</div>
+                    <h3>Discrimination Support</h3>
+                    <ul>
+                        <li>Incident documentation help</li>
+                        <li>Complaint filing assistance</li>
+                        <li>Agency navigation support</li>
+                        <li>Legal strategy guidance</li>
+                    </ul>
+                </div>
+                
+                <div class="service-item">
+                    <div class="service-icon">🏛️</div>
+                    <h3>Access to Justice</h3>
+                    <ul>
+                        <li>Court system navigation</li>
+                        <li>Pro bono connections</li>
+                        <li>Legal aid resources</li>
+                        <li>Self-representation tools</li>
+                    </ul>
+                </div>
+                
+                <div class="service-item">
+                    <div class="service-icon">📢</div>
+                    <h3>Advocacy Programs</h3>
+                    <ul>
+                        <li>Policy reform initiatives</li>
+                        <li>Community organizing</li>
+                        <li>Public awareness campaigns</li>
+                        <li>Coalition building</li>
+                    </ul>
+                </div>
+                
+                <div class="service-item">
+                    <div class="service-icon">🎓</div>
+                    <h3>Rights Education</h3>
+                    <ul>
+                        <li>Civil rights workshops</li>
+                        <li>Legal literacy programs</li>
+                        <li>Youth education initiatives</li>
+                        <li>Community seminars</li>
+                    </ul>
+                </div>
+                
+                <div class="service-item">
+                    <div class="service-icon">🤲</div>
+                    <h3>Emergency Support</h3>
+                    <ul>
+                        <li>Crisis intervention</li>
+                        <li>Rapid response network</li>
+                        <li>Emergency legal referrals</li>
+                        <li>Safety planning resources</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Getting Started Section -->
+    <section class="getting-started">
+        <div class="container">
+            <h2>Get Started with Civil Rights Support</h2>
+            
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Contact Our Team</h3>
+                        <p>Reach out to us at support@neonlaw.org to discuss your civil rights concerns and how we can help.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Initial Assessment</h3>
+                        <p>We'll review your situation and help identify the civil rights issues at stake and potential remedies.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Resource Connection</h3>
+                        <p>We'll connect you with appropriate resources, whether that's legal aid, advocacy groups, or self-help tools.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Ongoing Support</h3>
+                        <p>We provide continued guidance and support as you navigate the civil rights protection process.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Stand Up for Your Rights</h2>
+            <p>Don't face civil rights challenges alone. We're here to help you understand and protect your fundamental rights.</p>
+            <a href="mailto:support@neonlaw.org" class="cta-button">Get Civil Rights Support</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>About</h3>
+                    <ul>
+                        <li><a href="about.html">Our Mission</a></li>
+                        <li><a href="about.html#team">Our Team</a></li>
+                        <li><a href="about.html#impact">Our Impact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Services</h3>
+                    <ul>
+                        <li><a href="privacy-rights.html">Privacy Rights</a></li>
+                        <li><a href="digital-security.html">Digital Security</a></li>
+                        <li><a href="civil-rights.html">Civil Rights</a></li>
+                        <li><a href="education.html">Education</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="challenges.html">Online Courses</a></li>
+                        <li><a href="blog.html">Blog</a></li>
+                        <li><a href="#newsletter">Newsletter</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <ul>
+                        <li>Email: support@neonlaw.org</li>
+                        <li>Las Vegas, NV</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Neon Law Foundation. All rights reserved. | 501(c)(3) Nonprofit Organization</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

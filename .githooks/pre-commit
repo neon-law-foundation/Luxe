@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# Pre-commit hook to run sqlfluff fix on SQL files and swift-format on Swift files
+
+echo "Running pre-commit hooks..."
+
+# Check if sqlfluff is available
+if ! command -v sqlfluff &> /dev/null; then
+    echo "Warning: sqlfluff not found. Install with: pip install sqlfluff"
+    exit 1
+fi
+
+# Run sqlfluff fix on all SQL files
+echo "Running sqlfluff fix on SQL files..."
+sqlfluff fix --dialect postgres .
+
+# Stage any files that were modified by sqlfluff
+git add -u
+
+# Run swift format if available
+if command -v swift &> /dev/null; then
+    echo "Running swift format on Swift files..."
+    swift format --in-place --recursive .
+    
+    # Stage any files that were modified by swift format
+    git add -u
+fi
+
+echo "Pre-commit hooks completed successfully!"

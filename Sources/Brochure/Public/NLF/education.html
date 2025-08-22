@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Educational Programs - Neon Law Foundation</title>
+    <meta name="description" content="Empowering communities through privacy education, workshops, and training programs. Learn to protect your digital rights.">
+    <meta name="keywords" content="privacy education, workshops, training, digital rights, legal literacy, community programs">
+    <meta property="og:title" content="Educational Programs - Neon Law Foundation">
+    <meta property="og:description" content="Empowering communities through privacy education and digital rights training programs.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://neonlawfoundation.org/education.html">
+    <link rel="canonical" href="https://neonlawfoundation.org/education.html">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #fff;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: #000;
+            color: #fff;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .logo a {
+            color: #fff;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.5rem 0;
+            transition: opacity 0.3s;
+        }
+        
+        .nav-links a:hover,
+        .nav-links a.active {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+        
+        /* Service Hero Section */
+        .service-hero {
+            background-color: #2E8B57;
+            color: #fff;
+            padding: 4rem 0;
+            text-align: center;
+        }
+        
+        .service-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .service-hero p {
+            font-size: 1.25rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* Service Overview Section */
+        .service-overview {
+            padding: 4rem 0;
+            background-color: #f8f9fa;
+        }
+        
+        .service-overview h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .principles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .principle-card {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .principle-card h3 {
+            color: #2E8B57;
+            margin-bottom: 1rem;
+        }
+        
+        /* Services Section */
+        .services-section {
+            padding: 4rem 0;
+        }
+        
+        .services-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+        }
+        
+        .service-item {
+            text-align: center;
+        }
+        
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            background-color: #2E8B57;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+        }
+        
+        .service-item h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+        
+        .service-item ul {
+            list-style: none;
+            text-align: left;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        
+        .service-item li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        
+        .service-item li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #2E8B57;
+            font-weight: bold;
+        }
+        
+        /* Getting Started Section */
+        .getting-started {
+            padding: 4rem 0;
+            background-color: #f8f9fa;
+        }
+        
+        .getting-started h2 {
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+        
+        .steps-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+        }
+        
+        .step-number {
+            background-color: #2E8B57;
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 1.5rem;
+            flex-shrink: 0;
+        }
+        
+        .step-content h3 {
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            padding: 4rem 0;
+            background-color: #2E8B57;
+            color: #fff;
+            text-align: center;
+        }
+        
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .cta-section p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background-color: #fff;
+            color: #2E8B57;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        /* Footer Styles */
+        footer {
+            background-color: #000;
+            color: #fff;
+            padding: 3rem 0 1rem;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 1rem;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.25rem 0;
+            display: inline-block;
+            transition: opacity 0.3s;
+        }
+        
+        .footer-section a:hover {
+            opacity: 0.8;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #333;
+            margin-top: 2rem;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .service-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .service-hero p {
+                font-size: 1.1rem;
+            }
+            
+            .services-section h2,
+            .service-overview h2,
+            .getting-started h2,
+            .cta-section h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="container">
+            <div class="logo">
+                <a href="index.html" style="display: flex; align-items: center; gap: 12px;">
+                    <img src="images/logo.svg" alt="Neon Law Foundation Logo" style="height: 40px; width: auto;">
+                    <span>Neon Law Foundation</span>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="privacy-rights.html">Privacy Rights</a></li>
+                <li><a href="digital-security.html">Digital Security</a></li>
+                <li><a href="civil-rights.html">Civil Rights</a></li>
+                <li><a href="education.html" class="active">Education</a></li>
+                <li><a href="challenges.html">Courses</a></li>
+                <li><a href="blog.html">Blog</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Service Hero Section -->
+    <section class="service-hero">
+        <div class="container">
+            <h1>Educational Programs</h1>
+            <p>Empowering communities through comprehensive education on privacy rights, digital security, and civil liberties. Knowledge is the foundation of protection.</p>
+        </div>
+    </section>
+
+    <!-- Service Overview -->
+    <section class="service-overview">
+        <div class="container">
+            <h2>Our Educational Mission</h2>
+            <p style="text-align: center; font-size: 1.25rem; margin-bottom: 3rem; max-width: 800px; margin-left: auto; margin-right: auto;">
+                Education is at the heart of our mission. We believe that informed communities are empowered communities. Our programs provide practical knowledge and skills to protect your rights in the digital age.
+            </p>
+            
+            <div class="principles-grid">
+                <div class="principle-card">
+                    <h3>📚 Accessible Learning</h3>
+                    <p>Making complex legal and technical concepts understandable for everyone, regardless of background or experience level.</p>
+                </div>
+                <div class="principle-card">
+                    <h3>🎯 Practical Focus</h3>
+                    <p>Providing actionable knowledge that participants can immediately apply to protect their rights and privacy.</p>
+                </div>
+                <div class="principle-card">
+                    <h3>🌍 Community-Centered</h3>
+                    <p>Designing programs that meet the specific needs and challenges of diverse communities and populations.</p>
+                </div>
+                <div class="principle-card">
+                    <h3>🔄 Continuous Learning</h3>
+                    <p>Adapting our curriculum to address emerging threats and changing legal landscapes in privacy and civil rights.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services-section">
+        <div class="container">
+            <h2>Our Educational Offerings</h2>
+            
+            <div class="services-grid">
+                <div class="service-item">
+                    <div class="service-icon">🎓</div>
+                    <h3>Privacy Workshops</h3>
+                    <ul>
+                        <li>Know Your Privacy Rights</li>
+                        <li>Digital Privacy Fundamentals</li>
+                        <li>Data Protection Strategies</li>
+                        <li>Privacy Impact Assessments</li>
+                    </ul>
+                </div>
+                
+                <div class="service-item">
+                    <div class="service-icon">🏢</div>
+                    <h3>Training Programs</h3>
+                    <ul>
+                        <li>Organizational privacy training</li>
+                        <li>Legal professional education</li>
+                        <li>Community leader workshops</li>
+                        <li>Youth education programs</li>
+                    </ul>
+                </div>
+                
+                <div class="service-item">
+                    <div class="service-icon">📖</div>
+                    <h3>Educational Resources</h3>
+                    <ul>
+                        <li>Self-study guides</li>
+                        <li>Interactive learning materials</li>
+                        <li>Video tutorials</li>
+                        <li>Downloadable toolkits</li>
+                    </ul>
+                </div>
+                
+                <div class="service-item">
+                    <div class="service-icon">🤝</div>
+                    <h3>Fellowship Programs</h3>
+                    <ul>
+                        <li>Digital rights fellowship</li>
+                        <li>Privacy advocacy training</li>
+                        <li>Leadership development</li>
+                        <li>Mentorship opportunities</li>
+                    </ul>
+                </div>
+                
+                <div class="service-item">
+                    <div class="service-icon">👥</div>
+                    <h3>Community Seminars</h3>
+                    <ul>
+                        <li>Public awareness events</li>
+                        <li>Town hall discussions</li>
+                        <li>Expert panel sessions</li>
+                        <li>Q&A forums</li>
+                    </ul>
+                </div>
+                
+                <div class="service-item">
+                    <div class="service-icon">🎯</div>
+                    <h3>Specialized Training</h3>
+                    <ul>
+                        <li>Industry-specific programs</li>
+                        <li>Cultural competency training</li>
+                        <li>Accessibility-focused education</li>
+                        <li>Multi-language resources</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Getting Started Section -->
+    <section class="getting-started">
+        <div class="container">
+            <h2>Join Our Educational Programs</h2>
+            
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Explore Our Offerings</h3>
+                        <p>Browse our catalog of workshops, training programs, and resources to find what best meets your needs.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Register for Programs</h3>
+                        <p>Sign up for upcoming workshops or request custom training for your organization or community group.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Participate and Learn</h3>
+                        <p>Engage in interactive learning experiences designed to build practical knowledge and skills.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Apply Your Knowledge</h3>
+                        <p>Use your new skills to protect your rights and help educate others in your community.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Start Learning Today</h2>
+            <p>Join thousands of individuals and organizations who have strengthened their privacy and civil rights knowledge through our programs.</p>
+            <a href="mailto:support@neonlaw.org" class="cta-button">Explore Education Programs</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>About</h3>
+                    <ul>
+                        <li><a href="about.html">Our Mission</a></li>
+                        <li><a href="about.html#team">Our Team</a></li>
+                        <li><a href="about.html#impact">Our Impact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Services</h3>
+                    <ul>
+                        <li><a href="privacy-rights.html">Privacy Rights</a></li>
+                        <li><a href="digital-security.html">Digital Security</a></li>
+                        <li><a href="civil-rights.html">Civil Rights</a></li>
+                        <li><a href="education.html">Education</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="challenges.html">Online Courses</a></li>
+                        <li><a href="blog.html">Blog</a></li>
+                        <li><a href="#newsletter">Newsletter</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <ul>
+                        <li>Email: support@neonlaw.org</li>
+                        <li>Las Vegas, NV</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Neon Law Foundation. All rights reserved. | 501(c)(3) Nonprofit Organization</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

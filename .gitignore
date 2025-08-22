@@ -1,0 +1,21 @@
+.build/
+.vscode/
+
+# Generated ERD files (keep schema.png but ignore temporary files)
+schema.dot
+
+# Docker build logs
+*.log
+.DS_Store
+.swiftpm/
+node_modules/
+*.d
+*.o
+*.swiftdeps
+claude_desktop_config/
+
+# Claude Code settings
+.claude/settings.local.json
+
+.playwright-mcp/
+build/

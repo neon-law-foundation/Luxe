@@ -1,0 +1,80 @@
+# Dex configuration for local development
+issuer: http://localhost:5556/dex
+
+# Use SQLite for local development
+storage:
+  type: sqlite3
+  config:
+    file: /var/dex/dex.db
+
+# Web server configuration
+web:
+  http: 0.0.0.0:8080  # Listen on port 8080 inside container (mapped to 2222 on host)
+  allowedOrigins: ["http://localhost:8080", "http://127.0.0.1:8080"]
+
+# OAuth2 configuration
+oauth2:
+  skipApprovalScreen: true  # Skip consent screen for faster development
+  alwaysShowLoginScreen: false
+  passwordConnector: local
+
+# Enable password database for static users
+enablePasswordDB: true
+
+# Enable OIDC discovery endpoints
+oidc:
+  discovery:
+    enabled: true
+
+# Static users for local development
+staticPasswords:
+  # Admin user with same password as Keycloak setup (Vegas702!)
+  - email: "admin@neonlaw.com"
+    # Hash for "Vegas702!" generated with: docker run --rm httpd:2.4-alpine htpasswd -nbBC 10 "" 'Vegas702!'
+    hash: "$2y$10$qqfYBPxZACoWqrN4KH.EHOrNROpH.74MW9yT3fh2D9ahfrK5J9PDK"
+    username: "admin@neonlaw.com"
+    userID: "08a8684b-db88-4b73-90a9-3cd1661f5466"
+
+  # Test staff user
+  - email: "teststaff@example.com"
+    hash: "$2y$10$qqfYBPxZACoWqrN4KH.EHOrNROpH.74MW9yT3fh2D9ahfrK5J9PDK"  # Same password for simplicity
+    username: "teststaff@example.com"
+    userID: "41331323-6f44-45e6-b3b9-2c4b60c02be5"
+
+  # Test customer user
+  - email: "testcustomer@example.com"
+    hash: "$2y$10$qqfYBPxZACoWqrN4KH.EHOrNROpH.74MW9yT3fh2D9ahfrK5J9PDK"  # Same password for simplicity
+    username: "testcustomer@example.com"
+    userID: "51442434-7f55-56f7-c4ca-3d5c71d13cf6"
+
+# Static clients for local development
+staticClients:
+  # Main Luxe client (public client, no secret)
+  - id: luxe-client
+    redirectURIs:
+      - 'http://localhost:8080/auth/dex/callback'
+      - 'http://127.0.0.1:8080/auth/dex/callback'
+      - 'http://localhost:8080/app/me'
+      - 'http://127.0.0.1:8080/app/me'
+    name: 'Luxe Application'
+    public: true  # Public client (uses PKCE)
+
+# Logging configuration for development
+logger:
+  level: "debug"
+  format: "text"
+
+# Optional telemetry for debugging
+telemetry:
+  http: 0.0.0.0:5558
+
+# Frontend customization
+frontend:
+  issuer: "Luxe Development"
+  theme: "light"
+
+# Token expiration settings
+expiry:
+  signingKeys: "6h"
+  idTokens: "24h"
+  authRequests: "24h"

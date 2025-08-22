@@ -1,0 +1,40 @@
+---
+# Organization Types are defined in NeonLaw.Orgs.Type module and have a unique compound index on name and
+# jurisdiction_id.
+lookup_fields:
+  - name
+  - legal_jurisdiction_id
+records:
+  - name: C-Corp
+    legal__jurisdiction:
+      name: Delaware
+  - name: Single Member LLC
+    legal__jurisdiction:
+      name: Nevada
+  - name: Multi Member LLC
+    legal__jurisdiction:
+      name: Nevada
+  - name: 501(c)(3) Non-Profit
+    icon: "hero-heart"
+    legal__jurisdiction:
+      name: Nevada
+  - name: Family Trust
+    icon: "hero-user-group"
+    legal__jurisdiction:
+      name: Nevada
+  - name: Human
+    icon: "hero-user"
+    legal__jurisdiction:
+      name: Nevada
+  - name: Human
+    icon: "hero-user"
+    legal__jurisdiction:
+      name: California
+  - name: Human
+    icon: "hero-user"
+    legal__jurisdiction:
+      name: Washington
+  - name: Foreign Company
+    icon: "hero-globe-alt"
+    legal__jurisdiction:
+      name: Germany

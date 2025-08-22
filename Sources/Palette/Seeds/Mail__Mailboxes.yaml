@@ -1,0 +1,19 @@
+lookup_fields:
+  - directory_address_id
+  - mailbox_number
+records:
+  - directory__address:
+      legal__entity:
+        name: Sagebrush Services LLC
+        legal__entity_type:
+          name: Multi Member LLC
+          legal__jurisdiction:
+            name: Nevada
+      street: 405 Mae Anne Ave Ste 405-9000
+      city: Reno
+      state: NV
+      country: USA
+      zip: "89523"
+      is_verified: true
+    mailbox_number: 9000
+    is_active: true

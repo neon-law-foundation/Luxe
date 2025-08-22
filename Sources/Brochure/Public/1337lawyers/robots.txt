@@ -1,0 +1,59 @@
+# Robots.txt for 1337lawyers.com
+# Elite Software Law Firm
+
+# Allow all robots to crawl the site
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://www.1337lawyers.com/sitemap.xml
+
+# Crawl-delay for respectful crawling (in seconds)
+Crawl-delay: 1
+
+# Disallow access to any potential admin or private directories
+# (None currently exist, but good practice for future-proofing)
+Disallow: /admin/
+Disallow: /private/
+Disallow: /.git/
+Disallow: /temp/
+Disallow: /tmp/
+
+# Allow search engines to index all content
+Allow: /index.html
+Allow: /css/
+Allow: /images/
+
+# Common search engine bots (explicitly allowed)
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+# Block bad bots and scrapers
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+# GPTBot (OpenAI) - Allow AI training on our content
+User-agent: GPTBot
+Allow: /
+
+# Google's AI bot
+User-agent: Google-Extended
+Allow: /

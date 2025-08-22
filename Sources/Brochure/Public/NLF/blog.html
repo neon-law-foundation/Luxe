@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - Neon Law Foundation</title>
+    <meta name="description" content="Stay informed with the latest insights on privacy rights, digital security, and civil liberties from Neon Law Foundation experts.">
+    <meta name="keywords" content="privacy blog, digital rights, civil liberties, legal insights, privacy news, security updates">
+    <meta property="og:title" content="Blog - Neon Law Foundation">
+    <meta property="og:description" content="Latest insights on privacy rights, digital security, and civil liberties from our experts.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://neonlawfoundation.org/blog.html">
+    <link rel="canonical" href="https://neonlawfoundation.org/blog.html">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #fff;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: #000;
+            color: #fff;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .logo a {
+            color: #fff;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.5rem 0;
+            transition: opacity 0.3s;
+        }
+        
+        .nav-links a:hover,
+        .nav-links a.active {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+        
+        /* Blog Hero Section */
+        .blog-hero {
+            background-color: #6A0DAD;
+            color: #fff;
+            padding: 4rem 0;
+            text-align: center;
+        }
+        
+        .blog-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .blog-hero p {
+            font-size: 1.25rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* Blog Content Section */
+        .blog-content {
+            padding: 4rem 0;
+        }
+        
+        .blog-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 4rem;
+        }
+        
+        /* Main Blog Posts */
+        .blog-posts h2 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: #333;
+        }
+        
+        .blog-post {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 3rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .blog-post:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+        
+        .blog-post-header {
+            padding: 2rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .blog-post-category {
+            display: inline-block;
+            background-color: #6A0DAD;
+            color: #fff;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .blog-post-title {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+        
+        .blog-post-title a {
+            color: #333;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .blog-post-title a:hover {
+            color: #6A0DAD;
+        }
+        
+        .blog-post-meta {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .blog-post-excerpt {
+            color: #666;
+            line-height: 1.7;
+        }
+        
+        .blog-post-footer {
+            padding: 1.5rem 2rem;
+            background-color: #f8f9fa;
+        }
+        
+        .read-more {
+            color: #6A0DAD;
+            text-decoration: none;
+            font-weight: bold;
+            transition: opacity 0.3s;
+        }
+        
+        .read-more:hover {
+            opacity: 0.8;
+        }
+        
+        /* Sidebar */
+        .blog-sidebar h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+        
+        .sidebar-section {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+        
+        .category-list {
+            list-style: none;
+        }
+        
+        .category-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .category-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .category-list a {
+            color: #333;
+            text-decoration: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: color 0.3s;
+        }
+        
+        .category-list a:hover {
+            color: #6A0DAD;
+        }
+        
+        .category-count {
+            background-color: #6A0DAD;
+            color: #fff;
+            padding: 0.25rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.8rem;
+        }
+        
+        .recent-posts {
+            list-style: none;
+        }
+        
+        .recent-posts li {
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .recent-posts li:last-child {
+            border-bottom: none;
+        }
+        
+        .recent-post-title {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .recent-post-title a {
+            color: #333;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .recent-post-title a:hover {
+            color: #6A0DAD;
+        }
+        
+        .recent-post-date {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        /* Newsletter Signup */
+        .newsletter-signup {
+            background-color: #6A0DAD;
+            color: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .newsletter-signup h3 {
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+        
+        .newsletter-signup p {
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+        
+        .newsletter-form {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .newsletter-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .newsletter-button {
+            background-color: #fff;
+            color: #6A0DAD;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+        
+        .newsletter-button:hover {
+            opacity: 0.9;
+        }
+        
+        /* Footer Styles */
+        footer {
+            background-color: #000;
+            color: #fff;
+            padding: 3rem 0 1rem;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 1rem;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.25rem 0;
+            display: inline-block;
+            transition: opacity 0.3s;
+        }
+        
+        .footer-section a:hover {
+            opacity: 0.8;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #333;
+            margin-top: 2rem;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .blog-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .blog-hero p {
+                font-size: 1.1rem;
+            }
+            
+            .blog-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .newsletter-form {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="container">
+            <div class="logo">
+                <a href="index.html" style="display: flex; align-items: center; gap: 12px;">
+                    <img src="images/logo.svg" alt="Neon Law Foundation Logo" style="height: 40px; width: auto;">
+                    <span>Neon Law Foundation</span>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="privacy-rights.html">Privacy Rights</a></li>
+                <li><a href="digital-security.html">Digital Security</a></li>
+                <li><a href="civil-rights.html">Civil Rights</a></li>
+                <li><a href="education.html">Education</a></li>
+                <li><a href="challenges.html">Courses</a></li>
+                <li><a href="blog.html" class="active">Blog</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Blog Hero Section -->
+    <section class="blog-hero">
+        <div class="container">
+            <h1>Latest Insights</h1>
+            <p>Stay informed with expert analysis on privacy rights, digital security, and civil liberties in our rapidly evolving digital world.</p>
+        </div>
+    </section>
+
+    <!-- Blog Content -->
+    <section class="blog-content">
+        <div class="container">
+            <div class="blog-grid">
+                <!-- Main Blog Posts -->
+                <div class="blog-posts">
+                    <h2>Recent Posts</h2>
+                    
+                    <article class="blog-post">
+                        <div class="blog-post-header">
+                            <span class="blog-post-category">Privacy Rights</span>
+                            <h3 class="blog-post-title">
+                                <a href="#post-1">Understanding Your Rights Under the California Consumer Privacy Act</a>
+                            </h3>
+                            <div class="blog-post-meta">
+                                By Sarah Chen • January 15, 2024 • 8 min read
+                            </div>
+                            <p class="blog-post-excerpt">
+                                The California Consumer Privacy Act (CCPA) has fundamentally changed how businesses handle personal data. Learn about your rights as a consumer and how to exercise them effectively to protect your privacy.
+                            </p>
+                        </div>
+                        <div class="blog-post-footer">
+                            <a href="#post-1" class="read-more">Read Full Article →</a>
+                        </div>
+                    </article>
+                    
+                    <article class="blog-post">
+                        <div class="blog-post-header">
+                            <span class="blog-post-category">Digital Security</span>
+                            <h3 class="blog-post-title">
+                                <a href="#post-2">Essential Security Tools for Everyday Privacy Protection</a>
+                            </h3>
+                            <div class="blog-post-meta">
+                                By Marcus Rodriguez • January 10, 2024 • 12 min read
+                            </div>
+                            <p class="blog-post-excerpt">
+                                From encrypted messaging apps to secure browsers, discover the essential tools that can dramatically improve your digital privacy and security without sacrificing convenience.
+                            </p>
+                        </div>
+                        <div class="blog-post-footer">
+                            <a href="#post-2" class="read-more">Read Full Article →</a>
+                        </div>
+                    </article>
+                    
+                    <article class="blog-post">
+                        <div class="blog-post-header">
+                            <span class="blog-post-category">Civil Rights</span>
+                            <h3 class="blog-post-title">
+                                <a href="#post-3">Digital Discrimination: How Algorithms Perpetuate Inequality</a>
+                            </h3>
+                            <div class="blog-post-meta">
+                                By Dr. Aisha Patel • January 5, 2024 • 15 min read
+                            </div>
+                            <p class="blog-post-excerpt">
+                                Algorithmic bias in hiring, lending, and criminal justice systems disproportionately affects marginalized communities. Explore the intersection of technology and civil rights in the digital age.
+                            </p>
+                        </div>
+                        <div class="blog-post-footer">
+                            <a href="#post-3" class="read-more">Read Full Article →</a>
+                        </div>
+                    </article>
+                    
+                    <article class="blog-post">
+                        <div class="blog-post-header">
+                            <span class="blog-post-category">Privacy Rights</span>
+                            <h3 class="blog-post-title">
+                                <a href="#post-4">The Future of Privacy: Emerging Trends and Legal Developments</a>
+                            </h3>
+                            <div class="blog-post-meta">
+                                By James Thompson • December 28, 2023 • 10 min read
+                            </div>
+                            <p class="blog-post-excerpt">
+                                As technology evolves, so do privacy laws and regulations. Get ahead of the curve by understanding the emerging trends that will shape privacy rights in 2024 and beyond.
+                            </p>
+                        </div>
+                        <div class="blog-post-footer">
+                            <a href="#post-4" class="read-more">Read Full Article →</a>
+                        </div>
+                    </article>
+                    
+                    <article class="blog-post">
+                        <div class="blog-post-header">
+                            <span class="blog-post-category">Digital Security</span>
+                            <h3 class="blog-post-title">
+                                <a href="#post-5">Protecting Your Personal Data from Corporate Surveillance</a>
+                            </h3>
+                            <div class="blog-post-meta">
+                                By Lisa Park • December 20, 2023 • 9 min read
+                            </div>
+                            <p class="blog-post-excerpt">
+                                Major corporations collect vast amounts of personal data through tracking technologies. Learn practical strategies to limit data collection and regain control over your digital footprint.
+                            </p>
+                        </div>
+                        <div class="blog-post-footer">
+                            <a href="#post-5" class="read-more">Read Full Article →</a>
+                        </div>
+                    </article>
+                </div>
+                
+                <!-- Sidebar -->
+                <aside class="blog-sidebar">
+                    <div class="sidebar-section">
+                        <h3>Categories</h3>
+                        <ul class="category-list">
+                            <li>
+                                <a href="#privacy-rights">
+                                    Privacy Rights
+                                    <span class="category-count">12</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#digital-security">
+                                    Digital Security
+                                    <span class="category-count">8</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#civil-rights">
+                                    Civil Rights
+                                    <span class="category-count">6</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#legal-updates">
+                                    Legal Updates
+                                    <span class="category-count">4</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#education">
+                                    Education
+                                    <span class="category-count">5</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="sidebar-section">
+                        <h3>Recent Posts</h3>
+                        <ul class="recent-posts">
+                            <li>
+                                <div class="recent-post-title">
+                                    <a href="#recent-1">GDPR vs CCPA: Key Differences Explained</a>
+                                </div>
+                                <div class="recent-post-date">January 12, 2024</div>
+                            </li>
+                            <li>
+                                <div class="recent-post-title">
+                                    <a href="#recent-2">Building a Privacy-First Organization</a>
+                                </div>
+                                <div class="recent-post-date">January 8, 2024</div>
+                            </li>
+                            <li>
+                                <div class="recent-post-title">
+                                    <a href="#recent-3">Digital Rights in the Workplace</a>
+                                </div>
+                                <div class="recent-post-date">January 3, 2024</div>
+                            </li>
+                            <li>
+                                <div class="recent-post-title">
+                                    <a href="#recent-4">Facial Recognition and Privacy Concerns</a>
+                                </div>
+                                <div class="recent-post-date">December 30, 2023</div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="newsletter-signup">
+                        <h3>Stay Updated</h3>
+                        <p>Get the latest privacy insights delivered to your inbox weekly.</p>
+                        <form class="newsletter-form">
+                            <input type="email" class="newsletter-input" placeholder="Your email address" required>
+                            <button type="submit" class="newsletter-button">Subscribe</button>
+                        </form>
+                        <p style="font-size: 0.8rem; opacity: 0.8;">We respect your privacy. Unsubscribe at any time.</p>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>About</h3>
+                    <ul>
+                        <li><a href="about.html">Our Mission</a></li>
+                        <li><a href="about.html#team">Our Team</a></li>
+                        <li><a href="about.html#impact">Our Impact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Services</h3>
+                    <ul>
+                        <li><a href="privacy-rights.html">Privacy Rights</a></li>
+                        <li><a href="digital-security.html">Digital Security</a></li>
+                        <li><a href="civil-rights.html">Civil Rights</a></li>
+                        <li><a href="education.html">Education</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="challenges.html">Online Courses</a></li>
+                        <li><a href="blog.html">Blog</a></li>
+                        <li><a href="#newsletter">Newsletter</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <ul>
+                        <li>Email: support@neonlaw.org</li>
+                        <li>Las Vegas, NV</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Neon Law Foundation. All rights reserved. | 501(c)(3) Nonprofit Organization</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

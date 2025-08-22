@@ -1,0 +1,669 @@
+/* HoshiHoshi - Cosmic Astrology Design */
+
+/* CSS Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Purple & Gold Cosmic Color Palette */
+    --deep-space: #0a0a1a;          /* Deep cosmic background */
+    --galaxy-purple: #2d1b69;       /* Primary purple background */
+    --purple-light: rgba(45, 27, 105, 0.8);  /* Light purple with opacity */
+    --purple-dark: #1a0f40;         /* Darker purple variant */
+    --cosmic-white: #f8fafc;        /* Pure cosmic light */
+    --star-gold: #fbbf24;           /* Warm star gold for accents */
+    --gold-light: rgba(251, 191, 36, 0.8);  /* Light gold with opacity */
+    --cosmic-gradient: linear-gradient(135deg, var(--deep-space) 0%, var(--galaxy-purple) 50%, var(--purple-dark) 100%);
+}
+
+/* Global Styles */
+body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    line-height: 1.7;
+    color: var(--cosmic-white);
+    margin: 0;
+    padding: 0;
+    background: var(--cosmic-gradient);
+    background-attachment: fixed;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Starry Background Animation */
+.stars-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(2px 2px at 20px 30px, var(--star-gold), transparent),
+        radial-gradient(2px 2px at 40px 70px, var(--gold-light), transparent),
+        radial-gradient(1px 1px at 90px 40px, var(--star-gold), transparent),
+        radial-gradient(1px 1px at 130px 80px, var(--gold-light), transparent),
+        radial-gradient(2px 2px at 160px 30px, var(--star-gold), transparent);
+    background-repeat: repeat;
+    background-size: 200px 100px;
+    animation: twinkle 8s infinite;
+    opacity: 0.8;
+    z-index: -1;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 0.3; }
+}
+
+/* Header and Navigation */
+.cosmic-header {
+    position: relative;
+    background: rgba(42, 27, 105, 0.9);
+    backdrop-filter: blur(10px);
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(248, 250, 252, 0.1);
+}
+
+.constellation-nav {
+    position: relative;
+}
+
+.nav-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cosmic-logo {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--star-gold);
+    text-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
+    margin: 0;
+}
+
+.star-symbol {
+    animation: sparkle 2s infinite alternate;
+}
+
+@keyframes sparkle {
+    0% { opacity: 0.7; transform: scale(1); }
+    100% { opacity: 1; transform: scale(1.2); }
+}
+
+.stellar-menu {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.stellar-menu a {
+    color: var(--cosmic-white);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 10px 15px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    position: relative;
+    cursor: pointer;
+}
+
+.stellar-menu a:hover {
+    color: var(--star-gold);
+    background: rgba(248, 250, 252, 0.1);
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+}
+
+.cta-nav {
+    background: var(--galaxy-purple) !important;
+    color: white !important;
+    font-weight: bold !important;
+    cursor: pointer;
+}
+
+.cta-nav:hover {
+    background: var(--purple-dark) !important;
+    transform: scale(1.05);
+}
+
+/* Hero Section */
+.cosmic-hero {
+    position: relative;
+    padding: 100px 0;
+    text-align: center;
+    background: var(--cosmic-gradient);
+    overflow: hidden;
+}
+
+.hero-content {
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    background: linear-gradient(45deg, var(--star-gold), var(--gold-light), var(--galaxy-purple));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(251, 191, 36, 0.3);
+    line-height: 1.2;
+}
+
+.hero-subtitle {
+    font-size: 1.8rem;
+    color: var(--cosmic-white);
+    margin-bottom: 30px;
+    font-weight: 300;
+    font-style: italic;
+}
+
+.hero-description {
+    font-size: 1.3rem;
+    line-height: 1.8;
+    margin-bottom: 40px;
+    color: var(--cosmic-white);
+    opacity: 0.9;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.hero-cta {
+    margin-top: 50px;
+}
+
+/* Cosmic Buttons */
+.cosmic-button {
+    display: inline-block;
+    background: linear-gradient(45deg, var(--galaxy-purple), var(--purple-dark));
+    color: white;
+    padding: 20px 40px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(168, 85, 247, 0.3);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.cosmic-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(168, 85, 247, 0.4);
+}
+
+.cosmic-button.secondary {
+    background: linear-gradient(45deg, var(--purple-dark), var(--galaxy-purple));
+    box-shadow: 0 10px 30px rgba(30, 58, 138, 0.3);
+}
+
+.cosmic-button.large {
+    padding: 25px 50px;
+    font-size: 1.4rem;
+}
+
+.button-text {
+    display: block;
+    font-size: 1.3rem;
+}
+
+.button-subtext {
+    display: block;
+    font-size: 0.9rem;
+    margin-top: 5px;
+    opacity: 0.9;
+}
+
+.button-icon {
+    font-size: 1.5rem;
+    margin-right: 10px;
+}
+
+/* Spiritual Notice */
+.spiritual-notice {
+    background: rgba(168, 85, 247, 0.1);
+    padding: 20px 0;
+    border-top: 1px solid rgba(168, 85, 247, 0.3);
+    border-bottom: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.disclaimer-content {
+    text-align: center;
+}
+
+.disclaimer-text {
+    font-size: 1.1rem;
+    color: var(--star-gold);
+    font-weight: 500;
+}
+
+.disclaimer-icon {
+    margin: 0 10px;
+}
+
+/* Sections */
+.section-title {
+    text-align: center;
+    font-size: 2.8rem;
+    margin-bottom: 20px;
+    color: var(--star-gold);
+    text-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+    font-weight: bold;
+}
+
+.section-subtitle {
+    text-align: center;
+    font-size: 1.3rem;
+    margin-bottom: 50px;
+    color: var(--cosmic-white);
+    font-style: italic;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Services Section */
+.cosmic-services {
+    padding: 100px 0;
+    position: relative;
+}
+
+.services-constellation {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 40px;
+    margin-bottom: 50px;
+}
+
+.service-star {
+    background: rgba(248, 250, 252, 0.05);
+    backdrop-filter: blur(10px);
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    border: 1px solid rgba(248, 250, 252, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.service-star:hover {
+    transform: translateY(-10px);
+    background: rgba(248, 250, 252, 0.08);
+    border-color: var(--star-gold);
+    box-shadow: 0 20px 40px rgba(168, 85, 247, 0.2);
+}
+
+.star-icon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    display: block;
+}
+
+.service-star h3 {
+    color: var(--star-gold);
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+.service-star p {
+    margin-bottom: 20px;
+    line-height: 1.6;
+    color: var(--cosmic-white);
+}
+
+.cosmic-features {
+    list-style: none;
+    text-align: left;
+}
+
+.cosmic-features li {
+    padding: 8px 0;
+    position: relative;
+    padding-left: 25px;
+    color: var(--cosmic-white);
+}
+
+.cosmic-features li:before {
+    content: "✨";
+    position: absolute;
+    left: 0;
+    color: var(--star-gold);
+}
+
+.cta-center {
+    text-align: center;
+    margin-top: 60px;
+}
+
+/* Precision Section */
+.precision-section {
+    padding: 100px 0;
+    background: rgba(42, 27, 105, 0.3);
+}
+
+.precision-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+}
+
+.precision-feature {
+    text-align: center;
+    padding: 30px;
+}
+
+.precision-feature h3 {
+    color: var(--star-gold);
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+.precision-feature p {
+    color: var(--cosmic-white);
+    line-height: 1.6;
+}
+
+/* Zodiac Section */
+.zodiac-section {
+    padding: 100px 0;
+    text-align: center;
+}
+
+.zodiac-wheel {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.zodiac-sign {
+    background: rgba(248, 250, 252, 0.05);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 15px;
+    border: 1px solid rgba(248, 250, 252, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.zodiac-sign:hover {
+    background: rgba(168, 85, 247, 0.2);
+    border-color: var(--star-gold);
+    transform: scale(1.05);
+}
+
+.sign-symbol {
+    display: block;
+    font-size: 2.5rem;
+    color: var(--star-gold);
+    margin-bottom: 10px;
+}
+
+.sign-name {
+    display: block;
+    color: var(--cosmic-white);
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+/* About Section */
+.about-section {
+    padding: 100px 0;
+    background: rgba(30, 58, 138, 0.2);
+}
+
+.about-content {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.cosmic-paragraph {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    margin-bottom: 30px;
+    color: var(--cosmic-white);
+}
+
+.about-content h3 {
+    color: var(--star-gold);
+    font-size: 1.8rem;
+    margin: 40px 0 20px 0;
+}
+
+/* Contact Section */
+.contact-section {
+    padding: 100px 0;
+}
+
+.contact-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.contact-info h3 {
+    color: var(--star-gold);
+    font-size: 2rem;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.contact-method, .birth-data-needed, .reading-process {
+    background: rgba(248, 250, 252, 0.05);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    border: 1px solid rgba(248, 250, 252, 0.1);
+}
+
+.contact-method h4, .birth-data-needed h4, .reading-process h4 {
+    color: var(--star-gold);
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+}
+
+.email-link {
+    color: var(--star-gold);
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.3rem;
+    cursor: pointer;
+}
+
+.email-link:hover {
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+}
+
+.birth-data-needed ul, .reading-process ol {
+    color: var(--cosmic-white);
+    margin-top: 15px;
+}
+
+.birth-data-needed li, .reading-process li {
+    margin-bottom: 8px;
+    line-height: 1.6;
+}
+
+/* Final CTA */
+.final-cosmic-cta {
+    padding: 100px 0;
+    background: var(--cosmic-gradient);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.final-cosmic-cta h2 {
+    font-size: 2.5rem;
+    color: var(--star-gold);
+    margin-bottom: 30px;
+    text-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+}
+
+.cta-description {
+    font-size: 1.3rem;
+    margin-bottom: 40px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    color: var(--cosmic-white);
+}
+
+.final-cta-button {
+    margin: 40px 0;
+}
+
+.privacy-note {
+    color: var(--cosmic-white);
+    font-style: italic;
+    margin-top: 30px;
+}
+
+/* Footer */
+.cosmic-footer {
+    background: rgba(10, 10, 26, 0.9);
+    backdrop-filter: blur(10px);
+    padding: 50px 0;
+    border-top: 1px solid rgba(248, 250, 252, 0.1);
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 40px;
+}
+
+.footer-main h3 {
+    color: var(--star-gold);
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+}
+
+.footer-main p {
+    color: var(--cosmic-white);
+    margin-bottom: 20px;
+    font-style: italic;
+}
+
+.footer-email {
+    color: var(--star-gold);
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.footer-email:hover {
+    color: var(--star-gold);
+}
+
+.footer-legal {
+    color: var(--cosmic-white);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.footer-legal .disclaimer {
+    margin-bottom: 20px;
+    padding: 20px;
+    background: rgba(168, 85, 247, 0.1);
+    border-radius: 10px;
+    border: 1px solid rgba(168, 85, 247, 0.2);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.4rem;
+    }
+    
+    .hero-description {
+        font-size: 1.1rem;
+    }
+    
+    .cosmic-button {
+        padding: 15px 30px;
+        font-size: 1rem;
+    }
+    
+    .stellar-menu {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .nav-content {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .section-title {
+        font-size: 2.2rem;
+    }
+    
+    .services-constellation {
+        grid-template-columns: 1fr;
+    }
+    
+    .precision-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .zodiac-wheel {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    }
+    
+    .zodiac-sign {
+        padding: 20px;
+    }
+    
+    .sign-symbol {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .cosmic-logo {
+        font-size: 1.5rem;
+    }
+    
+    .section-title {
+        font-size: 1.8rem;
+    }
+    
+    .cosmic-button {
+        padding: 12px 25px;
+        font-size: 0.9rem;
+    }
+    
+    .service-star {
+        padding: 30px 20px;
+    }
+    
+    .contact-method, .birth-data-needed, .reading-process {
+        padding: 20px;
+    }
+}
