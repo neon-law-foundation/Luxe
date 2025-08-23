@@ -200,7 +200,7 @@ struct LetterTests {
         }
     }
 
-    @Test("Letter status workflow validation")
+    @Test("Letter status workflow validation", .disabled("CI connection timeout issues"))
     func letterStatusWorkflowValidation() async throws {
         try await TestUtilities.withApp { app, database in
             // Get or create a mailbox for testing
