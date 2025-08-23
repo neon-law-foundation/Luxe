@@ -22,9 +22,14 @@ COPY Tests/ ./Tests/
 # - Build products separately to avoid loading all dependencies at once
 # - Use --disable-sandbox to reduce overhead
 # - Set SWIFT_BUILD_FLAGS for additional memory control
+# - Set memory limits for the Swift compiler
 ENV SWIFT_BUILD_FLAGS="-Xswiftc -stats-output-dir -Xswiftc /tmp/stats"
-RUN swift build -c release --product Palette --static-swift-stdlib -j 1 --disable-sandbox
-RUN swift build -c release --product Bazaar --static-swift-stdlib -j 1 --disable-sandbox
+RUN ulimit -v 4194304 && \
+    ulimit -m 3145728 && \
+    swift build -c release --product Palette --static-swift-stdlib -j 1 --disable-sandbox
+RUN ulimit -v 4194304 && \
+    ulimit -m 3145728 && \
+    swift build -c release --product Bazaar --static-swift-stdlib -j 1 --disable-sandbox
 
 # Runtime stage
 FROM debian:bookworm-slim

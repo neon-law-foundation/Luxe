@@ -20,7 +20,15 @@ RUN swift package resolve
 COPY Sources/ ./Sources/
 COPY Tests/ ./Tests/
 
-RUN swift build -c release --product Destined --static-swift-stdlib
+# Build with memory optimizations:
+# - Use -j 1 to limit concurrent compilation jobs (reduces peak memory usage)
+# - Use --disable-sandbox to reduce overhead
+# - Set SWIFT_BUILD_FLAGS for additional memory control
+# - Set memory limits for the Swift compiler
+ENV SWIFT_BUILD_FLAGS="-Xswiftc -stats-output-dir -Xswiftc /tmp/stats"
+RUN ulimit -v 3145728 && \
+    ulimit -m 2097152 && \
+    swift build -c release --product Destined --static-swift-stdlib -j 1 --disable-sandbox
 
 # Runtime stage
 FROM debian:bookworm-slim
