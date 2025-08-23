@@ -314,8 +314,10 @@ struct VegasCommandsTests {
             // Then it should have correct properties
             #expect(config.commandName == "Vegas")
             #expect(config.abstract == "AWS infrastructure management tool")
-            #expect(config.subcommands.count == 6)  // Updated to include SESSetup
+            #expect(config.subcommands.count == 8)
             #expect(config.subcommands.contains { $0 == Infrastructure.self })
+            #expect(config.subcommands.contains { $0 == Deploy.self })
+            #expect(config.subcommands.contains { $0 == Versions.self })
             #expect(config.subcommands.contains { $0 == Elephants.self })
             #expect(config.subcommands.contains { $0 == Refresh.self })
             #expect(config.subcommands.contains { $0 == CheckUser.self })

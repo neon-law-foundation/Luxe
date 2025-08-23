@@ -190,7 +190,10 @@ struct SecretsManager: Stack {
           "Outputs": {
             "DatabaseSecretArn": {
               "Description": "ARN of the database secret",
-              "Value": { "Ref": "DatabaseSecret" }
+              "Value": { "Ref": "DatabaseSecret" },
+              "Export": {
+                "Name": { "Fn::Sub": "${AWS::StackName}-DatabaseSecretArn" }
+              }
             },
             "DatabaseSecretName": {
               "Description": "Name of the database secret",

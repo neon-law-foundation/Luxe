@@ -530,44 +530,46 @@ struct Infrastructure: AsyncParsableCommand {
             )
 
             // Bazaar ECS Fargate Service
-            // try await luxeCloud.upsertStack(
-            //     stack: ECSFargateService(),
-            //     region: primaryRegion,
-            //     stackParameters: [
-            //         "VPCStackName": "oregon-vpc",
-            //         "ALBStackName": "sagebrush-alb",
-            //         "CertificateStackName": "bazaar-certificate",
-            //         "SecretsStackName": "oregon-secrets",
-            //         "RedisStackName": "oregon-redis",
-            //         "ServiceName": "bazaar",
-            //         "ContainerImage": "ghcr.io/neon-law/bazaar",
-            //         "ImageTag": "latest",
-            //         "ContainerPort": "8080",
-            //         "HostHeader": "www.sagebrush.services",
-            //         "ListenerRulePriority": "300",
-            //         "EnableDatabase": "true",
-            //     ],
-            //     name: "bazaar-service"
-            // )
+            try await luxeCloud.upsertStack(
+                stack: ECSFargateService(),
+                region: primaryRegion,
+                stackParameters: [
+                    "VPCStackName": "oregon-vpc",
+                    "ALBStackName": "sagebrush-alb",
+                    "CertificateStackName": "bazaar-certificate",
+                    "SecretsStackName": "oregon-secrets",
+                    "RedisStackName": "oregon-redis",
+                    "ServiceName": "bazaar",
+                    "ContainerImage": "ghcr.io/neon-law-foundation/bazaar",
+                    "ImageTag": "latest",
+                    "ContainerPort": "8080",
+                    "HostHeader": "www.sagebrush.services",
+                    "ListenerRulePriority": "300",
+                    "EnableDatabase": "true",
+                ],
+                name: "bazaar-service"
+            )
 
-            // Destined ECS Fargate Service (commented out until Docker image is built and pushed)
-            // try await luxeCloud.upsertStack(
-            //     stack: ECSFargateService(),
-            //     region: primaryRegion,
-            //     stackParameters: [
-            //         "VPCStackName": "oregon-vpc",
-            //         "ALBStackName": "sagebrush-alb",
-            //         "CertificateStackName": "destined-certificate",
-            //         "SecretsStackName": "oregon-secrets",
-            //         "ServiceName": "destined",
-            //         "ContainerImage": "ghcr.io/neon-law/destined:latest",
-            //         "ContainerPort": "8080",
-            //         "HostHeader": "www.destined.travel",
-            //         "ListenerRulePriority": "400",
-            //         "EnableDatabase": "true",
-            //     ],
-            //     name: "destined-service"
-            // )
+            // Destined ECS Fargate Service
+            try await luxeCloud.upsertStack(
+                stack: ECSFargateService(),
+                region: primaryRegion,
+                stackParameters: [
+                    "VPCStackName": "oregon-vpc",
+                    "ALBStackName": "sagebrush-alb",
+                    "CertificateStackName": "destined-certificate",
+                    "SecretsStackName": "oregon-secrets",
+                    "RedisStackName": "oregon-redis",
+                    "ServiceName": "destined",
+                    "ContainerImage": "ghcr.io/neon-law-foundation/destined",
+                    "ImageTag": "latest",
+                    "ContainerPort": "8080",
+                    "HostHeader": "www.destined.travel",
+                    "ListenerRulePriority": "400",
+                    "EnableDatabase": "true",
+                ],
+                name: "destined-service"
+            )
 
             try await luxeCloud.client.shutdown()
             print("✅ Infrastructure creation completed successfully!")
@@ -618,9 +620,9 @@ struct Deploy: AsyncParsableCommand {
                         "ALBStackName": "sagebrush-alb",
                         "CertificateStackName": "bazaar-certificate",
                         "SecretsStackName": "oregon-secrets",
-                        "RedisStackName": "luxe-redis",
+                        "RedisStackName": "oregon-redis",
                         "ServiceName": "bazaar",
-                        "ContainerImage": "ghcr.io/neon-law/bazaar",
+                        "ContainerImage": "ghcr.io/neon-law-foundation/bazaar",
                         "ImageTag": version,
                         "ContainerPort": "8080",
                         "HostHeader": "www.sagebrush.services",
@@ -641,7 +643,7 @@ struct Deploy: AsyncParsableCommand {
                         "CertificateStackName": "destined-certificate",
                         "SecretsStackName": "oregon-secrets",
                         "ServiceName": "destined",
-                        "ContainerImage": "ghcr.io/neon-law/destined",
+                        "ContainerImage": "ghcr.io/neon-law-foundation/destined",
                         "ImageTag": version,
                         "ContainerPort": "8080",
                         "HostHeader": "www.destined.travel",
@@ -1304,12 +1306,12 @@ struct Refresh: AsyncParsableCommand {
                 ServiceConfig(
                     name: "bazaar",
                     clusterName: "bazaar-cluster",
-                    imageRepository: "ghcr.io/neon-law/bazaar"
+                    imageRepository: "ghcr.io/neon-law-foundation/bazaar"
                 ),
                 ServiceConfig(
                     name: "destined",
                     clusterName: "destined-cluster",
-                    imageRepository: "ghcr.io/neon-law/destined"
+                    imageRepository: "ghcr.io/neon-law-foundation/destined"
                 ),
             ]
 
