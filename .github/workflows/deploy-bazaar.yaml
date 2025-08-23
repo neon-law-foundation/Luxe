@@ -35,25 +35,25 @@ jobs:
         run: |
           # GitHub upgraded ubuntu-latest runners: 4 vCPUs, 16 GiB memory
           echo "🚀 Enhanced GitHub runner: 4 vCPUs, 16 GiB memory for Docker builds"
-          
+
           # Configure system memory management optimized for 16GB
           sudo sysctl vm.overcommit_memory=1
           sudo sysctl vm.max_map_count=262144  # Increased for 16GB
           sudo sysctl vm.swappiness=10
           sudo sysctl vm.vfs_cache_pressure=50
-          
+
           # Show available memory
           free -h
           df -h
-          
+
           # Clean up Docker to free space and memory
           docker system prune -af --volumes || true
-          
+
           # Configure Docker daemon for enhanced runner
           sudo service docker stop || true
           echo '{"storage-driver": "overlay2", "max-concurrent-downloads": 2, "max-concurrent-uploads": 2}' | sudo tee /etc/docker/daemon.json
           sudo service docker start
-          
+
           # Set generous memory limits for 16GB runner
           ulimit -m 12582912  # 12GB physical memory limit for Docker build
           ulimit -v 15728640  # 15GB virtual memory limit
@@ -93,7 +93,7 @@ jobs:
         run: |
           # Free up memory before build
           docker system prune -f || true
-          
+
           # Build with memory-efficient settings
           docker buildx build \
             -f Sources/Bazaar/Dockerfile \
@@ -121,7 +121,7 @@ jobs:
         run: |
           # Clean up Docker resources to free memory
           docker system prune -af --volumes || true
-          
+
           # Show final memory status
           free -h
           df -h

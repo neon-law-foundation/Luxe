@@ -27,10 +27,10 @@ ENV SWIFT_BUILD_FLAGS="-Xswiftc -stats-output-dir -Xswiftc /tmp/stats"
 # Enhanced ubuntu-latest runners: 4 vCPUs, 16 GiB memory
 RUN ulimit -v 12582912 && \
     ulimit -m 8388608 && \
-    swift build -c release --product Palette --static-swift-stdlib -j 2 --disable-sandbox
+    swift build -c release --product Palette --static-swift-stdlib -j 1 --disable-sandbox
 RUN ulimit -v 12582912 && \
     ulimit -m 8388608 && \
-    swift build -c release --product Bazaar --static-swift-stdlib -j 2 --disable-sandbox
+    swift build -c release --product Bazaar --static-swift-stdlib -j 1 --disable-sandbox
 
 # Runtime stage
 FROM debian:bookworm-slim
@@ -50,7 +50,7 @@ LABEL org.opencontainers.image.revision="${GIT_COMMIT}" \
       org.opencontainers.image.version="${GIT_TAG}" \
       org.opencontainers.image.created="${BUILD_DATE}" \
       org.opencontainers.image.title="Bazaar" \
-      org.opencontainers.image.description="Bazaar unified service"
+      org.opencontainers.image.description="Sagebrush Services"
 
 # Install ca-certificates and download RDS CA certificate bundle
 # This is required for PostgresNIO's .makeClientConfiguration() which uses system certificates
