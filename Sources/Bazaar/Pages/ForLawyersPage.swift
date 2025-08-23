@@ -57,8 +57,8 @@ struct ForLawyersPage: HTMLDocument {
                         ) {
                             strong { "Schedule Private Consultation" }
                         }
-                        a(.class("button is-light is-large"), .href("#security-risks")) { 
-                            "See Why Public AI Is Risky" 
+                        a(.class("button is-light is-large"), .href("#security-risks")) {
+                            "See Why Public AI Is Risky"
                         }
                     }
                 }
@@ -79,14 +79,29 @@ struct ForLawyersPage: HTMLDocument {
                             p(.class("has-text-weight-bold")) {
                                 "Using ChatGPT, Claude, or other public AI services for legal work creates serious liability exposure:"
                             }
-                            
+
                             riskList([
-                                ("🔓 Data Sharing", "Your client data trains their models and may be accessed by their staff"),
-                                ("⚖️ Privilege Breach", "Attorney-client privilege may be waived when data leaves your control"),
-                                ("📊 Audit Trail Gaps", "No comprehensive logging for compliance and malpractice defense"),
+                                (
+                                    "🔓 Data Sharing",
+                                    "Your client data trains their models and may be accessed by their staff"
+                                ),
+                                (
+                                    "⚖️ Privilege Breach",
+                                    "Attorney-client privilege may be waived when data leaves your control"
+                                ),
+                                (
+                                    "📊 Audit Trail Gaps",
+                                    "No comprehensive logging for compliance and malpractice defense"
+                                ),
                                 ("🎯 Targeted Attacks", "Shared infrastructure makes you vulnerable to data breaches"),
-                                ("📋 Compliance Failures", "Most public services don't meet legal industry security standards"),
-                                ("💸 Liability Exposure", "Malpractice insurance may not cover breaches from unapproved AI use")
+                                (
+                                    "📋 Compliance Failures",
+                                    "Most public services don't meet legal industry security standards"
+                                ),
+                                (
+                                    "💸 Liability Exposure",
+                                    "Malpractice insurance may not cover breaches from unapproved AI use"
+                                ),
                             ])
                         }
                     }
@@ -121,53 +136,57 @@ struct ForLawyersPage: HTMLDocument {
                 h2(.class("title is-2 has-text-primary has-text-centered mb-6")) {
                     "Why Your Law Firm Needs Its Own AWS Account"
                 }
-                
+
                 div(.class("columns is-multiline")) {
                     benefitCard(
                         icon: "🏛️",
                         title: "Complete Data Sovereignty",
-                        description: "Your client data never leaves your control. It lives entirely within your private AWS infrastructure, not shared servers.",
+                        description:
+                            "Your client data never leaves your control. It lives entirely within your private AWS infrastructure, not shared servers.",
                         benefits: [
                             "Dedicated hardware with no shared tenancy",
                             "You control encryption keys through AWS CloudHSM",
                             "Full audit trail of every data access",
-                            "Immediate compliance with Bar ethics rules"
+                            "Immediate compliance with Bar ethics rules",
                         ]
                     )
-                    
+
                     benefitCard(
                         icon: "🔒",
                         title: "Attorney-Client Privilege Protection",
-                        description: "Maintain absolute privilege protection with infrastructure designed for legal confidentiality.",
+                        description:
+                            "Maintain absolute privilege protection with infrastructure designed for legal confidentiality.",
                         benefits: [
                             "No third-party AI provider access to your data",
                             "VPC isolation prevents external network access",
                             "Encrypted data processing within your environment",
-                            "Legally defensible security architecture"
+                            "Legally defensible security architecture",
                         ]
                     )
-                    
+
                     benefitCard(
                         icon: "📋",
                         title: "Professional Compliance",
-                        description: "Meet and exceed bar association requirements with enterprise-grade security standards.",
+                        description:
+                            "Meet and exceed bar association requirements with enterprise-grade security standards.",
                         benefits: [
                             "HIPAA, GDPR, and SOC 2 compliance built-in",
                             "143 AWS security certifications",
                             "Detailed audit logs for malpractice defense",
-                            "Regular compliance reporting"
+                            "Regular compliance reporting",
                         ]
                     )
-                    
+
                     benefitCard(
                         icon: "🛡️",
                         title: "Risk Mitigation",
-                        description: "Eliminate the legal and financial risks of using public AI services for sensitive legal work.",
+                        description:
+                            "Eliminate the legal and financial risks of using public AI services for sensitive legal work.",
                         benefits: [
                             "Professional liability insurance compatibility",
                             "No data sharing with AI model providers",
                             "Controlled AI model versions for consistency",
-                            "Complete breach prevention architecture"
+                            "Complete breach prevention architecture",
                         ]
                     )
                 }
@@ -204,12 +223,12 @@ struct ForLawyersPage: HTMLDocument {
                 h2(.class("title is-2 has-text-primary has-text-centered mb-6")) {
                     "Secure VPC Architecture for Legal AI"
                 }
-                
+
                 div(.class("box")) {
                     p(.class("content has-text-centered is-size-5 mb-5")) {
                         "This diagram shows how your private AWS infrastructure keeps client data completely isolated while providing powerful AI capabilities:"
                     }
-                    
+
                     div(.class("mermaid")) {
                         """
                         flowchart TD
@@ -266,7 +285,7 @@ struct ForLawyersPage: HTMLDocument {
                             class TRAIL,GUARD,CONFIG securityZone
                         """
                     }
-                    
+
                     div(.class("content has-text-centered mt-5")) {
                         h4(.class("title is-4 has-text-primary")) { "Key Security Features:" }
                         div(.class("columns")) {
@@ -300,7 +319,7 @@ struct ForLawyersPage: HTMLDocument {
                 h2(.class("title is-2 has-text-primary has-text-centered mb-6")) {
                     "Your Own White-Labeled Legal AI Platform"
                 }
-                
+
                 div(.class("columns is-vcentered")) {
                     div(.class("column is-two-thirds")) {
                         h3(.class("title is-3 has-text-info")) { "Sagebrush Deploys Your Custom Legal Portal" }
@@ -308,7 +327,7 @@ struct ForLawyersPage: HTMLDocument {
                             p {
                                 "We don't just set up your AWS infrastructure—we deploy a complete, white-labeled version of our legal AI platform directly inside YOUR AWS account. This means:"
                             }
-                            
+
                             ul {
                                 li { "🎨 **Branded with your law firm's identity** - logo, colors, and messaging" }
                                 li { "🔧 **Customized workflows** for your practice areas and client needs" }
@@ -332,7 +351,7 @@ struct ForLawyersPage: HTMLDocument {
                         }
                     }
                 }
-                
+
                 div(.class("columns is-multiline mt-6")) {
                     featureHighlight(
                         icon: "🎯",
@@ -342,10 +361,10 @@ struct ForLawyersPage: HTMLDocument {
                             "Legal research with case law citations",
                             "Document drafting with style consistency",
                             "Discovery review with privilege screening",
-                            "Compliance monitoring with alerts"
+                            "Compliance monitoring with alerts",
                         ]
                     )
-                    
+
                     featureHighlight(
                         icon: "🔄",
                         title: "Workflow Integration",
@@ -354,10 +373,10 @@ struct ForLawyersPage: HTMLDocument {
                             "Time tracking with automated suggestions",
                             "Client communication with AI drafting",
                             "Billing optimization with usage analytics",
-                            "Calendar integration with deadline tracking"
+                            "Calendar integration with deadline tracking",
                         ]
                     )
-                    
+
                     featureHighlight(
                         icon: "👥",
                         title: "Multi-User Management",
@@ -366,10 +385,10 @@ struct ForLawyersPage: HTMLDocument {
                             "Client portal with secure document sharing",
                             "Staff training resources and best practices",
                             "Usage monitoring and productivity reports",
-                            "Collaborative workflows with approval processes"
+                            "Collaborative workflows with approval processes",
                         ]
                     )
-                    
+
                     featureHighlight(
                         icon: "🔧",
                         title: "Maintenance & Updates",
@@ -378,7 +397,7 @@ struct ForLawyersPage: HTMLDocument {
                             "New AI models as they become available",
                             "Security patches and compliance updates",
                             "Feature additions based on legal trends",
-                            "24/7 monitoring and support"
+                            "24/7 monitoring and support",
                         ]
                     )
                 }
@@ -390,7 +409,7 @@ struct ForLawyersPage: HTMLDocument {
     func featureHighlight(icon: String, title: String, items: [String]) -> some HTML {
         div(.class("column is-half")) {
             div(.class("box has-ribbon")) {
-                h4(.class("title is-4 has-text-primary")) { 
+                h4(.class("title is-4 has-text-primary")) {
                     span(.class("icon")) { icon }
                     span { title }
                 }
@@ -410,7 +429,7 @@ struct ForLawyersPage: HTMLDocument {
                 h2(.class("title is-2 has-text-primary has-text-centered mb-6")) {
                     "Bar Association Compliance Made Simple"
                 }
-                
+
                 div(.class("notification is-warning mb-6")) {
                     div(.class("content has-text-centered")) {
                         h4(.class("title is-4")) { "⚖️ Professional Responsibility Alert" }
@@ -419,7 +438,7 @@ struct ForLawyersPage: HTMLDocument {
                         }
                     }
                 }
-                
+
                 div(.class("columns is-multiline")) {
                     complianceCard(
                         title: "ABA Model Rule 1.6 Compliance",
@@ -428,23 +447,23 @@ struct ForLawyersPage: HTMLDocument {
                             "✅ Reasonable efforts to prevent disclosure",
                             "✅ Informed consent not required for secure systems",
                             "✅ Technical safeguards properly implemented",
-                            "✅ Vendor agreements ensure confidentiality"
+                            "✅ Vendor agreements ensure confidentiality",
                         ],
                         status: "FULLY COMPLIANT"
                     )
-                    
+
                     complianceCard(
-                        title: "ABA Model Rule 1.1 Compliance", 
+                        title: "ABA Model Rule 1.1 Compliance",
                         description: "Competent Representation",
                         requirements: [
                             "✅ Understanding of technology benefits and risks",
                             "✅ Reasonable security measures implemented",
                             "✅ Staff training on proper AI usage",
-                            "✅ Regular security updates and monitoring"
+                            "✅ Regular security updates and monitoring",
                         ],
                         status: "FULLY COMPLIANT"
                     )
-                    
+
                     complianceCard(
                         title: "ABA Model Rule 5.3 Compliance",
                         description: "Responsibilities Regarding Nonlawyer Assistants",
@@ -452,11 +471,11 @@ struct ForLawyersPage: HTMLDocument {
                             "✅ Clear policies for AI tool usage",
                             "✅ Supervision of AI-assisted work product",
                             "✅ Training on confidentiality requirements",
-                            "✅ Regular compliance monitoring"
+                            "✅ Regular compliance monitoring",
                         ],
                         status: "FULLY COMPLIANT"
                     )
-                    
+
                     complianceCard(
                         title: "State Bar Specific Requirements",
                         description: "Varying State Requirements",
@@ -464,7 +483,7 @@ struct ForLawyersPage: HTMLDocument {
                             "✅ California: SB-327 IoT Security Law compliance",
                             "✅ New York: SHIELD Act data protection",
                             "✅ Illinois: Personal Information Protection Act",
-                            "✅ Texas: Identity Theft Enforcement and Protection Act"
+                            "✅ Texas: Identity Theft Enforcement and Protection Act",
                         ],
                         status: "MEETS REQUIREMENTS"
                     )
@@ -502,36 +521,36 @@ struct ForLawyersPage: HTMLDocument {
                 h2(.class("title is-2 has-text-primary has-text-centered mb-6")) {
                     "Implementation Process: 30 Days to Secure Legal AI"
                 }
-                
+
                 div(.class("timeline")) {
                     processStep(
                         week: "Week 1",
-                        title: "Consultation & Planning", 
+                        title: "Consultation & Planning",
                         icon: "📋",
                         tasks: [
                             "Comprehensive security and compliance assessment",
                             "Legal practice workflow analysis",
                             "AWS account setup and initial configuration",
                             "Custom portal design and branding requirements",
-                            "Staff training schedule and requirements planning"
+                            "Staff training schedule and requirements planning",
                         ],
                         deliverable: "Detailed implementation plan and timeline"
                     )
-                    
+
                     processStep(
                         week: "Week 2",
                         title: "AWS Infrastructure Setup",
-                        icon: "☁️", 
+                        icon: "☁️",
                         tasks: [
                             "Private VPC creation with strict network isolation",
                             "AWS Bedrock deployment and AI model configuration",
                             "S3 bucket setup with client-controlled encryption",
                             "CloudTrail, GuardDuty, and Config compliance setup",
-                            "IAM roles and policies for least-privilege access"
+                            "IAM roles and policies for least-privilege access",
                         ],
                         deliverable: "Fully secured AWS environment ready for legal data"
                     )
-                    
+
                     processStep(
                         week: "Week 3",
                         title: "White-Label Portal Deployment",
@@ -541,11 +560,11 @@ struct ForLawyersPage: HTMLDocument {
                             "Branding application (logo, colors, messaging)",
                             "Legal workflow configuration and customization",
                             "Integration setup with existing legal software",
-                            "Security testing and vulnerability assessment"
+                            "Security testing and vulnerability assessment",
                         ],
                         deliverable: "Branded legal AI platform ready for testing"
                     )
-                    
+
                     processStep(
                         week: "Week 4",
                         title: "Training & Go-Live",
@@ -555,7 +574,7 @@ struct ForLawyersPage: HTMLDocument {
                             "Best practices documentation and guidelines",
                             "Trial runs with non-sensitive test cases",
                             "Final security validation and compliance check",
-                            "Go-live support and monitoring setup"
+                            "Go-live support and monitoring setup",
                         ],
                         deliverable: "Fully operational secure legal AI platform"
                     )
@@ -572,7 +591,7 @@ struct ForLawyersPage: HTMLDocument {
             }
             div(.class("timeline-content")) {
                 p(.class("heading")) { week }
-                h3(.class("title is-4")) { 
+                h3(.class("title is-4")) {
                     span(.class("icon is-medium")) { icon }
                     span { title }
                 }
@@ -598,7 +617,7 @@ struct ForLawyersPage: HTMLDocument {
                 h2(.class("title is-2 has-text-primary has-text-centered mb-6")) {
                     "Investment in Your Firm's Security & Efficiency"
                 }
-                
+
                 div(.class("columns is-centered")) {
                     div(.class("column is-8")) {
                         div(.class("pricing-table")) {
@@ -617,19 +636,19 @@ struct ForLawyersPage: HTMLDocument {
                                     "30 days of go-live support",
                                     "Ongoing software updates and maintenance",
                                     "24/7 infrastructure monitoring",
-                                    "Monthly compliance reporting"
+                                    "Monthly compliance reporting",
                                 ],
                                 highlight: true
                             )
                         }
-                        
+
                         div(.class("notification is-warning mt-5")) {
                             h4(.class("title is-4")) { "💰 AWS Infrastructure Costs" }
                             p {
                                 "AWS costs are separate but typically range from $300-1,200/month depending on usage. We optimize your infrastructure to minimize costs while maintaining security. Compare this to the $2,000-5,000/month you might pay for traditional case management software with inferior AI capabilities."
                             }
                         }
-                        
+
                         div(.class("notification is-success mt-3")) {
                             h4(.class("title is-4")) { "📊 ROI Analysis" }
                             p {
@@ -643,11 +662,25 @@ struct ForLawyersPage: HTMLDocument {
     }
 
     @HTMLBuilder
-    func pricingTier(name: String, price: String, period: String, monthlyFee: String, description: String, includes: [String], highlight: Bool = false) -> some HTML {
+    func pricingTier(
+        name: String,
+        price: String,
+        period: String,
+        monthlyFee: String,
+        description: String,
+        includes: [String],
+        highlight: Bool = false
+    ) -> some HTML {
         div(.class("column")) {
             div(.class(highlight ? "card has-border-primary" : "card")) {
                 div(.class(highlight ? "card-header has-background-primary" : "card-header")) {
-                    p(.class(highlight ? "card-header-title has-text-white has-text-centered is-size-4" : "card-header-title has-text-centered is-size-4")) {
+                    p(
+                        .class(
+                            highlight
+                                ? "card-header-title has-text-white has-text-centered is-size-4"
+                                : "card-header-title has-text-centered is-size-4"
+                        )
+                    ) {
                         name
                     }
                 }
@@ -657,7 +690,7 @@ struct ForLawyersPage: HTMLDocument {
                     p(.class("title is-3 has-text-info")) { monthlyFee }
                     p(.class("subtitle")) { "ongoing" }
                     p(.class("content")) { description }
-                    
+
                     h5(.class("title is-5 has-text-left")) { "Includes:" }
                     div(.class("content has-text-left")) {
                         ul {
@@ -689,7 +722,7 @@ struct ForLawyersPage: HTMLDocument {
                 p(.class("subtitle is-4 has-text-white-bis mb-6")) {
                     "Join the law firms who prioritize client confidentiality with truly private AI infrastructure"
                 }
-                
+
                 div(.class("columns is-centered")) {
                     div(.class("column is-8")) {
                         div(.class("box")) {
@@ -700,7 +733,9 @@ struct ForLawyersPage: HTMLDocument {
                             div(.class("buttons is-centered")) {
                                 a(
                                     .class("button is-primary is-large"),
-                                    .href("mailto:support@sagebrush.services?subject=Private Legal AI Consultation&body=I'm interested in learning more about setting up a private AWS infrastructure for our law firm. Please schedule a consultation to discuss our needs.%0A%0AFirm Name:%0AContact Name:%0APhone Number:%0ABest Time to Call:")
+                                    .href(
+                                        "mailto:support@sagebrush.services?subject=Private Legal AI Consultation&body=I'm interested in learning more about setting up a private AWS infrastructure for our law firm. Please schedule a consultation to discuss our needs.%0A%0AFirm Name:%0AContact Name:%0APhone Number:%0ABest Time to Call:"
+                                    )
                                 ) {
                                     "Schedule Private Consultation"
                                 }
@@ -714,7 +749,7 @@ struct ForLawyersPage: HTMLDocument {
                         }
                     }
                 }
-                
+
                 div(.class("columns is-centered mt-6")) {
                     div(.class("column is-4")) {
                         div(.class("notification is-info is-light")) {

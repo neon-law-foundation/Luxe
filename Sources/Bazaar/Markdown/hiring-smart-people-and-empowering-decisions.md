@@ -5,8 +5,6 @@ description: "Why we embrace contentious debate and written culture at Sagebrush
 created_at: "2025-08-23T12:00:00Z"
 ---
 
-# Hiring Smart People and Empowering Their Decisions
-
 Steve Jobs once said, "It doesn't make sense to hire smart people and tell them what to do; we hire smart people so
 they can tell us what to do." This quote has become a cornerstone of how we think about building teams at Sagebrush.
 

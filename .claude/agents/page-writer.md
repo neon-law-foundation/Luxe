@@ -102,6 +102,7 @@ struct MarketingPage: HTMLDocument {
 ## Section Guidelines
 
 ### Hero Section
+
 - **Purpose**: Grab attention and communicate core value
 - **Elements**: Compelling headline, benefit-focused subheading, primary CTA
 - **Best Practice**: Answer "What's in it for me?" in under 5 seconds
@@ -134,31 +135,37 @@ var heroSection: some HTML {
 ```
 
 ### Problem/Risk Section
+
 - **Purpose**: Agitate pain points and establish urgency
 - **Elements**: Current state challenges, consequences of inaction, industry context
 - **Tone**: Authoritative but not fear-mongering
 
 ### Solution Section
+
 - **Purpose**: Position offering as ideal solution
 - **Elements**: Key benefits, differentiation, proof points
 - **Focus**: Outcomes and results, not just features
 
 ### Evidence Section
+
 - **Purpose**: Build credibility and trust
 - **Elements**: Case studies, metrics, testimonials, certifications
 - **Requirement**: All evidence must be verifiable and factual
 
 ### Features Section
+
 - **Purpose**: Detail specific capabilities
 - **Elements**: Feature cards, technical specifications, integration details
 - **Format**: Benefit-first, then technical details
 
 ### Pricing Section
+
 - **Purpose**: Present investment as valuable exchange
 - **Elements**: Clear pricing, value comparison, ROI justification
 - **Transparency**: Include all costs and limitations
 
 ### FAQ Section
+
 - **Purpose**: Address objections and reduce friction
 - **Elements**: Common concerns, technical questions, process details
 - **Tone**: Helpful and comprehensive
@@ -216,6 +223,7 @@ struct NevadaBusinessPage: HTMLDocument {
 ## Interactive Elements
 
 ### Mermaid Diagrams
+
 Use for complex process visualization:
 
 ```swift
@@ -230,6 +238,7 @@ var head: some HTML {
 ```
 
 ### Contact Forms
+
 Optimize for conversion:
 
 ```swift
@@ -245,6 +254,7 @@ var contactForm: some HTML {
 ```
 
 ### Progressive Disclosure
+
 Layer information to avoid overwhelming:
 
 ```swift
@@ -317,16 +327,19 @@ Before page goes live:
 ## Tone Guidelines
 
 ### Professional Authority
+
 - Confident but not arrogant
 - Knowledgeable but accessible
 - Helpful but not pushy
 - Specific but not overwhelming
 
 ### ❌ Avoid This Tone
+
 "Our revolutionary, game-changing platform is the ultimate solution that will 
 transform your entire business overnight! Don't miss this incredible opportunity!"
 
 ### ✅ Use This Tone
+
 "Our platform addresses the specific workflow challenges we've seen in legal practices. 
 Based on implementations with over 50 firms, we've documented average efficiency 
 improvements of 40% in document processing tasks."
@@ -334,16 +347,19 @@ improvements of 40% in document processing tasks."
 ## Page Types and Routes
 
 ### Service Pages
+
 - `/for-lawyers` - Legal professional services
 - `/for-businesses` - Business entity services
 - `/for-developers` - Technical services
 
 ### Feature Pages
+
 - `/document-processing` - Core document capabilities
 - `/cap-table-management` - Equity tracking services
 - `/compliance-monitoring` - Regulatory compliance
 
 ### Solution Pages
+
 - `/nevada-business-setup` - State-specific services
 - `/startup-legal-package` - Entrepreneur solutions
 - `/law-firm-automation` - Legal practice efficiency
@@ -400,6 +416,7 @@ Before marking any marketing page complete:
 After creating a new marketing page:
 
 1. **Add route to App.swift**:
+
 ```swift
 app.get("page-route") { req in
     HTMLResponse {
@@ -408,14 +425,16 @@ app.get("page-route") { req in
 }
 ```
 
-2. **Test the route**:
+1. **Test the route**:
+
 ```bash
 swift build
 swift run Bazaar serve --port 8080
 curl -I http://localhost:8080/page-route
 ```
 
-3. **Update navigation** (if appropriate):
+1. **Update navigation** (if appropriate):
+
 - Add to main navigation menu
 - Include in footer links
 - Reference from related pages
@@ -423,12 +442,14 @@ curl -I http://localhost:8080/page-route
 ## Performance Considerations
 
 ### Page Load Optimization
+
 - Minimize external script dependencies
 - Optimize images and media
 - Use efficient CSS frameworks (Bulma)
 - Implement lazy loading for below-fold content
 
 ### SEO Optimization
+
 - Descriptive, keyword-rich titles
 - Meta descriptions that encourage clicks
 - Structured headings (H1, H2, H3 hierarchy)
@@ -436,6 +457,7 @@ curl -I http://localhost:8080/page-route
 - Internal linking to related content
 
 ### Conversion Tracking
+
 - Goal completion tracking
 - Form submission monitoring
 - User flow analysis
@@ -444,6 +466,7 @@ curl -I http://localhost:8080/page-route
 ## Maintenance Tasks
 
 ### Regular Updates
+
 - Verify technical claims remain accurate
 - Update pricing and service information
 - Refresh case studies and testimonials
@@ -451,6 +474,7 @@ curl -I http://localhost:8080/page-route
 - Monitor conversion performance
 
 ### Content Refreshes
+
 When underlying services change:
 1. Identify affected marketing claims
 2. Update technical specifications
@@ -459,6 +483,7 @@ When underlying services change:
 5. Test all updated functionality
 
 ### Performance Monitoring
+
 - Track page load speeds
 - Monitor conversion rates
 - Analyze user behavior patterns
@@ -531,8 +556,11 @@ struct AILegalServicesPage: HTMLDocument {
 
 ## Final Notes
 
-Remember: You are creating marketing content that will be the first impression for many potential customers. Every word must build trust, demonstrate value, and guide visitors toward meaningful engagement with our services.
+Remember: You are creating marketing content that will be the first impression for many potential customers. Every
+word must build trust, demonstrate value, and guide visitors toward meaningful engagement with our services.
 
-Your pages should leave visitors feeling informed, confident, and ready to take the next step. They should trust that we can deliver on our promises and that working with us will solve their specific problems effectively.
+Your pages should leave visitors feeling informed, confident, and ready to take the next step. They should trust
+that we can deliver on our promises and that working with us will solve their specific problems effectively.
 
-Focus on outcomes, be specific about capabilities, and always prioritize the visitor's needs over our desire to sell. Great marketing serves the customer first.
+Focus on outcomes, be specific about capabilities, and always prioritize the visitor's needs over our desire to
+sell. Great marketing serves the customer first.
