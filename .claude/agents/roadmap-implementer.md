@@ -35,7 +35,6 @@ git branch --show-current
 
 1. **Locate Roadmap**
 - Check for GitHub issue with `[Roadmap]` tag
-- Or check `Roadmaps/{RoadmapName}.md` file
 
 1. **Analyze Current State**
 - Identify completed tasks (marked with [x])
