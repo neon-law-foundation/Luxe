@@ -125,12 +125,7 @@ struct ECSFargateService: Stack {
                               "Resource": [
                                 {
                                   "Fn::ImportValue": {
-                                    "Fn::Sub": "${SecretsStackName}-DatabaseSecretArn"
-                                  }
-                                },
-                                {
-                                  "Fn::ImportValue": {
-                                    "Fn::Sub": "${RedisStackName}-RedisAuthTokenSecret"
+                                    "Fn::Sub": "${SecretsStackName}-ApplicationSecretArn"
                                   }
                                 }
                               ]
@@ -422,14 +417,6 @@ struct ECSFargateService: Stack {
                                   }
                                 }
                               ]
-                            }
-                          },
-                          {
-                            "Name": "REDIS_AUTH_TOKEN",
-                            "ValueFrom": {
-                              "Fn::ImportValue": {
-                                "Fn::Sub": "${RedisStackName}-RedisAuthTokenSecret"
-                              }
                             }
                           }
                         ],

@@ -89,6 +89,27 @@ struct ApplicationLoadBalancerWithAuth: Stack {
                 ]
               }
             },
+            "HTTPListener": {
+              "Type": "AWS::ElasticLoadBalancingV2::Listener",
+              "Properties": {
+                "DefaultActions": [
+                  {
+                    "Type": "redirect",
+                    "RedirectConfig": {
+                      "Protocol": "HTTPS",
+                      "Port": "443",
+                      "Host": "#{host}",
+                      "Path": "/#{path}",
+                      "Query": "#{query}",
+                      "StatusCode": "HTTP_301"
+                    }
+                  }
+                ],
+                "LoadBalancerArn": { "Ref": "ApplicationLoadBalancer" },
+                "Port": 80,
+                "Protocol": "HTTP"
+              }
+            },
             "HTTPSListener": {
               "Type": "AWS::ElasticLoadBalancingV2::Listener",
               "Properties": {
@@ -159,6 +180,13 @@ struct ApplicationLoadBalancerWithAuth: Stack {
               "Value": { "Ref": "HTTPSListener" },
               "Export": {
                 "Name": { "Fn::Sub": "${AWS::StackName}-HTTPSListenerArn" }
+              }
+            },
+            "HTTPListenerArn": {
+              "Description": "ARN of the HTTP listener",
+              "Value": { "Ref": "HTTPListener" },
+              "Export": {
+                "Name": { "Fn::Sub": "${AWS::StackName}-HTTPListenerArn" }
               }
             }
           }
