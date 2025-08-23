@@ -18,7 +18,8 @@ fundamentally cannot work on Linux (e.g., requires macOS-specific APIs), disable
 
 ## Steps
 
-1. **Analyze GitHub Actions failures first**: Use `gh pr checks` and `gh run view <run-id> --log-failed` to identify the root cause
+1. **Analyze GitHub Actions failures first**: Use `gh pr checks` and `gh run view <run-id> --log-failed` to identify the
+   root cause
    - Look specifically for:
      - `connectionRequestTimeout` errors (database connection pool issues)
      - Memory allocation failures
