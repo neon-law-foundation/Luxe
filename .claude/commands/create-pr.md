@@ -10,6 +10,14 @@
 
 Create a pull request using specialized agents to ensure code quality and proper workflow. Follow these steps:
 
+0. **Pre-Check: Verify Swift File Changes** - Before proceeding, ensure there are actual Swift code changes to review:
+   - Check for changed Swift files in `Sources/` or `Tests/` folders:
+     `git diff --name-only origin/main -- Sources/ Tests/ | grep '\.swift$'`
+   - **CRITICAL**: If no Swift files have changed, the workflow cannot proceed
+   - **REQUIRED**: Must have at least one modified Swift file in Sources/ or Tests/ to create a PR
+   - If no Swift changes detected, create feature branch first and make code changes
+   - Only proceed to Step 1 if Swift files have been modified
+
 1. **Code Review with test-driven-developer** - Use the test-driven-developer agent to review the current code changes:
    - Analyze all modifications for quality and adherence to Swift best practices
    - Verify TDD compliance and test coverage
@@ -68,13 +76,13 @@ Create a pull request using specialized agents to ensure code quality and proper
 ## Agent Workflow Summary
 
 ```text
-┌─────────────────────┐    ┌──────────────┐    ┌─────────────────────┐    ┌───────────────────┐
-│ test-driven-       │───▶│ Formatters   │───▶│ test-driven-       │───▶│ git-branch-      │
-│ developer          │    │              │    │ developer          │    │ manager          │
-│ Code Review        │    │ Format Check │    │ Test Verify        │    │ Branch Mgmt      │
-└─────────────────────┘    └──────────────┘    └─────────────────────┘    └───────────────────┘
-                                                                    │
-                                                                    ▼
+┌─────────────────────┐    ┌─────────────────────┐    ┌──────────────┐    ┌─────────────────────┐    ┌───────────────────┐
+│ Pre-Check:         │───▶│ test-driven-        │───▶│ Formatters   │───▶│ test-driven-       │───▶│ git-branch-      │
+│ Swift File Changes │    │ developer           │    │              │    │ developer          │    │ manager          │
+│ (Sources/Tests)    │    │ Code Review         │    │ Format Check │    │ Test Verify        │    │ Branch Mgmt      │
+└─────────────────────┘    └─────────────────────┘    └──────────────┘    └─────────────────────┘    └───────────────────┘
+                                                                                                    │
+                                                                                                    ▼
 ┌─────────────┐    ┌──────────────────────┐    ┌─────────────┐
 │issue-updater│◀───│ pull-request-manager │◀───│  commiter   │
 │ Roadmap Tag │    │ PR Creation          │    │ Commits     │
@@ -85,6 +93,7 @@ Create a pull request using specialized agents to ensure code quality and proper
 
 Each agent enforces specific quality requirements:
 
+- **pre-check**: Swift files in Sources/ or Tests/ folders must have changed from origin/main
 - **test-driven-developer**: All tests pass, code quality verified
 - **swift-formatter & markdown-formatter**: SQL migrations linted, Swift format compliant, markdown validated
   (all exit code 0 mandatory)
@@ -96,6 +105,7 @@ Each agent enforces specific quality requirements:
 ## Error Handling
 
 If any agent fails:
+0. **pre-check fails**: No Swift files changed in Sources/ or Tests/ - create feature branch and make code changes first
 1. **test-driven-developer fails**: Fix code issues, re-run tests
 2. **Formatters fail**: Fix ALL formatting issues (SQL, Swift, markdown) until all validations exit 0, re-validate
 3. **commiter fails**: Check git status, resolve conflicts
@@ -105,6 +115,7 @@ Never proceed to next step if current agent reports failure.
 ## Success Criteria
 
 PR creation is complete when:
+- ✅ Swift files in Sources/ or Tests/ have changed from origin/main
 - ✅ All code reviewed and tests passing
 - ✅ All formatting validated and compliant (SQL, Swift, markdown)
 - ✅ Final test verification passed (no regressions)
