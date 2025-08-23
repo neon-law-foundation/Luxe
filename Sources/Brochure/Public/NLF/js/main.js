@@ -100,11 +100,11 @@ function showVideoModal(title, videoNumber) {
                         <p>This video covers important privacy and civil rights topics as part of our educational mission.</p>
                         <p><strong>Contact for Access:</strong> For full video access and educational materials, please contact us at:</p>
                         <p class="contact-info">
-                            <a href="mailto:aire@neonlaw.org?subject=Video Access Request: ${title}">aire@neonlaw.org</a>
+                            <a href="mailto:director@neonlaw.org?subject=Video Access Request: ${title}">director@neonlaw.org</a>
                         </p>
                         <div class="action-buttons">
-                            <a href="contact.html" class="cta-button secondary">Request Workshop</a>
-                            <a href="our-mission.html" class="cta-button primary">Learn More</a>
+                            <a href="mailto:director@neonlaw.org?subject=Workshop Request" class="cta-button secondary">Request Workshop</a>
+                            <a href="about.html" class="cta-button primary">Learn More</a>
                         </div>
                     </div>
                 </div>

@@ -36,6 +36,7 @@ struct BlogIndexContent: HTML {
 struct DynamicBlogCards: HTML {
     var content: some HTML {
         // Ordered by most recent first (by creation date)
+        BlogCard9()  // S Corp Election for LLCs - Aug 23, 2025
         BlogCard8()  // Nevada Virtual Creators - Jan 19, 2025
         BlogCard2()  // a16z Leaving Delaware - Jan 15, 2025
         BlogCard3()  // Digital Nomads - Jan 14, 2025
@@ -47,6 +48,31 @@ struct DynamicBlogCards: HTML {
 }
 
 // Ordered by most recent first
+struct BlogCard9: HTML {  // S Corp Election for LLCs - Aug 23, 2025
+    var content: some HTML {
+        div(.class("column is-half")) {
+            div(.class("card")) {
+                div(.class("card-header")) {
+                    p(.class("card-header-title")) { "S Corp Election for LLCs: A Complete Guide to Form 2553" }
+                }
+                div(.class("card-content")) {
+                    div(.class("content")) {
+                        p {
+                            "Learn how LLCs can elect S Corp tax treatment using Form 2553, including filing deadlines, requirements, and potential self-employment tax savings for profitable businesses..."
+                        }
+                        p(.class("has-text-grey is-size-7")) { "Published: August 23, 2025" }
+                    }
+                }
+                footer(.class("card-footer")) {
+                    a(.class("card-footer-item button is-primary"), .href("/blog/s-corp-election-llc-form-2553")) {
+                        "Read More"
+                    }
+                }
+            }
+        }
+    }
+}
+
 struct BlogCard8: HTML {  // Nevada Virtual Creators - Jan 19, 2025
     var content: some HTML {
         div(.class("column is-half")) {
