@@ -52,6 +52,31 @@ jobs:
     steps:
       - uses: "actions/checkout@v4"
 
+      - name: Start LocalStack
+        uses: LocalStack/setup-localstack@v0.2.4
+        with:
+          image-tag: 'latest'
+          install-awslocal: 'true'
+          configuration: |
+            SERVICES=s3
+            DEBUG=1
+            AWS_DEFAULT_REGION=us-west-2
+            AWS_ACCESS_KEY_ID=test
+            AWS_SECRET_ACCESS_KEY=test
+            LOCALSTACK_HOST=localhost
+            SKIP_SSL_CERT_DOWNLOAD=1
+            PERSISTENCE=0
+            DATA_DIR=/tmp/localstack_data
+            LAMBDA_EXECUTOR=local
+            DOCKER_LAMBDA_EXECUTOR=0
+            EAGER_SERVICE_LOADING=1
+            HOSTNAME_EXTERNAL=localhost
+            DISABLE_CORS_HEADERS=1
+            DISABLE_CUSTOM_CORS_S3=1
+            DISABLE_CUSTOM_CORS=1
+            USE_SSL=0
+            DEFAULT_REGION=us-west-2
+
       - name: Configure system for enhanced 16GB ubuntu-latest runner
         run: |
           # GitHub upgraded ubuntu-latest runners: 4 vCPUs, 16 GiB memory
