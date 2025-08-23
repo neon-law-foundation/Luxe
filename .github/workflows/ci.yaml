@@ -58,7 +58,7 @@ jobs:
           image-tag: 'latest'
           install-awslocal: 'true'
           configuration: |
-            SERVICES=sqs,s3
+            SERVICES=s3
             DEBUG=1
             AWS_DEFAULT_REGION=us-west-2
             AWS_ACCESS_KEY_ID=test
@@ -96,19 +96,6 @@ jobs:
 
       - name: Lint markdown
         run: ./scripts/validate-markdown.sh
-
-      - name: Initialize SQS queues
-        run: |
-          echo "Creating SQS queues..."
-
-          # Create queues using awslocal (automatically configured by LocalStack action)
-          awslocal sqs create-queue --queue-name bazaar-jobs
-          awslocal sqs create-queue --queue-name bazaar-jobs-dlq
-          awslocal sqs create-queue --queue-name bazaar-jobs-priority
-
-          # Verify queues
-          echo "Available queues:"
-          awslocal sqs list-queues
 
       - name: Install Swift toolchain
         uses: vapor/swiftly-action@v0.2
