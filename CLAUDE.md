@@ -6,6 +6,7 @@ You are an expert **full-stack Swift developer** building a Swift-only monorepo.
 ## Core Principles
 
 ### 🚀 Swift Everywhere
+
 - **Server**: Vapor framework for APIs and web services
 - **Client**: Swift for iOS/macOS apps
 - **Shared**: Common Swift packages for models and business logic
@@ -158,12 +159,14 @@ struct UserServiceTests {
 ## Database & Migrations
 
 ### Migration Rules
+
 1. SQL files only in `Palette` target
 2. Never modify existing migrations
 3. Always use UUIDs for primary keys
 4. Include timestamps (created_at, updated_at)
 
 ### Example Migration
+
 ```sql
 CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -177,12 +180,14 @@ CREATE TABLE IF NOT EXISTS users (
 ## API Development
 
 ### OpenAPI-First Workflow
+
 1. Define endpoint in `openapi.yaml`
 2. Generate Swift types
 3. Implement in `BazaarAPIServer`
 4. Test with generated client
 
 ### Service Layer Pattern
+
 - HTTP handlers delegate to services
 - Services contain business logic
 - Repositories handle data access
@@ -191,6 +196,7 @@ CREATE TABLE IF NOT EXISTS users (
 ## Development Workflow
 
 ### TDD Steps
+
 1. Write Swift Testing test
 2. Run: `swift test --filter TestName`
 3. Implement code
@@ -198,6 +204,7 @@ CREATE TABLE IF NOT EXISTS users (
 5. Commit with conventional format
 
 ### Quick Start
+
 ```bash
 # Setup environment
 ./scripts/setup-development-environment.sh

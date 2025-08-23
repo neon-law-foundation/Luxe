@@ -26,6 +26,7 @@ codebase meets the strictest formatting standards.
 ```bash
 ./scripts/validate-markdown.sh --fix
 ```
+
 - Automatically fixes most issues
 - Captures output for analysis
 
@@ -34,6 +35,7 @@ codebase meets the strictest formatting standards.
 ```bash
 ./scripts/validate-markdown.sh
 ```
+
 - Check for remaining issues
 - Focus on non-MD013 errors first
 - Fix ALL issues except line length
@@ -43,6 +45,7 @@ codebase meets the strictest formatting standards.
 ```bash
 ./scripts/validate-markdown.sh | grep MD013
 ```
+
 - Capture all line length violations
 - Note file paths and line numbers
 
@@ -55,9 +58,11 @@ For each MD013 violation:
 - Break at natural points (commas, periods)
 
 #### Line Breaking Rules
+
 ```markdown
 <!-- BAD: Over 120 characters -->
-This is a very long line that exceeds the maximum character limit and needs to be broken up into multiple lines for better readability and compliance.
+This is a very long line that exceeds the maximum character limit and needs to be broken up into multiple lines
+for better readability and compliance.
 
 <!-- GOOD: Properly formatted -->
 This is a very long line that exceeds the maximum character limit and needs to be
@@ -71,13 +76,13 @@ broken up into multiple lines for better readability and compliance.
 ```code
 // Code blocks are exempt from line length rules - do not modify
 ```
-```
 
 ### Step 5: Final Validation
 
 ```bash
 ./scripts/validate-markdown.sh
 ```
+
 **CRITICAL**: Must exit with code 0
 - If not, repeat from Step 2
 - Never proceed with violations
@@ -87,7 +92,7 @@ broken up into multiple lines for better readability and compliance.
 1. **MD001**: Header levels should increment by one level at a time
 2. **MD003**: Header style consistency
 3. **MD004**: Unordered list style consistency
-4. **MD009**: No trailing spaces
+4. **MD009**: No trailing spaces (strict mode enabled - removes ALL trailing whitespace)
 5. **MD010**: No hard tabs
 6. **MD012**: No multiple consecutive blank lines
 7. **MD013**: Line length (120 character max)
@@ -139,7 +144,7 @@ find . -name "*.md" -type f | grep -v .build | grep -v node_modules
 ./scripts/validate-markdown.sh 2>&1 | head -20
 ```
 
-2. **Fix most common issues**:
+1. **Fix most common issues**:
 
 ```bash
 # Remove trailing spaces
@@ -149,7 +154,7 @@ find . -name "*.md" -exec sed -i '' 's/[[:space:]]*$//' {} \;
 find . -name "*.md" -exec dos2unix {} \;
 ```
 
-3. **Manual line length fixes**:
+1. **Manual line length fixes**:
 - Open each file with MD013 errors
 - Break lines at 120 characters
 - Preserve formatting and readability

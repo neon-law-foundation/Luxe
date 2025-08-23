@@ -16,7 +16,8 @@ Create a pull request using specialized agents to ensure code quality and proper
    - Ensure all tests pass with `swift test --no-parallel` (exit code 0 mandatory)
    - Fix any issues found before proceeding
 
-2. **Format Compliance with swift-formatter and markdown-formatter** - Use the swift-formatter and markdown-formatter agents to enforce formatting:
+2. **Format Compliance with swift-formatter and markdown-formatter** - Use the swift-formatter and markdown-formatter
+   agents to enforce formatting:
    - Run SQL migration linting: `sqlfluff lint --dialect postgres .`
    - Auto-fix SQL issues if needed: `sqlfluff fix --dialect postgres .`
    - Run Swift format compliance: `swift format lint --strict --recursive --parallel --no-color-diagnostics .`
@@ -25,7 +26,8 @@ Create a pull request using specialized agents to ensure code quality and proper
    - **CRITICAL**: SQL linting, Swift format, and Markdown validation MUST ALL exit with code 0
    - Fix ALL issues before proceeding
 
-3. **Final Test Verification with test-driven-developer** - Use the test-driven-developer agent to verify all tests still pass after formatting:
+3. **Final Test Verification with test-driven-developer** - Use the test-driven-developer agent to verify all tests
+   still pass after formatting:
    - Run comprehensive test suite: `swift test --no-parallel`
    - Ensure ALL tests pass with exit code 0
    - Verify no regressions were introduced during formatting
@@ -84,7 +86,8 @@ Create a pull request using specialized agents to ensure code quality and proper
 Each agent enforces specific quality requirements:
 
 - **test-driven-developer**: All tests pass, code quality verified
-- **swift-formatter & markdown-formatter**: SQL migrations linted, Swift format compliant, markdown validated (all exit code 0 mandatory)
+- **swift-formatter & markdown-formatter**: SQL migrations linted, Swift format compliant, markdown validated
+  (all exit code 0 mandatory)
 - **git-branch-manager**: Clean branch state, conflicts resolved, synced with main
 - **commiter**: Conventional commits, tests passing, quality gates met
 - **pull-request-manager**: Comprehensive PR description, roadmap links, all checks pass

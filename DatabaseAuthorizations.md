@@ -77,7 +77,8 @@ The Luxe application uses a hierarchical role system:
 
 ## Row-Level Security (RLS)
 
-Many tables implement Row-Level Security policies that restrict data access based on the user's role and relationship to the data:
+Many tables implement Row-Level Security policies that restrict data access based on the user's role and relationship to
+the data:
 
 - **Customer**: Can only access their own records and related data
 - **Staff**: Can access data needed for customer support and daily operations
@@ -92,9 +93,10 @@ The application automatically switches PostgreSQL roles based on the authenticat
 - All database operations during the request are performed with that role's permissions
 - The role is reset at the end of each request
 
-This ensures that database-level security policies are enforced automatically without requiring application-level permission checks.
+This ensures that database-level security policies are enforced automatically without requiring application-level
+permission checks.
 
-## Function Permissions
+## Function Access Control
 
 PostgreSQL functions have EXECUTE permissions that control which roles can invoke them:
 

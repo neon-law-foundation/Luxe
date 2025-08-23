@@ -26,6 +26,7 @@ codebase meets the strictest formatting standards.
 ```bash
 swift format lint --strict --recursive --parallel --no-color-diagnostics .
 ```
+
 - Captures all violations
 - Note file paths and issues
 
@@ -34,6 +35,7 @@ swift format lint --strict --recursive --parallel --no-color-diagnostics .
 ```bash
 swift format format --in-place --recursive --parallel .
 ```
+
 - Automatically fixes most issues
 - Applies standard formatting rules
 
@@ -42,6 +44,7 @@ swift format format --in-place --recursive --parallel .
 ```bash
 swift format lint --strict --recursive --parallel --no-color-diagnostics .
 ```
+
 **CRITICAL**: Must exit with code 0
 - If violations remain, fix manually
 - Common issues need manual intervention
@@ -85,6 +88,7 @@ func processData(input: String, options: ProcessingOptions, completion: @escapin
 ```
 
 #### Trailing Whitespace
+
 ```swift
 // GOOD: No trailing spaces
 let value = 42
@@ -94,6 +98,7 @@ let value = 42••
 ```
 
 #### Import Ordering
+
 ```swift
 // GOOD: Alphabetical, grouped by type
 import Foundation
@@ -148,13 +153,13 @@ swift format format --in-place --recursive --parallel .
 swift format format --in-place --recursive --parallel . # Run twice
 ```
 
-2. **Check for syntax errors**:
+1. **Check for syntax errors**:
 
 ```bash
 swift build 2>&1 | grep -i error
 ```
 
-3. **Manual fixes**:
+1. **Manual fixes**:
 - Fix import ordering
 - Remove trailing whitespace
 - Adjust indentation

@@ -19,7 +19,7 @@ public struct NewsletterSubscriptionService {
         let result = try await postgresDB.sql()
             .raw(
                 """
-                SELECT 
+                SELECT
                     id,
                     email,
                     name,
@@ -27,7 +27,7 @@ public struct NewsletterSubscriptionService {
                     subscribed_newsletters->>'sagebrush' as sagebrush,
                     subscribed_newsletters->>'neon_law' as neon_law,
                     created_at
-                FROM auth.users 
+                FROM auth.users
                 WHERE subscribed_newsletters IS NOT NULL
                 ORDER BY created_at DESC
                 """
@@ -185,11 +185,11 @@ public struct NewsletterSubscriptionService {
         let result = try await postgresDB.sql()
             .raw(
                 """
-                SELECT 
+                SELECT
                     subscribed_newsletters->>'sci_tech' as sci_tech,
                     subscribed_newsletters->>'sagebrush' as sagebrush,
                     subscribed_newsletters->>'neon_law' as neon_law
-                FROM auth.users 
+                FROM auth.users
                 WHERE id = \(bind: userId)
                 """
             )

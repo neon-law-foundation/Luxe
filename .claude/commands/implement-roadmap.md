@@ -44,16 +44,19 @@ For each uncompleted task in the roadmap:
 2. **Implementation based on task type**:
 
    #### For Database/Migration Tasks
+
    - Implement SQL migrations in Palette target
    - Run `sqlfluff lint --dialect postgres .` and fix all issues
    - Update ERD with `./scripts/visualize-postgres.sh`
    
    #### For Service/API Tasks
+
    - Implement service layer code
    - Create/update DTOs and controllers
    - Update OpenAPI specifications
    
    #### For Frontend Tasks
+
    - Implement Elementary components
    - Add client-side validation
    - Update UI interactions
@@ -128,11 +131,13 @@ graph TD
 ## Quality Gates at Each Step
 
 ### Pre-Implementation Gates
+
 - ✅ Branch created and pushed (git-branch-manager)
 - ✅ GitHub issue created with tasks (issue-creator)
 - ✅ Roadmap understood and current
 
 ### Per-Task Gates
+
 - ✅ Implementation complete
 - ✅ Documentation added (swift-documenter)
 - ✅ Tests written and passing
@@ -140,6 +145,7 @@ graph TD
 - ✅ Issue updated (issue-updater)
 
 ### Pre-PR Gates
+
 - ✅ All tasks completed
 - ✅ Branch synchronized (git-branch-manager)
 - ✅ Full test suite passes
@@ -147,6 +153,7 @@ graph TD
 - ✅ Formatting validated
 
 ### PR Creation Gates
+
 - ✅ PR created and linked (pull-request-manager)
 - ✅ Issue updated with PR (issue-updater)
 - ✅ All quality standards met
@@ -154,31 +161,37 @@ graph TD
 ## Agent Usage Examples
 
 ### git-branch-manager for Branch Management
+
 ```bash
 Use the git-branch-manager agent to create feature branch for AuthRoadmap implementation
 ```
 
 ### issue-creator for Issue Creation
+
 ```bash
 Use the issue-creator agent to create GitHub issue for AuthRoadmap with sample implementations
 ```
 
 ### swift-documenter for Documentation
+
 ```bash
 Use the swift-documenter agent to add DocC documentation for the new authentication service
 ```
 
 ### commiter for Commits
+
 ```bash
 Use the commiter agent to create conventional commit for completed authentication tasks
 ```
 
 ### issue-updater for Updates
+
 ```bash
 Use the issue-updater agent to update issue #123 with commit SHA abc123
 ```
 
 ### pull-request-manager for PR
+
 ```bash
 Use the pull-request-manager agent to create pull request for completed AuthRoadmap implementation
 ```
@@ -223,3 +236,5 @@ The roadmap is complete when:
 
 This agentic approach ensures higher quality, better tracking, and more reliable roadmap implementation
 through specialized task delegation and isolated context management.
+
+
