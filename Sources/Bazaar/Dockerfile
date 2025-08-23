@@ -24,12 +24,13 @@ COPY Tests/ ./Tests/
 # - Set SWIFT_BUILD_FLAGS for additional memory control
 # - Set memory limits for the Swift compiler
 ENV SWIFT_BUILD_FLAGS="-Xswiftc -stats-output-dir -Xswiftc /tmp/stats"
-RUN ulimit -v 4194304 && \
-    ulimit -m 3145728 && \
-    swift build -c release --product Palette --static-swift-stdlib -j 1 --disable-sandbox
-RUN ulimit -v 4194304 && \
-    ulimit -m 3145728 && \
-    swift build -c release --product Bazaar --static-swift-stdlib -j 1 --disable-sandbox
+# Enhanced ubuntu-latest runners: 4 vCPUs, 16 GiB memory
+RUN ulimit -v 12582912 && \
+    ulimit -m 8388608 && \
+    swift build -c release --product Palette --static-swift-stdlib -j 2 --disable-sandbox
+RUN ulimit -v 12582912 && \
+    ulimit -m 8388608 && \
+    swift build -c release --product Bazaar --static-swift-stdlib -j 2 --disable-sandbox
 
 # Runtime stage
 FROM debian:bookworm-slim

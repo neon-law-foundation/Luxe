@@ -31,11 +31,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Configure system for memory-efficient Docker builds
+      - name: Configure enhanced 16GB ubuntu-latest runner for Docker builds
         run: |
-          # Configure system memory management for Docker builds
+          # GitHub upgraded ubuntu-latest runners: 4 vCPUs, 16 GiB memory
+          echo "🚀 Enhanced GitHub runner: 4 vCPUs, 16 GiB memory for Docker builds"
+          
+          # Configure system memory management optimized for 16GB
           sudo sysctl vm.overcommit_memory=1
-          sudo sysctl vm.max_map_count=65530
+          sudo sysctl vm.max_map_count=262144  # Increased for 16GB
           sudo sysctl vm.swappiness=10
           sudo sysctl vm.vfs_cache_pressure=50
           
@@ -46,14 +49,14 @@ jobs:
           # Clean up Docker to free space and memory
           docker system prune -af --volumes || true
           
-          # Configure Docker daemon for memory efficiency
+          # Configure Docker daemon for enhanced runner
           sudo service docker stop || true
-          echo '{"storage-driver": "overlay2", "max-concurrent-downloads": 1, "max-concurrent-uploads": 1}' | sudo tee /etc/docker/daemon.json
+          echo '{"storage-driver": "overlay2", "max-concurrent-downloads": 2, "max-concurrent-uploads": 2}' | sudo tee /etc/docker/daemon.json
           sudo service docker start
           
-          # Set memory limits for processes
-          ulimit -m 6291456  # 6GB physical memory limit for Docker build
-          ulimit -v 8388608  # 8GB virtual memory limit
+          # Set generous memory limits for 16GB runner
+          ulimit -m 12582912  # 12GB physical memory limit for Docker build
+          ulimit -v 15728640  # 15GB virtual memory limit
 
       - name: Set up Docker Buildx with memory optimization
         uses: docker/setup-buildx-action@v3
@@ -101,9 +104,9 @@ jobs:
             --build-arg BUILD_DATE=${{ steps.version.outputs.BUILD_DATE }} \
             --build-arg BUILDKIT_INLINE_CACHE=1 \
             --cache-from ghcr.io/${{ github.repository_owner }}/bazaar:latest \
-            --memory 6g \
-            --memory-swap 8g \
-            --shm-size 1g \
+            --memory 12g \
+            --memory-swap 15g \
+            --shm-size 2g \
             --push \
             .
         env:

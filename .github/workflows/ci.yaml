@@ -52,22 +52,25 @@ jobs:
     steps:
       - uses: "actions/checkout@v4"
 
-      - name: Configure system for memory efficiency
+      - name: Configure system for enhanced 16GB ubuntu-latest runner
         run: |
-          # Configure swap to handle memory pressure
+          # GitHub upgraded ubuntu-latest runners: 4 vCPUs, 16 GiB memory
+          # Configure system to leverage the enhanced capacity
           sudo swapon --show
           free -h
-          # Set kernel memory management for stability
+          echo "🚀 Enhanced GitHub runner: 4 vCPUs, 16 GiB memory"
+          
+          # Set kernel memory management optimized for 16GB
           echo 'vm.overcommit_memory=1' | sudo tee -a /etc/sysctl.conf
-          echo 'vm.max_map_count=65530' | sudo tee -a /etc/sysctl.conf
-          # Additional memory management optimizations
+          echo 'vm.max_map_count=262144' | sudo tee -a /etc/sysctl.conf  # Increased for 16GB
           echo 'vm.swappiness=10' | sudo tee -a /etc/sysctl.conf
           echo 'vm.vfs_cache_pressure=50' | sudo tee -a /etc/sysctl.conf
           sudo sysctl -p
-          # Set process limits for memory conservation
-          ulimit -d 2097152  # 2GB data segment limit
-          ulimit -m 2097152  # 2GB physical memory limit
-          ulimit -v 3145728  # 3GB virtual memory limit
+          
+          # Set more generous process limits for 16GB system
+          ulimit -d 8388608   # 8GB data segment limit
+          ulimit -m 8388608   # 8GB physical memory limit
+          ulimit -v 12582912  # 12GB virtual memory limit
 
       - uses: "actions/setup-python@v5"
         with:
@@ -110,12 +113,13 @@ jobs:
 
       - name: Run Swift Build
         run: |
-          # Limit Swift compiler parallelism to reduce memory usage
-          # Set process limits for build
-          ulimit -d 2097152  # 2GB data segment limit
-          ulimit -m 2097152  # 2GB physical memory limit
-          ulimit -v 3145728  # 3GB virtual memory limit
-          swift build --jobs 1
+          # Leverage enhanced 4-vCPU, 16GB ubuntu-latest runner
+          # Set generous process limits for enhanced runner
+          ulimit -d 8388608   # 8GB data segment limit
+          ulimit -m 8388608   # 8GB physical memory limit
+          ulimit -v 12582912  # 12GB virtual memory limit
+          # Use more parallelism with enhanced runner
+          swift build --jobs 2
 
       - name: Run Database Migrations
         run: |
@@ -126,16 +130,16 @@ jobs:
 
       - name: Run tests
         run: |
-          # Run tests with chunked execution to reduce memory pressure
-          # Set global memory limits and optimizations
-          ulimit -d 2097152  # 2GB data segment limit
-          ulimit -m 2097152  # 2GB physical memory limit  
-          ulimit -v 3145728  # 3GB virtual memory limit
-          export MALLOC_ARENA_MAX=1  # Minimize malloc arenas
+          # Leverage enhanced 16GB ubuntu-latest runner for test execution
+          # Set generous memory limits for enhanced runner
+          ulimit -d 8388608   # 8GB data segment limit
+          ulimit -m 8388608   # 8GB physical memory limit
+          ulimit -v 12582912  # 12GB virtual memory limit
+          export MALLOC_ARENA_MAX=2  # Allow more malloc arenas with 16GB
           export MALLOC_MMAP_THRESHOLD_=32768  # Use mmap for larger allocations
           export MALLOC_TRIM_THRESHOLD_=131072  # Trim heap more aggressively
           
-          # Run tests in memory-efficient chunks
+          # With 16GB memory, we can run tests more efficiently
           ./scripts/run-memory-efficient-tests.sh
         env:
           DATABASE_URL: postgres://postgres@localhost:5432/luxe?sslmode=disable
@@ -147,12 +151,12 @@ jobs:
           ENV: TEST
           DISABLE_LEAK_DETECTION: true
           REDIS_URL: redis://localhost:6379
-          # Swift runtime optimizations for memory efficiency
+          # Swift runtime optimizations for enhanced 16GB runner
           SWIFT_DETERMINISTIC_HASHING: 1
-          MALLOC_CONF: "narenas:1,dirty_decay_ms:1000,muzzy_decay_ms:1000,abort_conf:true"
-          # Additional memory management for Swift runtime
-          SWIFT_MAX_MEMORY_MB: 1536  # Limit Swift runtime memory to 1.5GB
-          SWIFT_BACKTRACE_LIMIT: 0   # Disable backtraces to save memory
+          MALLOC_CONF: "narenas:2,dirty_decay_ms:1000,muzzy_decay_ms:1000,abort_conf:true"
+          # Enhanced memory management for 16GB runner
+          SWIFT_MAX_MEMORY_MB: 8192  # Allow Swift runtime to use up to 8GB
+          SWIFT_BACKTRACE_LIMIT: 0   # Keep disabled to save memory
 
       - name: Enable auto-merge for PR
         uses: peter-evans/enable-pull-request-automerge@v3

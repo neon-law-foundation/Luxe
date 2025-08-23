@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-echo "🧠 Starting memory-efficient test execution..."
+echo "🧠 Starting memory-efficient test execution on enhanced 16GB runner..."
 
 # Function to run tests with memory monitoring
 run_test_chunk() {
@@ -12,10 +12,10 @@ run_test_chunk() {
     echo "🧠 Memory before chunk:"
     free -h
     
-    # Set aggressive memory limits for each chunk
-    ulimit -d 1048576  # 1GB data segment limit per test chunk
-    ulimit -m 1048576  # 1GB physical memory limit per test chunk
-    ulimit -v 2097152  # 2GB virtual memory limit per test chunk
+    # Set generous memory limits for enhanced 16GB runner
+    ulimit -d 4194304  # 4GB data segment limit per test chunk
+    ulimit -m 4194304  # 4GB physical memory limit per test chunk
+    ulimit -v 6291456  # 6GB virtual memory limit per test chunk
     
     # Run the test chunk with aggressive memory management
     timeout 600 swift test --filter "$filter" --no-parallel --jobs 1 || {
