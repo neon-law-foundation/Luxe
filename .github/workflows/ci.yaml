@@ -60,7 +60,14 @@ jobs:
           # Set kernel memory management for stability
           echo 'vm.overcommit_memory=1' | sudo tee -a /etc/sysctl.conf
           echo 'vm.max_map_count=65530' | sudo tee -a /etc/sysctl.conf
+          # Additional memory management optimizations
+          echo 'vm.swappiness=10' | sudo tee -a /etc/sysctl.conf
+          echo 'vm.vfs_cache_pressure=50' | sudo tee -a /etc/sysctl.conf
           sudo sysctl -p
+          # Set process limits for memory conservation
+          ulimit -d 2097152  # 2GB data segment limit
+          ulimit -m 2097152  # 2GB physical memory limit
+          ulimit -v 3145728  # 3GB virtual memory limit
 
       - uses: "actions/setup-python@v5"
         with:
@@ -104,7 +111,11 @@ jobs:
       - name: Run Swift Build
         run: |
           # Limit Swift compiler parallelism to reduce memory usage
-          swift build --jobs 2
+          # Set process limits for build
+          ulimit -d 2097152  # 2GB data segment limit
+          ulimit -m 2097152  # 2GB physical memory limit
+          ulimit -v 3145728  # 3GB virtual memory limit
+          swift build --jobs 1
 
       - name: Run Database Migrations
         run: |
@@ -115,11 +126,17 @@ jobs:
 
       - name: Run tests
         run: |
-          # Run tests with memory optimizations
-          # Set memory limits and enable efficient test execution
+          # Run tests with chunked execution to reduce memory pressure
+          # Set global memory limits and optimizations
+          ulimit -d 2097152  # 2GB data segment limit
+          ulimit -m 2097152  # 2GB physical memory limit  
           ulimit -v 3145728  # 3GB virtual memory limit
-          export MALLOC_ARENA_MAX=2  # Limit malloc arenas to reduce fragmentation
-          swift test --no-parallel --jobs 1
+          export MALLOC_ARENA_MAX=1  # Minimize malloc arenas
+          export MALLOC_MMAP_THRESHOLD_=32768  # Use mmap for larger allocations
+          export MALLOC_TRIM_THRESHOLD_=131072  # Trim heap more aggressively
+          
+          # Run tests in memory-efficient chunks
+          ./scripts/run-memory-efficient-tests.sh
         env:
           DATABASE_URL: postgres://postgres@localhost:5432/luxe?sslmode=disable
           DEX_ISSUER: http://localhost:2222/dex
@@ -132,7 +149,10 @@ jobs:
           REDIS_URL: redis://localhost:6379
           # Swift runtime optimizations for memory efficiency
           SWIFT_DETERMINISTIC_HASHING: 1
-          MALLOC_CONF: "narenas:2,dirty_decay_ms:0,muzzy_decay_ms:0"
+          MALLOC_CONF: "narenas:1,dirty_decay_ms:1000,muzzy_decay_ms:1000,abort_conf:true"
+          # Additional memory management for Swift runtime
+          SWIFT_MAX_MEMORY_MB: 1536  # Limit Swift runtime memory to 1.5GB
+          SWIFT_BACKTRACE_LIMIT: 0   # Disable backtraces to save memory
 
       - name: Enable auto-merge for PR
         uses: peter-evans/enable-pull-request-automerge@v3
