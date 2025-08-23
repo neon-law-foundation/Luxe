@@ -15,7 +15,7 @@ concurrency:
 jobs:
   containers:
     runs-on:
-      - ubuntu-large
+      - ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
