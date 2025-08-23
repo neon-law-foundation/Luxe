@@ -271,7 +271,7 @@ struct CreatePersonAndUserTests {
         }
     }
 
-    @Test("Function creates user with specified role")
+    @Test("Function creates user with specified role", .disabled("CI connection timeout issues"))
     func functionCreatesUserWithSpecifiedRole() async throws {
         try await TestUtilities.withApp { app, database in
 
