@@ -34,8 +34,8 @@ graph TB
         subgraph ECSServices["🐳 ECS Fargate Services"]
             BazaarService["🏪 Bazaar Service<br/>Port: 8080<br/>Host: www.sagebrush.services<br/>Cluster:
                           bazaar-cluster"]
-            HoshiHoshiService["🌟 HoshiHoshi Service<br/>Port: 8080<br/>Host: www.hoshihoshi.app<br/>Cluster:
-                              hoshihoshi-cluster"]
+            DestinedService["✈️ Destined Service<br/>Port: 8080<br/>Host: www.destined.travel<br/>Cluster:
+                           destined-cluster"]
         end
 
         %% RDS Database
@@ -77,14 +77,14 @@ graph TB
 
         %% Container Images (GitHub Container Registry)
         subgraph ContainerImages["📦 Container Images (ghcr.io)"]
-            BazaarImage["🏪 Bazaar Image<br/>ghcr.io/neon-law/bazaar"]
-            HoshiHoshiImage["🌟 HoshiHoshi Image<br/>ghcr.io/neon-law/hoshihoshi"]
+            BazaarImage["🏪 Bazaar Image<br/>ghcr.io/neon-law-foundation/bazaar"]
+            DestinedImage["✈️ Destined Image<br/>ghcr.io/neon-law-foundation/destined"]
         end
 
         %% SSL Certificates
         subgraph SSLCerts["🔒 SSL Certificates"]
             BazaarCert["🏪 Bazaar Certificate<br/>www.sagebrush.services"]
-            HoshiHoshiCert["🌟 HoshiHoshi Certificate<br/>www.hoshihoshi.app"]
+            DestinedCert["✈️ Destined Certificate<br/>www.destined.travel"]
         end
     end
 
@@ -102,26 +102,26 @@ graph TB
     ALB --> ALBSG
     ALBSG --> ECSSG
     ECSSG --> BazaarService
-    ECSSG --> HoshiHoshiService
+    ECSSG --> DestinedService
 
     BazaarService --> RDS
-    HoshiHoshiService --> RDS
+    DestinedService --> RDS
     Bastion --> RDS
 
     BazaarService --> PrivateBucket
-    HoshiHoshiService --> PrivateBucket
+    DestinedService --> PrivateBucket
 
     BazaarService --> SQS
-    HoshiHoshiService --> SQS
+    DestinedService --> SQS
 
     BazaarService --> Secrets
-    HoshiHoshiService --> Secrets
+    DestinedService --> Secrets
 
     SES --> EmailBucket
     EmailBucket --> SQS
 
     BazaarService --> Cognito
-    HoshiHoshiService --> Cognito
+    DestinedService --> Cognito
 
     %% Subnet placements
     ALB -.-> SubnetAPublic
@@ -132,9 +132,9 @@ graph TB
     BazaarService -.-> SubnetBPublic
     BazaarService -.-> SubnetCPublic
 
-    HoshiHoshiService -.-> SubnetAPublic
-    HoshiHoshiService -.-> SubnetBPublic
-    HoshiHoshiService -.-> SubnetCPublic
+    DestinedService -.-> SubnetAPublic
+    DestinedService -.-> SubnetBPublic
+    DestinedService -.-> SubnetCPublic
 
     RDS -.-> SubnetAPrivate
     RDS -.-> SubnetBPrivate
@@ -145,14 +145,14 @@ graph TB
     %% VPC Endpoint connections
     PrivateBucket -.-> S3Endpoint
     BazaarService -.-> S3Endpoint
-    HoshiHoshiService -.-> S3Endpoint
+    DestinedService -.-> S3Endpoint
 
     %% Services pull images from GitHub Container Registry
 
     %% Security group connections
     ALB --> ALBSG
     BazaarService --> ECSSG
-    HoshiHoshiService --> ECSSG
+    DestinedService --> ECSSG
     RDS --> RDSSG
     Bastion --> BastionSG
 
@@ -163,11 +163,11 @@ graph TB
 
     %% SSL Certificate connections
     ALB --> BazaarCert
-    ALB --> HoshiHoshiCert
+    ALB --> DestinedCert
 
     %% Container image connections
     BazaarService --> BazaarImage
-    HoshiHoshiService --> HoshiHoshiImage
+    DestinedService --> DestinedImage
 
     %% Styling
     classDef vpcStyle fill:#e1f5fe,stroke:#01579b,stroke-width:2px
@@ -181,10 +181,10 @@ graph TB
     class VPC vpcStyle
     class PublicSubnets,SubnetAPublic,SubnetBPublic,SubnetCPublic publicStyle
     class PrivateSubnets,SubnetAPrivate,SubnetBPrivate,SubnetCPrivate privateStyle
-    class ECSServices,BazaarService,HoshiHoshiService,ALB serviceStyle
+    class ECSServices,BazaarService,DestinedService,ALB serviceStyle
     class RDS,Secrets databaseStyle
     class SecurityGroups,ALBSG,ECSSG,RDSSG,BastionSG securityStyle
-    class ExternalServices,SES,Doppler,GitHub,Engineering externalStyle
+    class ExternalServices,SES,Engineering externalStyle
 ```
 
 ## Prerequisites
@@ -220,6 +220,26 @@ This command will create or update the following AWS resources:
 - Cognito User Pool for authentication
 - Application Load Balancer with authentication
 - ECS Fargate services for the unified Bazaar application (serves both API and web content)
+
+### Update Services Command
+
+Update ECS services with the latest container images from GitHub Container Registry:
+
+```bash
+swift run Vegas update-services
+```
+
+This command will:
+- Update both Bazaar and Destined ECS services with the latest images from ghcr.io
+- Pull the latest container versions from GitHub Container Registry
+- Force new deployments even if the task definition hasn't changed
+- Wait for deployments to complete successfully
+
+You can specify a custom timeout (default: 300 seconds):
+
+```bash
+swift run Vegas update-services --timeout 600
+```
 
 ### Elephants Command
 
