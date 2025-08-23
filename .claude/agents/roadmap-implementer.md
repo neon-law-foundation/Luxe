@@ -35,7 +35,6 @@ git branch --show-current
 
 1. **Locate Roadmap**
 - Check for GitHub issue with `[Roadmap]` tag
-- Or check `Roadmaps/{RoadmapName}.md` file
 
 1. **Analyze Current State**
 - Identify completed tasks (marked with [x])
@@ -232,7 +231,7 @@ Current Phase: 2 - API/Backend
 
 1. Document the specific failures
 2. Create a subtask to fix the issue
-3. Delegate fix to test-driven-developer
+3. Delegate fix to developer
 4. Only proceed when tests pass
 
 ## Commit Management

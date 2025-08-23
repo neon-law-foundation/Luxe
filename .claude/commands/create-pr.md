@@ -10,35 +10,37 @@
 
 Create a pull request using specialized agents to ensure code quality and proper workflow. Follow these steps:
 
-0. **Pre-Check: Verify Swift File Changes** - Before proceeding, ensure there are actual Swift code changes to review:
+0. **Pre-Check: Detect Swift File Changes** - Check if there are Swift code changes to review:
    - Check for changed Swift files in `Sources/` or `Tests/` folders:
      `git diff --name-only origin/main -- Sources/ Tests/ | grep '\.swift$'`
-   - **CRITICAL**: If no Swift files have changed, the workflow cannot proceed
-   - **REQUIRED**: Must have at least one modified Swift file in Sources/ or Tests/ to create a PR
-   - If no Swift changes detected, create feature branch first and make code changes
-   - Only proceed to Step 1 if Swift files have been modified
+   - **NOTE**: If no Swift files have changed, Swift-specific steps will be skipped
+   - The workflow will proceed with all changes regardless of file type
+   - Swift testing and formatting steps are conditionally applied based on changes detected
 
-1. **Code Review with test-driven-developer** - Use the test-driven-developer agent to review the current code changes:
-   - Analyze all modifications for quality and adherence to Swift best practices
-   - Verify TDD compliance and test coverage
-   - Ensure all tests pass with `swift test --no-parallel` (exit code 0 mandatory)
+1. **Code Review with developer** - Use the developer agent to review the current code changes:
+   - Analyze all modifications for quality and adherence to best practices
+   - **IF Swift files changed**: Verify TDD compliance and test coverage
+   - **IF Swift files changed**: Ensure all tests pass with `swift test --no-parallel` (exit code 0 mandatory)
+   - **IF no Swift files**: Skip Swift-specific testing, focus on general code quality
    - Fix any issues found before proceeding
 
 2. **Format Compliance with swift-formatter and markdown-formatter** - Use the swift-formatter and markdown-formatter
    agents to enforce formatting:
    - Run SQL migration linting: `sqlfluff lint --dialect postgres .`
    - Auto-fix SQL issues if needed: `sqlfluff fix --dialect postgres .`
-   - Run Swift format compliance: `swift format lint --strict --recursive --parallel --no-color-diagnostics .`
-   - Auto-format if needed: `swift format format --in-place --recursive --parallel .`
+   - **IF Swift files changed**: Run Swift format compliance:
+     `swift format lint --strict --recursive --parallel --no-color-diagnostics .`
+   - **IF Swift files changed**: Auto-format if needed: `swift format format --in-place --recursive --parallel .`
    - Run markdown validation: `./scripts/validate-markdown.sh --fix` then `./scripts/validate-markdown.sh`
-   - **CRITICAL**: SQL linting, Swift format, and Markdown validation MUST ALL exit with code 0
+   - **CRITICAL**: All applicable linting (SQL, Swift if changed, markdown) MUST exit with code 0
    - Fix ALL issues before proceeding
 
-3. **Final Test Verification with test-driven-developer** - Use the test-driven-developer agent to verify all tests
+3. **Final Test Verification with developer** - Use the developer agent to verify all tests
    still pass after formatting:
-   - Run comprehensive test suite: `swift test --no-parallel`
-   - Ensure ALL tests pass with exit code 0
-   - Verify no regressions were introduced during formatting
+   - **IF Swift files changed**: Run comprehensive test suite: `swift test --no-parallel`
+   - **IF Swift files changed**: Ensure ALL tests pass with exit code 0
+   - **IF Swift files changed**: Verify no regressions were introduced during formatting
+   - **IF no Swift files**: Skip Swift testing, proceed to branch management
    - Fix any test failures before proceeding to branch management
 
 4. **Branch Management with git-branch-manager** - Use the git-branch-manager agent for branch operations:
@@ -50,8 +52,9 @@ Create a pull request using specialized agents to ensure code quality and proper
 
 5. **Commit Creation with commiter** - Use the commiter agent to create conventional commit:
    - Stage all changes: `git add .`
-   - Verify build succeeds: `swift build`
-   - Run final test verification: `swift test --no-parallel` (must exit code 0)
+   - **IF Swift files changed**: Verify build succeeds: `swift build`
+   - **IF Swift files changed**: Run final test verification: `swift test --no-parallel` (must exit code 0)
+   - **IF no Swift files**: Skip Swift build/test verification
    - Create conventional commit: `git commit -m "<type>[scope]: <description>"`
    - Push branch: `git push origin $(git branch --show-current)`
 
@@ -77,9 +80,9 @@ Create a pull request using specialized agents to ensure code quality and proper
 
 ```text
 ┌─────────────────────┐    ┌─────────────────────┐    ┌──────────────┐    ┌─────────────────────┐    ┌───────────────────┐
-│ Pre-Check:         │───▶│ test-driven-        │───▶│ Formatters   │───▶│ test-driven-       │───▶│ git-branch-      │
-│ Swift File Changes │    │ developer           │    │              │    │ developer          │    │ manager          │
-│ (Sources/Tests)    │    │ Code Review         │    │ Format Check │    │ Test Verify        │    │ Branch Mgmt      │
+│ Pre-Check:         │───▶│ developer           │───▶│ Formatters   │───▶│ developer          │───▶│ git-branch-      │
+│ Detect Changes     │    │ developer           │    │              │    │ developer          │    │ manager          │
+│ (All File Types)   │    │ Code Review         │    │ Format Check │    │ Test Verify        │    │ Branch Mgmt      │
 └─────────────────────┘    └─────────────────────┘    └──────────────┘    └─────────────────────┘    └───────────────────┘
                                                                                                     │
                                                                                                     ▼
@@ -93,21 +96,21 @@ Create a pull request using specialized agents to ensure code quality and proper
 
 Each agent enforces specific quality requirements:
 
-- **pre-check**: Swift files in Sources/ or Tests/ folders must have changed from origin/main
-- **test-driven-developer**: All tests pass, code quality verified
-- **swift-formatter & markdown-formatter**: SQL migrations linted, Swift format compliant, markdown validated
-  (all exit code 0 mandatory)
+- **pre-check**: Detect any file changes from origin/main, note if Swift files are included
+- **developer**: Code quality verified; Swift tests pass if Swift files changed
+- **swift-formatter & markdown-formatter**: SQL migrations linted, Swift format compliant (if changed), markdown validated
+  (all applicable linting exit code 0 mandatory)
 - **git-branch-manager**: Clean branch state, conflicts resolved, synced with main
-- **commiter**: Conventional commits, tests passing, quality gates met
+- **commiter**: Conventional commits, applicable quality gates met (Swift tests if changed)
 - **pull-request-manager**: Comprehensive PR description, roadmap links, all checks pass
 - **issue-updater**: Roadmap issues updated, progress tracked, commits linked
 
 ## Error Handling
 
 If any agent fails:
-0. **pre-check fails**: No Swift files changed in Sources/ or Tests/ - create feature branch and make code changes first
-1. **test-driven-developer fails**: Fix code issues, re-run tests
-2. **Formatters fail**: Fix ALL formatting issues (SQL, Swift, markdown) until all validations exit 0, re-validate
+0. **pre-check**: No longer blocks workflow - proceeds with any detected changes
+1. **developer fails**: Fix code issues, re-run applicable tests
+2. **Formatters fail**: Fix ALL applicable formatting issues until all validations exit 0, re-validate
 3. **commiter fails**: Check git status, resolve conflicts
 
 Never proceed to next step if current agent reports failure.
@@ -115,10 +118,10 @@ Never proceed to next step if current agent reports failure.
 ## Success Criteria
 
 PR creation is complete when:
-- ✅ Swift files in Sources/ or Tests/ have changed from origin/main
-- ✅ All code reviewed and tests passing
-- ✅ All formatting validated and compliant (SQL, Swift, markdown)
-- ✅ Final test verification passed (no regressions)
+- ✅ Any file changes detected from origin/main
+- ✅ All code reviewed and applicable tests passing
+- ✅ All applicable formatting validated and compliant (SQL, Swift if changed, markdown)
+- ✅ Final verification passed (Swift tests if changed, no regressions)
 - ✅ Feature branch created (not main)
 - ✅ Conventional commit created
 - ✅ PR created with proper description
