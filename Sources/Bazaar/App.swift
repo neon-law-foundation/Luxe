@@ -301,6 +301,12 @@ public func configureApp(_ app: Application) async throws {
         }
     }
 
+    app.get("for-lawyers") { req in
+        HTMLResponse {
+            ForLawyersPage(currentUser: CurrentUserContext.user)
+        }
+    }
+
     // Standards routes
     app.get("standards") { _ in
         Response(

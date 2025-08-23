@@ -18,29 +18,44 @@ fundamentally cannot work on Linux (e.g., requires macOS-specific APIs), disable
 
 ## Steps
 
-1. View the current status of the PR with `gh pr view` to understand the PR context
-2. **CRITICAL: Run `swift build` first to check for compilation errors** that may be caused by cross-platform issues
+1. **Analyze GitHub Actions failures first**: Use `gh pr checks` and `gh run view <run-id> --log-failed` to identify the
+   root cause
+   - Look specifically for:
+     - `connectionRequestTimeout` errors (database connection pool issues)
+     - Memory allocation failures
+     - Platform-specific compilation errors
+     - Test timeout issues
+     - Resource exhaustion problems
+2. **CRITICAL: Run `swift build` locally** to check for compilation errors that may be caused by cross-platform issues
    (GitHub Actions runs on Linux, local development runs on macOS). Specifically look for:
    - macOS-only libraries or frameworks (like Foundation components that don't work on Linux)
    - Platform-specific file paths or system calls
    - Dependencies that aren't available on Linux Swift
    - Import statements that work on macOS but fail on Linux
-3. Check the GitHub Actions logs to identify failing tests using `gh pr checks` and `gh run view <run-id> --log-failed`
-4. **Pay special attention to platform compatibility**: Look for test failures that mention "No such module", "cannot
-   find", or file path issues that suggest macOS vs Linux differences
-5. **Fix compilation errors first**: Address any build errors, especially those related to platform compatibility
-6. **Fix failing tests systematically**:
-   - Analyze each test failure to understand the root cause
-   - Implement fixes that work on both macOS and Linux
-   - Consider using conditional compilation (#if os(macOS)) when platform-specific code is unavoidable
-   - For tests that cannot be fixed for Linux, disable them in CI with appropriate environment checks
-   - Ensure proper test environment setup (mocks, test data, configuration)
-7. **Run tests after each fix**: Use `swift test --filter [TestName]` to verify individual fixes
-8. **Run full test suite**: Execute `swift test --no-parallel` to ensure all tests pass with exit code 0
-9. **Verify cross-platform compatibility**:
-   - Ensure no macOS-specific APIs are used without Linux alternatives
-   - Check that file paths use platform-agnostic approaches
-   - Verify that all dependencies are available on both platforms
-   - Confirm disabled tests are properly guarded for CI/Linux environments
-10. **Clean up any existing roadmap files**: Delete any Roadmaps/PullRequestPR*Roadmap.md files after fixes are complete
-11. **Commit and push changes**: Create a descriptive commit message detailing the fixes made
+3. **Database Connection Pool Analysis**: If seeing `connectionRequestTimeout` errors:
+   - Check for database connection leaks in test code
+   - Verify proper connection cleanup in test teardown methods
+   - Consider database connection pool configuration (max connections, timeout settings)
+   - Look for tests that don't properly close database resources
+4. **Memory and Resource Management**: For memory-related failures:
+   - Use Swift test flags to limit memory usage: `--jobs 1`, `--no-parallel`
+   - Consider environment variables: `SWIFT_MAX_MEMORY_MB`, `MALLOC_CONF`
+   - Remove custom memory profiling scripts that may interfere with standard Swift testing
+   - Run tests with fewer parallel processes to reduce memory pressure
+5. **Fix root causes systematically**:
+   - **Database connection timeouts**: Fix connection pool configuration and test cleanup
+   - **Platform compatibility**: Use conditional compilation (#if os(macOS)) when needed
+   - **Memory issues**: Optimize test execution order and resource cleanup
+   - **Resource leaks**: Ensure proper cleanup in test teardown methods
+6. **Test execution strategy**:
+   - Run tests with `swift test --no-parallel` to prevent resource conflicts
+   - Use `swift test --filter [TestName]` for targeted testing after fixes
+   - Avoid custom test execution scripts that may interfere with Swift's memory management
+7. **Verify fixes**:
+   - Run full test suite locally: `swift test --no-parallel`
+   - Ensure proper resource cleanup between tests
+   - Verify cross-platform compatibility for any platform-specific fixes
+8. **Clean up and commit**:
+   - Remove any problematic custom test scripts
+   - Clean up any existing roadmap files: Delete Roadmaps/PullRequestPR*Roadmap.md files
+   - Commit changes with descriptive message detailing the root cause and fix

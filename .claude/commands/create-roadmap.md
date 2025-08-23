@@ -37,6 +37,4 @@ Create a detailed list of uncompleted checkmarks for tracking progress. Follow t
    complete."
 13. Ensure all task descriptions are specific, actionable, and follow the project's quality standards.
 14. Review the roadmap for completeness, ensuring no critical tasks are missing.
-15. Place the roadmap file in the `Roadmaps/` folder with PascalCase naming convention (e.g.,
-   `Roadmaps/FeatureRoadmap.md`).
-16. Run the `/format-markdown` Claude command to ensure the markdown is formatted correctly.
+15. Run the `/format-markdown` Claude command to ensure the markdown is formatted correctly.

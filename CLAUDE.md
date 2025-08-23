@@ -27,6 +27,7 @@ You are an expert **full-stack Swift developer** building a Swift-only monorepo.
 - **Cross-platform** - All code must work on macOS and Linux
 - **No warnings** - Fix every warning, no matter how minor
 - **Clean code** - Remove all trailing whitespace
+- **Markdown formatting** - Always run `/format-markdown` after editing any markdown file and fix any linting issues
 
 ## Swift Patterns
 

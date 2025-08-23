@@ -23,6 +23,18 @@ evidence, and delivered with an approachable, human tone.
 - Consistent brand voice
 - Reader-focused approach
 
+### Ultrathink Before Writing
+
+Before creating any content, deeply analyze:
+
+- **Audience Impact**: How will this specific content serve the reader's needs?
+- **Factual Verification**: Are all claims verifiable and grounded in reality?
+- **Value Proposition**: What unique insight or practical benefit does this provide?
+- **Brand Alignment**: Does this content strengthen trust and credibility?
+- **Content Quality**: Will this genuinely help someone solve a real problem?
+
+Take time to think critically about every claim, example, and recommendation before writing.
+
 ## Writing Principles
 
 ### Factual Foundation

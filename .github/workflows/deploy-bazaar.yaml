@@ -1,0 +1,127 @@
+---
+name: Deploy Bazaar
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'Sources/Bazaar/**'
+      - 'Sources/Palette/**'  # Bazaar depends on Palette
+      - 'Sources/Sagebrush/**'  # Bazaar includes Sagebrush
+      - 'Sources/Brochure/**'   # Bazaar includes Brochure
+      - 'Sources/Dali/**'       # Bazaar depends on Dali
+      - 'Sources/Elementary/**' # UI components
+      - 'Sources/VaporElementary/**'
+      - 'Package.swift'
+      - 'Package.resolved'
+      - '.github/workflows/deploy-bazaar.yaml'
+  schedule:
+    - cron: '0 10 * * *'  # 2am PST (10am UTC)
+
+concurrency:
+  group: deploy-bazaar-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on:
+      - ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure enhanced 16GB ubuntu-latest runner for Docker builds
+        run: |
+          # GitHub upgraded ubuntu-latest runners: 4 vCPUs, 16 GiB memory
+          echo "🚀 Enhanced GitHub runner: 4 vCPUs, 16 GiB memory for Docker builds"
+
+          # Configure system memory management optimized for 16GB
+          sudo sysctl vm.overcommit_memory=1
+          sudo sysctl vm.max_map_count=262144  # Increased for 16GB
+          sudo sysctl vm.swappiness=10
+          sudo sysctl vm.vfs_cache_pressure=50
+
+          # Show available memory
+          free -h
+          df -h
+
+          # Clean up Docker to free space and memory
+          docker system prune -af --volumes || true
+
+          # Configure Docker daemon for enhanced runner
+          sudo service docker stop || true
+          echo '{"storage-driver": "overlay2", "max-concurrent-downloads": 2, "max-concurrent-uploads": 2}' | sudo tee /etc/docker/daemon.json
+          sudo service docker start
+
+          # Set generous memory limits for 16GB runner
+          ulimit -m 12582912  # 12GB physical memory limit for Docker build
+          ulimit -v 15728640  # 15GB virtual memory limit
+
+      - name: Set up Docker Buildx with memory optimization
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: |
+            network=host
+            env.BUILDKIT_STEP_LOG_MAX_SIZE=10485760
+            env.BUILDKIT_STEP_LOG_MAX_SPEED=1048576
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract version information
+        id: version
+        run: |
+          # Get the git commit SHA (short version)
+          echo "GIT_COMMIT=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+          # Check if this is a tag push
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            echo "GIT_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          else
+            echo "GIT_TAG=latest" >> $GITHUB_OUTPUT
+          fi
+
+          # Get the current date in ISO format
+          echo "BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> $GITHUB_OUTPUT
+
+      - name: Build and push Bazaar Docker image with memory optimization
+        run: |
+          # Free up memory before build
+          docker system prune -f || true
+
+          # Build with memory-efficient settings
+          docker buildx build \
+            -f Sources/Bazaar/Dockerfile \
+            -t ghcr.io/${{ github.repository_owner }}/bazaar:latest \
+            -t ghcr.io/${{ github.repository_owner }}/bazaar:${{ github.sha }} \
+            --build-arg GIT_COMMIT=${{ steps.version.outputs.GIT_COMMIT }} \
+            --build-arg GIT_TAG=${{ steps.version.outputs.GIT_TAG }} \
+            --build-arg BUILD_DATE=${{ steps.version.outputs.BUILD_DATE }} \
+            --build-arg BUILDKIT_INLINE_CACHE=1 \
+            --cache-from ghcr.io/${{ github.repository_owner }}/bazaar:latest \
+            --memory 12g \
+            --memory-swap 15g \
+            --shm-size 2g \
+            --push \
+            .
+        env:
+          # Docker build environment optimizations
+          BUILDKIT_PROGRESS: plain
+          DOCKER_BUILDKIT: 1
+          BUILDKIT_STEP_LOG_MAX_SIZE: 10485760
+          BUILDKIT_STEP_LOG_MAX_SPEED: 1048576
+
+      - name: Cleanup after build
+        if: always()
+        run: |
+          # Clean up Docker resources to free memory
+          docker system prune -af --volumes || true
+
+          # Show final memory status
+          free -h
+          df -h
