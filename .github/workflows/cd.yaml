@@ -5,6 +5,8 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
+  schedule:
+    - cron: '0 10 * * *'  # 2am PST (10am UTC)
 
 concurrency:
   group: cd
