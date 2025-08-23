@@ -62,34 +62,6 @@ jobs:
           echo 'vm.max_map_count=65530' | sudo tee -a /etc/sysctl.conf
           sudo sysctl -p
 
-      - name: Start LocalStack
-        uses: LocalStack/setup-localstack@v0.2.4
-        with:
-          image-tag: 'latest'
-          install-awslocal: 'true'
-          configuration: |
-            SERVICES=sqs,s3
-            DEBUG=0
-            LOG_LEVEL=WARN
-            AWS_DEFAULT_REGION=us-west-2
-            AWS_ACCESS_KEY_ID=test
-            AWS_SECRET_ACCESS_KEY=test
-            LOCALSTACK_HOST=localhost
-            SKIP_SSL_CERT_DOWNLOAD=1
-            PERSISTENCE=0
-            DATA_DIR=/tmp/localstack_data
-            LAMBDA_EXECUTOR=local
-            DOCKER_LAMBDA_EXECUTOR=0
-            EAGER_SERVICE_LOADING=0
-            HOSTNAME_EXTERNAL=localhost
-            DISABLE_CORS_HEADERS=1
-            DISABLE_CUSTOM_CORS_S3=1
-            DISABLE_CUSTOM_CORS=1
-            USE_SSL=0
-            DEFAULT_REGION=us-west-2
-            # Memory optimization
-            LOCALSTACK_CONTAINER_FLAGS=-m 512m
-
       - uses: "actions/setup-python@v5"
         with:
           python-version: "3.11"
@@ -109,19 +81,6 @@ jobs:
 
       - name: Lint markdown
         run: ./scripts/validate-markdown.sh
-
-      - name: Initialize SQS queues
-        run: |
-          echo "Creating SQS queues..."
-
-          # Create queues using awslocal (automatically configured by LocalStack action)
-          awslocal sqs create-queue --queue-name bazaar-jobs
-          awslocal sqs create-queue --queue-name bazaar-jobs-dlq
-          awslocal sqs create-queue --queue-name bazaar-jobs-priority
-
-          # Verify queues
-          echo "Available queues:"
-          awslocal sqs list-queues
 
       - name: Install Swift toolchain
         uses: vapor/swiftly-action@v0.2
