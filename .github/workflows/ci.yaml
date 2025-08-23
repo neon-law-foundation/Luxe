@@ -139,8 +139,9 @@ jobs:
           export MALLOC_MMAP_THRESHOLD_=32768  # Use mmap for larger allocations
           export MALLOC_TRIM_THRESHOLD_=131072  # Trim heap more aggressively
           
-          # With 16GB memory, we can run tests more efficiently
-          ./scripts/run-memory-efficient-tests.sh
+          # Run tests with optimized settings to prevent connection timeouts
+          # Use --no-parallel to prevent database connection pool exhaustion
+          swift test --no-parallel
         env:
           DATABASE_URL: postgres://postgres@localhost:5432/luxe?sslmode=disable
           DEX_ISSUER: http://localhost:2222/dex
