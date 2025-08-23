@@ -52,6 +52,16 @@ jobs:
     steps:
       - uses: "actions/checkout@v4"
 
+      - name: Configure system for memory efficiency
+        run: |
+          # Configure swap to handle memory pressure
+          sudo swapon --show
+          free -h
+          # Set kernel memory management for stability
+          echo 'vm.overcommit_memory=1' | sudo tee -a /etc/sysctl.conf
+          echo 'vm.max_map_count=65530' | sudo tee -a /etc/sysctl.conf
+          sudo sysctl -p
+
       - name: Start LocalStack
         uses: LocalStack/setup-localstack@v0.2.4
         with:
@@ -59,7 +69,8 @@ jobs:
           install-awslocal: 'true'
           configuration: |
             SERVICES=sqs,s3
-            DEBUG=1
+            DEBUG=0
+            LOG_LEVEL=WARN
             AWS_DEFAULT_REGION=us-west-2
             AWS_ACCESS_KEY_ID=test
             AWS_SECRET_ACCESS_KEY=test
@@ -69,13 +80,15 @@ jobs:
             DATA_DIR=/tmp/localstack_data
             LAMBDA_EXECUTOR=local
             DOCKER_LAMBDA_EXECUTOR=0
-            EAGER_SERVICE_LOADING=1
+            EAGER_SERVICE_LOADING=0
             HOSTNAME_EXTERNAL=localhost
             DISABLE_CORS_HEADERS=1
             DISABLE_CUSTOM_CORS_S3=1
             DISABLE_CUSTOM_CORS=1
             USE_SSL=0
             DEFAULT_REGION=us-west-2
+            # Memory optimization
+            LOCALSTACK_CONTAINER_FLAGS=-m 512m
 
       - uses: "actions/setup-python@v5"
         with:
@@ -131,7 +144,8 @@ jobs:
 
       - name: Run Swift Build
         run: |
-          swift build
+          # Limit Swift compiler parallelism to reduce memory usage
+          swift build --jobs 2
 
       - name: Run Database Migrations
         run: |
@@ -142,7 +156,11 @@ jobs:
 
       - name: Run tests
         run: |
-          swift test --no-parallel
+          # Run tests with memory optimizations
+          # Set memory limits and enable efficient test execution
+          ulimit -v 3145728  # 3GB virtual memory limit
+          export MALLOC_ARENA_MAX=2  # Limit malloc arenas to reduce fragmentation
+          swift test --no-parallel --jobs 1
         env:
           DATABASE_URL: postgres://postgres@localhost:5432/luxe?sslmode=disable
           DEX_ISSUER: http://localhost:2222/dex
@@ -153,6 +171,9 @@ jobs:
           ENV: TEST
           DISABLE_LEAK_DETECTION: true
           REDIS_URL: redis://localhost:6379
+          # Swift runtime optimizations for memory efficiency
+          SWIFT_DETERMINISTIC_HASHING: 1
+          MALLOC_CONF: "narenas:2,dirty_decay_ms:0,muzzy_decay_ms:0"
 
       - name: Enable auto-merge for PR
         uses: peter-evans/enable-pull-request-automerge@v3
