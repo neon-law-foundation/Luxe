@@ -3,11 +3,10 @@
 ## Usage
 
 ```txt
-/implement-roadmap ROADMAP_NAME
+/implement-roadmap ISSUE_NUMBER
 ```
 
-Where `ROADMAP_NAME` is the name of the roadmap file in the Roadmaps/ directory (e.g., `AuthRoadmap.md`,
-`PostgresRoadmap.md`).
+Where `ISSUE_NUMBER` is the GitHub issue number containing the roadmap tasks (e.g., `11`, `15`).
 
 ## Overview
 
@@ -31,15 +30,15 @@ agents to implement complete roadmaps from start to finish.
    - Set up proper labels and milestones
 
 3. **Research current implementation**:
-   - Read the Roadmaps/ROADMAP_NAME.md file
-   - Understand current status and next steps
-   - Identify dependencies and impacts
+   - Read the GitHub issue with roadmap tasks
+   - Understand current status and next steps from issue description
+   - Identify dependencies and impacts from issue technical details
 
 ### Phase 2: Implementation Cycle
 
 For each uncompleted task in the roadmap:
 
-1. **Mark task as in progress** by changing `- [ ]` to `- [🔄]` in the roadmap file
+1. **Mark task as in progress** by updating the GitHub issue with progress comments
 
 2. **Implementation based on task type**:
 
@@ -78,8 +77,8 @@ For each uncompleted task in the roadmap:
 
 6. **Tracking Updates** - Use the **issue-updater agent** to update GitHub issue:
    - Updates issue with commit SHA
-   - Mark task as completed
-   - Report progress status
+   - Mark task as completed with checkbox updates
+   - Report progress status and link commits
 
 ### Phase 3: Quality Assurance
 
@@ -103,8 +102,8 @@ For each uncompleted task in the roadmap:
 
 2. **Final Updates**:
    - Use **issue-updater agent** to link PR to roadmap issue
-   - Update roadmap status section with completion
-   - Note any remaining tasks
+   - Update issue status section with completion percentage
+   - Note any remaining tasks in issue comments
 
 ## Agent Coordination Flow
 
@@ -216,10 +215,10 @@ If any agent fails:
 ## Completion Criteria
 
 The roadmap is complete when:
-- ✅ All tasks checked in roadmap file
-- ✅ All commit SHAs recorded
-- ✅ GitHub issue shows 100% completion
-- ✅ PR is created and linked
+- ✅ All tasks checked in GitHub issue
+- ✅ All commit SHAs recorded in issue comments
+- ✅ GitHub issue shows 100% task completion
+- ✅ PR is created and linked to issue
 - ✅ All tests pass with exit code 0
 - ✅ Build succeeds with no warnings
 
@@ -227,12 +226,12 @@ The roadmap is complete when:
 
 - **NEVER** skip test verification at any step
 - **ALWAYS** use agents for their specialized tasks
-- **MANDATORY**: Every task must have a commit SHA
+- **MANDATORY**: Every task must have a commit SHA recorded in the issue
 - **CRITICAL**: Tests must pass before any commit
-- **MANDATORY**: Run `swift test --no-parallel` after each step and after roadmap updates
+- **MANDATORY**: Run `swift test --no-parallel` after each step and after issue updates
 - Each roadmap step gets its own commit (via commiter)
-- Update roadmap with commit SHA after each step
-- Continue until entire roadmap is completed
+- Update GitHub issue with commit SHA after each step
+- Continue until entire GitHub issue roadmap is completed
 
 This agentic approach ensures higher quality, better tracking, and more reliable roadmap implementation
 through specialized task delegation and isolated context management.
