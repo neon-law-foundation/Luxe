@@ -289,7 +289,41 @@ Follow the workflow in `.claude/commands/create-blog-post.md`:
 3. Add complete YAML frontmatter
 4. Write engaging, factual content
 5. Include creation timestamp
-6. Format with `./scripts/format-markdown.sh`
+6. Add blog card entry to `Sources/Bazaar/Pages/BlogPage.swift` in `DynamicBlogCards` (add at the top for newest posts)
+7. Format with `./scripts/format-markdown.sh`
+
+### Blog Card Template
+
+When adding new blog posts to `Sources/Bazaar/Pages/BlogPage.swift`:
+
+```swift
+struct BlogCardX: HTML {  // Post Title - Month Day, Year
+    var content: some HTML {
+        div(.class("column is-half")) {
+            div(.class("card")) {
+                div(.class("card-header")) {
+                    p(.class("card-header-title")) { "Post Title Here" }
+                }
+                div(.class("card-content")) {
+                    div(.class("content")) {
+                        p {
+                            "Brief description or excerpt from the post..."
+                        }
+                        p(.class("has-text-grey is-size-7")) { "Published: Month Day, Year" }
+                    }
+                }
+                footer(.class("card-footer")) {
+                    a(.class("card-footer-item button is-primary"), .href("/blog/post-slug")) {
+                        "Read More"
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+Then add `BlogCardX()` to the top of `DynamicBlogCards` for newest posts first.
 
 ## Example: Complete Blog Post
 
