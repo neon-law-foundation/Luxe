@@ -34,7 +34,7 @@ public struct NewsletterAnalyticsService {
         _ = try await postgresDB.sql()
             .raw(
                 """
-                INSERT INTO marketing.newsletter_analytics 
+                INSERT INTO marketing.newsletter_analytics
                 (newsletter_id, user_id, event_type, event_data, ip_address, user_agent)
                 VALUES (\(bind: newsletterId), \(bind: userId), \(bind: eventType.rawValue), \(bind: eventDataJson)::jsonb, \(bind: ipAddress), \(bind: userAgent))
                 """
@@ -51,11 +51,11 @@ public struct NewsletterAnalyticsService {
         let result = try await postgresDB.sql()
             .raw(
                 """
-                SELECT 
+                SELECT
                     event_type,
                     COUNT(*) as event_count,
                     COUNT(DISTINCT user_id) as unique_users
-                FROM marketing.newsletter_analytics 
+                FROM marketing.newsletter_analytics
                 WHERE newsletter_id = \(bind: newsletterId)
                 GROUP BY event_type
                 """
@@ -118,7 +118,7 @@ public struct NewsletterAnalyticsService {
         let result = try await postgresDB.sql()
             .raw(
                 """
-                SELECT 
+                SELECT
                     n.name as newsletter_type,
                     COUNT(DISTINCT n.id) as newsletter_count,
                     COALESCE(SUM(CASE WHEN na.event_type = 'sent' THEN 1 ELSE 0 END), 0) as total_sent,
@@ -168,7 +168,7 @@ public struct NewsletterAnalyticsService {
         let result = try await postgresDB.sql()
             .raw(
                 """
-                SELECT 
+                SELECT
                     na.id,
                     na.newsletter_id,
                     na.user_id,

@@ -157,7 +157,7 @@ public struct SESNewsletterSending: Stack {
                                 },
                                 {
                                     "Fn::GetAtt": [
-                                        "SagebrushDomainIdentity", 
+                                        "SagebrushDomainIdentity",
                                         "DkimDNSTokenValue2"
                                     ]
                                 },
@@ -188,7 +188,7 @@ public struct SESNewsletterSending: Stack {
                                 },
                                 {
                                     "Fn::GetAtt": [
-                                        "NVSciTechDomainIdentity", 
+                                        "NVSciTechDomainIdentity",
                                         "DkimDNSTokenValue2"
                                     ]
                                 },
@@ -219,7 +219,7 @@ public struct SESNewsletterSending: Stack {
                                 },
                                 {
                                     "Fn::GetAtt": [
-                                        "NeonLawDomainIdentity", 
+                                        "NeonLawDomainIdentity",
                                         "DkimDNSTokenValue2"
                                     ]
                                 },
@@ -250,7 +250,7 @@ public struct SESNewsletterSending: Stack {
                                 },
                                 {
                                     "Fn::GetAtt": [
-                                        "SagebrushDomainIdentity", 
+                                        "SagebrushDomainIdentity",
                                         "DkimDNSTokenName2"
                                     ]
                                 },
@@ -278,7 +278,7 @@ public struct SESNewsletterSending: Stack {
                                 },
                                 {
                                     "Fn::GetAtt": [
-                                        "NVSciTechDomainIdentity", 
+                                        "NVSciTechDomainIdentity",
                                         "DkimDNSTokenName2"
                                     ]
                                 },
@@ -306,7 +306,7 @@ public struct SESNewsletterSending: Stack {
                                 },
                                 {
                                     "Fn::GetAtt": [
-                                        "NeonLawDomainIdentity", 
+                                        "NeonLawDomainIdentity",
                                         "DkimDNSTokenName2"
                                     ]
                                 },

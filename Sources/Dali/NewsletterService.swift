@@ -325,7 +325,7 @@ public actor NewsletterService {
 
         // Get paginated results
         let dataQuery = """
-                SELECT * FROM marketing.newsletters 
+                SELECT * FROM marketing.newsletters
                 \(whereClause)
                 ORDER BY sent_at DESC, created_at DESC
                 LIMIT \(limit) OFFSET \(offset)

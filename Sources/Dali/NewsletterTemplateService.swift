@@ -19,10 +19,10 @@ public struct NewsletterTemplateService {
         let result = try await postgresDB.sql()
             .raw(
                 """
-                SELECT 
+                SELECT
                     id, name, description, template_content, category, is_active,
                     created_by, created_at, updated_at
-                FROM marketing.newsletter_templates 
+                FROM marketing.newsletter_templates
                 WHERE is_active = true
                 ORDER BY category, name
                 """
@@ -65,10 +65,10 @@ public struct NewsletterTemplateService {
         let result = try await postgresDB.sql()
             .raw(
                 """
-                SELECT 
+                SELECT
                     id, name, description, template_content, category, is_active,
                     created_by, created_at, updated_at
-                FROM marketing.newsletter_templates 
+                FROM marketing.newsletter_templates
                 WHERE id = \(bind: id)
                 """
             )
@@ -119,7 +119,7 @@ public struct NewsletterTemplateService {
         _ = try await postgresDB.sql()
             .raw(
                 """
-                INSERT INTO marketing.newsletter_templates 
+                INSERT INTO marketing.newsletter_templates
                 (id, name, description, template_content, category, created_by, created_at, updated_at)
                 VALUES (\(bind: id), \(bind: name), \(bind: description), \(bind: templateContent), \(bind: category), \(bind: createdBy), \(bind: now), \(bind: now))
                 """
@@ -156,9 +156,9 @@ public struct NewsletterTemplateService {
         _ = try await postgresDB.sql()
             .raw(
                 """
-                UPDATE marketing.newsletter_templates 
-                SET name = \(bind: name), 
-                    description = \(bind: description), 
+                UPDATE marketing.newsletter_templates
+                SET name = \(bind: name),
+                    description = \(bind: description),
                     template_content = \(bind: templateContent),
                     category = \(bind: category),
                     updated_at = \(bind: now)
