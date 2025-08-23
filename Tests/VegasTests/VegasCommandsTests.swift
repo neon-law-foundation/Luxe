@@ -303,6 +303,65 @@ struct VegasCommandsTests {
         }
     }
 
+    @Suite("Update Services Command", .serialized)
+    struct UpdateServicesCommandTests {
+
+        @Test(
+            "update-services command configuration describes ECS service container image updates from GitHub Container Registry"
+        )
+        func updatesECSServicesWithGitHubContainerImages() async throws {
+            // Given an update-services command configuration
+            let config = UpdateServices.configuration
+
+            // Then it should have correct configuration
+            #expect(config.commandName == "update-services")
+            #expect(
+                config.abstract == "Update ECS services with latest container images from GitHub Container Registry"
+            )
+        }
+
+        @Test("update-services command has correct properties and timeout option")
+        func hasCorrectPropertiesAndOptions() {
+            // Given an update-services command configuration
+            let config = UpdateServices.configuration
+
+            // Then it should have expected properties
+            #expect(config.commandName == "update-services")
+            #expect(
+                config.abstract == "Update ECS services with latest container images from GitHub Container Registry"
+            )
+
+            // And should have discussion about what the command does
+            #expect(config.discussion.contains("Update the Bazaar and Destined ECS services"))
+            #expect(config.discussion.contains("Pull the latest images from ghcr.io/neon-law-foundation/"))
+            #expect(config.discussion.contains("Wait for deployments to complete"))
+        }
+
+        @Test("service update config contains correct repository information")
+        func serviceConfigHasCorrectRepositories() {
+            // Given service configuration
+            let bazaarConfig = ServiceUpdateConfig(
+                serviceName: "bazaar",
+                stackName: "bazaar-service",
+                clusterName: "bazaar-cluster",
+                imageRepository: "ghcr.io/neon-law-foundation/bazaar"
+            )
+
+            let destinedConfig = ServiceUpdateConfig(
+                serviceName: "destined",
+                stackName: "destined-service",
+                clusterName: "destined-cluster",
+                imageRepository: "ghcr.io/neon-law-foundation/destined"
+            )
+
+            // Then configurations should have correct properties
+            #expect(bazaarConfig.serviceName == "bazaar")
+            #expect(bazaarConfig.imageRepository == "ghcr.io/neon-law-foundation/bazaar")
+            #expect(destinedConfig.serviceName == "destined")
+            #expect(destinedConfig.imageRepository == "ghcr.io/neon-law-foundation/destined")
+        }
+    }
+
     @Suite("Main Command", .serialized)
     struct MainCommandTests {
 
@@ -314,7 +373,7 @@ struct VegasCommandsTests {
             // Then it should have correct properties
             #expect(config.commandName == "Vegas")
             #expect(config.abstract == "AWS infrastructure management tool")
-            #expect(config.subcommands.count == 8)
+            #expect(config.subcommands.count == 9)
             #expect(config.subcommands.contains { $0 == Infrastructure.self })
             #expect(config.subcommands.contains { $0 == Deploy.self })
             #expect(config.subcommands.contains { $0 == Versions.self })
@@ -323,6 +382,7 @@ struct VegasCommandsTests {
             #expect(config.subcommands.contains { $0 == CheckUser.self })
             #expect(config.subcommands.contains { $0 == CheckUserSimple.self })
             #expect(config.subcommands.contains { $0 == SESSetup.self })
+            #expect(config.subcommands.contains { $0 == UpdateServices.self })
         }
     }
 }
