@@ -17,7 +17,7 @@ Create a pull request using specialized agents to ensure code quality and proper
    - The workflow will proceed with all changes regardless of file type
    - Swift testing and formatting steps are conditionally applied based on changes detected
 
-1. **Code Review with test-driven-developer** - Use the test-driven-developer agent to review the current code changes:
+1. **Code Review with developer** - Use the developer agent to review the current code changes:
    - Analyze all modifications for quality and adherence to best practices
    - **IF Swift files changed**: Verify TDD compliance and test coverage
    - **IF Swift files changed**: Ensure all tests pass with `swift test --no-parallel` (exit code 0 mandatory)
@@ -35,7 +35,7 @@ Create a pull request using specialized agents to ensure code quality and proper
    - **CRITICAL**: All applicable linting (SQL, Swift if changed, markdown) MUST exit with code 0
    - Fix ALL issues before proceeding
 
-3. **Final Test Verification with test-driven-developer** - Use the test-driven-developer agent to verify all tests
+3. **Final Test Verification with developer** - Use the developer agent to verify all tests
    still pass after formatting:
    - **IF Swift files changed**: Run comprehensive test suite: `swift test --no-parallel`
    - **IF Swift files changed**: Ensure ALL tests pass with exit code 0
@@ -80,7 +80,7 @@ Create a pull request using specialized agents to ensure code quality and proper
 
 ```text
 ┌─────────────────────┐    ┌─────────────────────┐    ┌──────────────┐    ┌─────────────────────┐    ┌───────────────────┐
-│ Pre-Check:         │───▶│ test-driven-        │───▶│ Formatters   │───▶│ test-driven-       │───▶│ git-branch-      │
+│ Pre-Check:         │───▶│ developer           │───▶│ Formatters   │───▶│ developer          │───▶│ git-branch-      │
 │ Detect Changes     │    │ developer           │    │              │    │ developer          │    │ manager          │
 │ (All File Types)   │    │ Code Review         │    │ Format Check │    │ Test Verify        │    │ Branch Mgmt      │
 └─────────────────────┘    └─────────────────────┘    └──────────────┘    └─────────────────────┘    └───────────────────┘
@@ -97,7 +97,7 @@ Create a pull request using specialized agents to ensure code quality and proper
 Each agent enforces specific quality requirements:
 
 - **pre-check**: Detect any file changes from origin/main, note if Swift files are included
-- **test-driven-developer**: Code quality verified; Swift tests pass if Swift files changed
+- **developer**: Code quality verified; Swift tests pass if Swift files changed
 - **swift-formatter & markdown-formatter**: SQL migrations linted, Swift format compliant (if changed), markdown validated
   (all applicable linting exit code 0 mandatory)
 - **git-branch-manager**: Clean branch state, conflicts resolved, synced with main
@@ -109,7 +109,7 @@ Each agent enforces specific quality requirements:
 
 If any agent fails:
 0. **pre-check**: No longer blocks workflow - proceeds with any detected changes
-1. **test-driven-developer fails**: Fix code issues, re-run applicable tests
+1. **developer fails**: Fix code issues, re-run applicable tests
 2. **Formatters fail**: Fix ALL applicable formatting issues until all validations exit 0, re-validate
 3. **commiter fails**: Check git status, resolve conflicts
 

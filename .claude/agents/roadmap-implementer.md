@@ -231,7 +231,7 @@ Current Phase: 2 - API/Backend
 
 1. Document the specific failures
 2. Create a subtask to fix the issue
-3. Delegate fix to test-driven-developer
+3. Delegate fix to developer
 4. Only proceed when tests pass
 
 ## Commit Management
