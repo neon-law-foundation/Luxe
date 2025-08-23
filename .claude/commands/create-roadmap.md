@@ -45,3 +45,4 @@ Create a comprehensive GitHub issue with detailed implementation tasks and sampl
 14. Ensure all task descriptions are specific, actionable, and follow the project's quality standards.
 15. **Use terse, technical syntax** suitable for experienced Swift developers
 16. Include commit SHA tracking in the issue template for implementation progress
+17. Run the `/format-markdown` Claude command to ensure the markdown is formatted correctly.
