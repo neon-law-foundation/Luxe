@@ -168,7 +168,6 @@ struct CognitoUserServiceTests {
     // Note: Database integration tests will be added in Phase 2 when implementing the authenticator
     // For now we focus on the core data validation and role mapping functionality
 
-
     @Test("Should validate user role matches Cognito groups")
     func testValidateUserRole() async throws {
         let user = User(
@@ -211,7 +210,7 @@ struct CognitoUserServiceTests {
         #expect(logData["role"] as? String == "staff")
         #expect(logData["request_path"] as? String == "/admin/dashboard")
         #expect(logData["alb_headers_count"] as? Int == 5)
-        
+
         let cognitoGroups = logData["cognito_groups"] as? [String]
         #expect(cognitoGroups?.contains("staff") == true)
         #expect(cognitoGroups?.contains("lawyers") == true)

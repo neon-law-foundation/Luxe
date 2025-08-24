@@ -33,7 +33,7 @@ public struct ALBHeaderValidator {
             public let name: String?
             public let cognitoGroups: [String]
             public let username: String
-            
+
             /// Converts to CognitoData for database operations
             public func toCognitoData(albHeaders: [String: String] = [:]) -> CognitoUserService.CognitoData {
                 CognitoUserService.CognitoData(
