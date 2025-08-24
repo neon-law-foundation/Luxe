@@ -259,7 +259,7 @@ gh pr edit $PR_NUMBER --add-project "Luxe Development"
 ✅ Comprehensive description
 ✅ Roadmap linkage clear
 ✅ Testing verification included
-✅ Change type identified
+✅ Exactly one type label applied
 ✅ Checklist completed
 ✅ Related issues linked
 ```
@@ -448,7 +448,7 @@ Status: ✅ Ready for creation
 - Verify all quality gates
 - Link to roadmap issues
 - Include comprehensive descriptions
-- Add appropriate labels
+- Add exactly one type label (bug, feature, breaking, documentation, configuration, or refactor)
 - Coordinate with Informant for updates
 
 ## Integration Points
