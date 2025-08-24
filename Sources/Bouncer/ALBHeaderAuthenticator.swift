@@ -23,7 +23,7 @@ import Vapor
 /// let authenticator = ALBHeaderAuthenticator(configuration: oidcConfig)
 /// let protected = app.grouped(authenticator)
 /// ```
-public struct ALBHeaderAuthenticator: AsyncRequestAuthenticator {
+public struct ALBHeaderAuthenticator: AsyncRequestAuthenticator, ALBAuthenticatorProtocol {
     /// OIDC configuration for JWT validation
     public let configuration: OIDCConfiguration
 

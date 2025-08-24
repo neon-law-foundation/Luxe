@@ -104,39 +104,9 @@ public func configureApp(_ app: Application) async throws {
     let oidcMiddleware = OIDCMiddleware(configuration: oidcConfig)
 
     // Configure header-based authentication with smart routing
+    // Only /app and /api routes require authentication, all others are public
     let albAuthenticator = ALBHeaderAuthenticator(configuration: oidcConfig)
-    let smartAuth = SmartAuthMiddleware(
-        authenticator: albAuthenticator,
-        publicPatterns: [
-            "/",
-            "/health",
-            "/status",
-            "/favicon.ico",
-            "/robots.txt",
-            "/api/public/*",
-            "/assets/*",
-            "/css/*",
-            "/js/*",
-            "/images/*",
-            "/login",
-            "/logout",
-            "/auth/*",
-            "/webhook/*",
-            "/sagebrush",
-            "/for-lawyers",
-            "/lawyers/*",
-            "/about",
-            "/contact",
-            "/privacy",
-            "/terms",
-            "/blog",
-            "/blog/*",
-            "/newsletters",
-            "/newsletters/*",
-            "/physical-address",
-            "/onboarding",
-        ]
-    )
+    let smartAuth = SmartAuthMiddleware(authenticator: albAuthenticator)
 
     // Use SmartAuthMiddleware for all routes (replaces SessionMiddleware)
     if app.environment != .testing {
