@@ -21,7 +21,7 @@ struct BlogPageTests {
 
                 let body = response.body.string
                 #expect(body.contains("Sagebrush Blog"))
-                #expect(body.contains("Why Nevada for Your Physical Address"))
+                #expect(body.contains("Why Nevada for Your Virtual Mailbox"))
                 #expect(body.contains("Understanding Cap Tables and Equity Sharing in Nevada"))
                 #expect(body.contains("Why a16z is Leaving Delaware for Nevada"))
                 #expect(body.contains("/blog/why-nevada"))

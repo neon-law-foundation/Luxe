@@ -1,6 +1,7 @@
 import Foundation
 
-struct BlogPost: Equatable {
+struct BlogPost: Equatable, Identifiable {
+    var id: String { slug }
     let title: String
     let slug: String
     let description: String
