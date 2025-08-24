@@ -236,50 +236,50 @@ struct ForLawyersPage: HTMLDocument {
                                 LF[👥 Legal Staff]
                                 LF --> |"🔐 MFA + VPN"| VPN[VPN Gateway]
                             end
-                            
+
                             subgraph "Your Private AWS Account"
                                 subgraph "Private VPC (Isolated Network)"
                                     VPN --> |"Encrypted Transit"| LB[🔒 Load Balancer]
                                     LB --> WEB[🌐 White-Labeled Legal Portal]
-                                    
+
                                     subgraph "AI Processing Zone"
                                         WEB --> |"VPC Endpoints Only"| BEDROCK[🤖 AWS Bedrock AI]
                                         BEDROCK --> |"Internal Processing"| MODELS[🧠 Legal AI Models]
                                     end
-                                    
+
                                     subgraph "Secure Data Storage"
                                         WEB --> |"PrivateLink"| S3[📁 S3 Document Storage]
                                         S3 --> |"Your Keys"| KMS[🗝️ AWS CloudHSM]
                                         BEDROCK --> RDS[(🛢️ Case Database)]
                                         RDS --> |"Encryption at Rest"| KMS
                                     end
-                                    
+
                                     subgraph "Compliance & Monitoring"
                                         TRAIL[📊 CloudTrail Logging]
                                         GUARD[🛡️ GuardDuty Security]
                                         CONFIG[📋 Config Compliance]
-                                        
+
                                         WEB -.->|"Audit All Actions"| TRAIL
                                         S3 -.->|"Monitor Access"| GUARD
                                         RDS -.->|"Compliance Check"| CONFIG
                                     end
                                 end
                             end
-                            
+
                             subgraph "External (BLOCKED)"
                                 PUB[❌ Public Internet]
                                 AI[❌ Public AI Services]
                                 THIRD[❌ Third-Party Access]
                             end
-                            
+
                             VPC -.->|"NO DIRECT ACCESS"| PUB
                             BEDROCK -.->|"NO DATA SHARING"| AI
                             S3 -.->|"NO EXTERNAL ACCESS"| THIRD
-                            
+
                             classDef privateZone fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
                             classDef blockedZone fill:#ffebee,stroke:#d32f2f,stroke-width:2px
                             classDef securityZone fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-                            
+
                             class VPC,LB,WEB,BEDROCK,MODELS,S3,RDS,KMS privateZone
                             class PUB,AI,THIRD blockedZone
                             class TRAIL,GUARD,CONFIG securityZone
