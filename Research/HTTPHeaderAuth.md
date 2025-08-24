@@ -197,7 +197,8 @@ CognitoUserPoolClient:
 
 ### Problem Statement
 
-ALB authentication only works in AWS production environment. Local development needs simulation of ALB headers without actual AWS infrastructure.
+ALB authentication only works in AWS production environment. Local development needs simulation of ALB headers without
+actual AWS infrastructure.
 
 ### Mock Authentication Middleware
 
