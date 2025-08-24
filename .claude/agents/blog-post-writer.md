@@ -301,8 +301,12 @@ Follow the workflow in `.claude/commands/create-blog-post.md`:
 3. Add complete YAML frontmatter
 4. Write engaging, factual content
 5. Include creation timestamp
-6. Add blog card entry to `Sources/Bazaar/Pages/BlogPage.swift` in `DynamicBlogCards` (add at the top for newest posts)
+6. **ALWAYS** add blog card entry to `Sources/Bazaar/Pages/BlogPage.swift` in `DynamicBlogCards`
+   (add at the top for newest posts)
 7. Format with `./scripts/format-markdown.sh`
+
+**CRITICAL**: Every blog post MUST have a corresponding BlogCard added to
+`Sources/Bazaar/Pages/BlogPage.swift` or it won't appear on the blog index page. This is not optional.
 
 ### Blog Card Template
 
