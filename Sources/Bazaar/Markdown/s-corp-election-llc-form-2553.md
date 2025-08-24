@@ -62,6 +62,7 @@ The IRS provides relief for late elections under certain circumstances:
 ### All Members Must Consent
 
 Every LLC member must sign Form 2553 to consent to the election. This includes:
+
 - Signature on the actual form
 - Date of signature
 - Complete member information
@@ -70,6 +71,7 @@ Every LLC member must sign Form 2553 to consent to the election. This includes:
 ### Eligibility Criteria
 
 Your LLC must meet S Corporation eligibility requirements:
+
 - No more than 100 members
 - Members must be individuals, certain trusts, or estates (not corporations or partnerships)
 - Only one class of membership interest
@@ -82,6 +84,7 @@ Let's examine how S Corp election can save money for a profitable LLC:
 ### Without S Corp Election
 
 **LLC Annual Profit**: $100,000
+
 - Self-employment tax (15.3%): $15,300
 - Federal income tax: ~$18,000
 - **Total Tax Burden**: ~$33,300
@@ -89,6 +92,7 @@ Let's examine how S Corp election can save money for a profitable LLC:
 ### With S Corp Election
 
 **LLC Annual Profit**: $100,000
+
 - Reasonable salary: $50,000
 - Self-employment tax on salary (15.3%): $7,650
 - Federal income tax on full $100,000: ~$18,000
@@ -108,6 +112,7 @@ address. The IRS website provides current mailing addresses, which can change.
 ### Required Information
 
 Form 2553 requires detailed information:
+
 - LLC's complete legal name and EIN
 - Date and state of LLC formation
 - Business address and type of business
@@ -117,6 +122,7 @@ Form 2553 requires detailed information:
 ### Documentation to Keep
 
 Maintain copies of:
+
 - Filed Form 2553 with proof of mailing
 - Form 8832 (if filed separately)
 - All supporting documentation
@@ -146,12 +152,14 @@ your state's specific rules.
 ## When S Corp Election Makes Sense
 
 Consider S Corp election when:
+
 - Your LLC generates significant profits (typically $60,000+ annually)
 - You can pay yourself a reasonable salary and still have distributions left over
 - The administrative complexity is worth the tax savings
 - Your business can handle payroll tax obligations
 
 S Corp election might not be beneficial if:
+
 - Your profits are modest
 - You prefer simpler tax reporting
 - You frequently reinvest all profits back into the business
@@ -170,6 +178,7 @@ The cost of professional guidance is typically far less than the potential conse
 ## Reversing the Election
 
 S Corp elections are generally permanent, but can be revoked:
+
 - **Voluntary Revocation**: All shareholders must consent
 - **Automatic Termination**: If eligibility requirements are violated
 - **Five-Year Rule**: Generally cannot re-elect S Corp status for five years after revocation
