@@ -35,20 +35,18 @@ struct BlogIndexContent: HTML {
 
 struct DynamicBlogCards: HTML {
     var content: some HTML {
-        // Ordered by most recent first (by creation date)
-        BlogCard9()  // S Corp Election for LLCs - Aug 23, 2025
-        BlogCard8()  // Nevada Virtual Creators - Jan 19, 2025
-        BlogCard2()  // a16z Leaving Delaware - Jan 15, 2025
-        BlogCard3()  // Digital Nomads - Jan 14, 2025
-        BlogCard4()  // Cap Table Equity - Jan 12, 2025
-        BlogCard5()  // Why Every Business Needs - Jan 11, 2025
-        BlogCard7()  // One Year Cliff - Jan 10, 2025
-        BlogCard6()  // Why Nevada - Jan 8, 2025
+        BlogCard9()  // S Corp Election for LLCs
+        BlogCard8()  // Nevada Virtual Creators
+        BlogCard2()  // a16z Leaving Delaware
+        BlogCard3()  // Digital Nomads
+        BlogCard4()  // Cap Table Equity
+        BlogCard5()  // Why Every Business Needs
+        BlogCard7()  // One Year Cliff
+        BlogCard6()  // Why Nevada
     }
 }
 
-// Ordered by most recent first
-struct BlogCard9: HTML {  // S Corp Election for LLCs - Aug 23, 2025
+struct BlogCard9: HTML {  // S Corp Election for LLCs
     var content: some HTML {
         div(.class("column is-half")) {
             div(.class("card")) {
@@ -60,7 +58,16 @@ struct BlogCard9: HTML {  // S Corp Election for LLCs - Aug 23, 2025
                         p {
                             "Learn how LLCs can elect S Corp tax treatment using Form 2553, including filing deadlines, requirements, and potential self-employment tax savings for profitable businesses..."
                         }
-                        p(.class("has-text-grey is-size-7")) { "Published: August 23, 2025" }
+                        a(
+                            .href(
+                                "https://github.com/neon-law-foundation/Luxe/tree/main/Sources/Bazaar/Markdown/s-corp-election-llc-form-2553.md"
+                            ),
+                            .target("_blank"),
+                            .rel("noreferrer"),
+                            .class("has-text-primary is-size-7")
+                        ) {
+                            "View on GitHub"
+                        }
                     }
                 }
                 footer(.class("card-footer")) {
@@ -73,7 +80,7 @@ struct BlogCard9: HTML {  // S Corp Election for LLCs - Aug 23, 2025
     }
 }
 
-struct BlogCard8: HTML {  // Nevada Virtual Creators - Jan 19, 2025
+struct BlogCard8: HTML {  // Nevada Virtual Creators
     var content: some HTML {
         div(.class("column is-half")) {
             div(.class("card")) {
@@ -85,7 +92,16 @@ struct BlogCard8: HTML {  // Nevada Virtual Creators - Jan 19, 2025
                         p {
                             "Discover why Nevada offers unbeatable advantages for virtual creators, influencers, and content creators earning from Instagram, TikTok, OnlyFans, and other digital platforms..."
                         }
-                        p(.class("has-text-grey is-size-7")) { "Published: January 19, 2025" }
+                        a(
+                            .href(
+                                "https://github.com/neon-law-foundation/Luxe/tree/main/Sources/Bazaar/Markdown/nevada-virtual-creators.md"
+                            ),
+                            .target("_blank"),
+                            .rel("noreferrer"),
+                            .class("has-text-primary is-size-7")
+                        ) {
+                            "View on GitHub"
+                        }
                     }
                 }
                 footer(.class("card-footer")) {
@@ -98,7 +114,7 @@ struct BlogCard8: HTML {  // Nevada Virtual Creators - Jan 19, 2025
     }
 }
 
-struct BlogCard2: HTML {  // Why Nevada - Jan 15, 2025
+struct BlogCard2: HTML {  // Why Nevada
     var content: some HTML {
         div(.class("column is-half")) {
             div(.class("card")) {
@@ -110,7 +126,16 @@ struct BlogCard2: HTML {  // Why Nevada - Jan 15, 2025
                         p {
                             "Andreessen Horowitz, the most reputable VC firm, is abandoning Delaware. Learn why Nevada's superior corporate framework makes it the clear choice for modern companies..."
                         }
-                        p(.class("has-text-grey is-size-7")) { "Published: January 15, 2025" }
+                        a(
+                            .href(
+                                "https://github.com/neon-law-foundation/Luxe/tree/main/Sources/Bazaar/Markdown/a16z-leaving-delaware.md"
+                            ),
+                            .target("_blank"),
+                            .rel("noreferrer"),
+                            .class("has-text-primary is-size-7")
+                        ) {
+                            "View on GitHub"
+                        }
                     }
                 }
                 footer(.class("card-footer")) {
@@ -123,7 +148,7 @@ struct BlogCard2: HTML {  // Why Nevada - Jan 15, 2025
     }
 }
 
-struct BlogCard3: HTML {  // Digital Nomads - Jan 14, 2025
+struct BlogCard3: HTML {  // Digital Nomads
     var content: some HTML {
         div(.class("column is-half")) {
             div(.class("card")) {
@@ -135,7 +160,16 @@ struct BlogCard3: HTML {  // Digital Nomads - Jan 14, 2025
                         p {
                             "Discover how physical address services enable true location independence for entrepreneurs working from Bali, Vietnam, and beyond..."
                         }
-                        p(.class("has-text-grey is-size-7")) { "Published: January 14, 2025" }
+                        a(
+                            .href(
+                                "https://github.com/neon-law-foundation/Luxe/tree/main/Sources/Bazaar/Markdown/digital-nomad-virtual-mailbox.md"
+                            ),
+                            .target("_blank"),
+                            .rel("noreferrer"),
+                            .class("has-text-primary is-size-7")
+                        ) {
+                            "View on GitHub"
+                        }
                     }
                 }
                 footer(.class("card-footer")) {
@@ -148,7 +182,7 @@ struct BlogCard3: HTML {  // Digital Nomads - Jan 14, 2025
     }
 }
 
-struct BlogCard4: HTML {  // Cap Table Equity - Jan 12, 2025
+struct BlogCard4: HTML {  // Cap Table Equity
     var content: some HTML {
         div(.class("column is-half")) {
             div(.class("card")) {
@@ -160,7 +194,16 @@ struct BlogCard4: HTML {  // Cap Table Equity - Jan 12, 2025
                         p {
                             "Learn how cap tables work and why transparent equity sharing matters for Nevada LLCs and C-Corps. From vesting schedules to fair compensation..."
                         }
-                        p(.class("has-text-grey is-size-7")) { "Published: January 12, 2025" }
+                        a(
+                            .href(
+                                "https://github.com/neon-law-foundation/Luxe/tree/main/Sources/Bazaar/Markdown/cap-table-equity.md"
+                            ),
+                            .target("_blank"),
+                            .rel("noreferrer"),
+                            .class("has-text-primary is-size-7")
+                        ) {
+                            "View on GitHub"
+                        }
                     }
                 }
                 footer(.class("card-footer")) {
@@ -173,7 +216,7 @@ struct BlogCard4: HTML {  // Cap Table Equity - Jan 12, 2025
     }
 }
 
-struct BlogCard5: HTML {  // Why Every Business Needs - Jan 11, 2025
+struct BlogCard5: HTML {  // Why Every Business Needs
     var content: some HTML {
         div(.class("column is-half")) {
             div(.class("card")) {
@@ -185,7 +228,16 @@ struct BlogCard5: HTML {  // Why Every Business Needs - Jan 11, 2025
                         p {
                             "Every business is unique, and transparent equity management is the foundation of successful partnerships. Learn why clear rules and responsibilities matter from day one..."
                         }
-                        p(.class("has-text-grey is-size-7")) { "Published: January 11, 2025" }
+                        a(
+                            .href(
+                                "https://github.com/neon-law-foundation/Luxe/tree/main/Sources/Bazaar/Markdown/why-every-business-needs-cap-table.md"
+                            ),
+                            .target("_blank"),
+                            .rel("noreferrer"),
+                            .class("has-text-primary is-size-7")
+                        ) {
+                            "View on GitHub"
+                        }
                     }
                 }
                 footer(.class("card-footer")) {
@@ -198,7 +250,7 @@ struct BlogCard5: HTML {  // Why Every Business Needs - Jan 11, 2025
     }
 }
 
-struct BlogCard7: HTML {  // One Year Cliff - Jan 10, 2025
+struct BlogCard7: HTML {  // One Year Cliff
     var content: some HTML {
         div(.class("column is-half")) {
             div(.class("card")) {
@@ -210,7 +262,16 @@ struct BlogCard7: HTML {  // One Year Cliff - Jan 10, 2025
                         p {
                             "Learn why the one-year cliff protects startups and how Nevada's business-friendly environment makes it ideal for equity management through Sagebrush's Reno headquarters..."
                         }
-                        p(.class("has-text-grey is-size-7")) { "Published: January 10, 2025" }
+                        a(
+                            .href(
+                                "https://github.com/neon-law-foundation/Luxe/tree/main/Sources/Bazaar/Markdown/one-year-cliff.md"
+                            ),
+                            .target("_blank"),
+                            .rel("noreferrer"),
+                            .class("has-text-primary is-size-7")
+                        ) {
+                            "View on GitHub"
+                        }
                     }
                 }
                 footer(.class("card-footer")) {
@@ -223,7 +284,7 @@ struct BlogCard7: HTML {  // One Year Cliff - Jan 10, 2025
     }
 }
 
-struct BlogCard6: HTML {  // Why Nevada - Jan 8, 2025
+struct BlogCard6: HTML {  // Why Nevada
     var content: some HTML {
         div(.class("column is-half")) {
             div(.class("card")) {
@@ -235,7 +296,16 @@ struct BlogCard6: HTML {  // Why Nevada - Jan 8, 2025
                         p {
                             "Learn why Nevada is the ideal state for your physical address service. From business-friendly laws to strategic location..."
                         }
-                        p(.class("has-text-grey is-size-7")) { "Published: January 8, 2025" }
+                        a(
+                            .href(
+                                "https://github.com/neon-law-foundation/Luxe/tree/main/Sources/Bazaar/Markdown/why-nevada.md"
+                            ),
+                            .target("_blank"),
+                            .rel("noreferrer"),
+                            .class("has-text-primary is-size-7")
+                        ) {
+                            "View on GitHub"
+                        }
                     }
                 }
                 footer(.class("card-footer")) {
@@ -244,13 +314,4 @@ struct BlogCard6: HTML {  // Why Nevada - Jan 8, 2025
             }
         }
     }
-}
-
-extension DateFormatter {
-    static let blogDate: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .none
-        return formatter
-    }()
 }

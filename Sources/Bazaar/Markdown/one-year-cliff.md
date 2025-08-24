@@ -4,7 +4,6 @@ slug: "one-year-cliff"
 description: |
     Learn why the one-year cliff protects startups and how Nevada's business-friendly environment makes it
     ideal for equity management through Sagebrush's Reno headquarters...
-created_at: "2025-01-10T10:00:00Z"
 ---
 
 When building a startup, one of your most critical decisions involves structuring equity compensation for employees.

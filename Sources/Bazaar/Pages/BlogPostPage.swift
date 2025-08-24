@@ -47,7 +47,7 @@ struct BlogArticle: HTML {
                     // Render the markdown content as HTML using TouchMenu's MarkdownContent
                     TouchMenu.MarkdownContent(markdown: markdownContent, style: .bulma)
 
-                    BlogMeta(date: post.createdAt)
+                    BlogGitHubLink(post: post)
                     BlogCTACard()
                 }
             }
@@ -55,17 +55,20 @@ struct BlogArticle: HTML {
     }
 }
 
-struct BlogMeta: HTML {
-    let date: Date
+struct BlogGitHubLink: HTML {
+    let post: BlogPost
 
     var content: some HTML {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .long
-        formatter.timeStyle = .none
-        let dateString = formatter.string(from: date)
-
-        return p(.class("has-text-grey is-size-7")) {
-            "Published: \(dateString)"
+        p(.class("has-text-grey is-size-7")) {
+            "View source and history on "
+            a(
+                .href(post.githubUrl),
+                .target("_blank"),
+                .rel("noreferrer"),
+                .class("has-text-primary")
+            ) {
+                "GitHub"
+            }
         }
     }
 }

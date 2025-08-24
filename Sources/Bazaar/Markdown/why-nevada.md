@@ -4,7 +4,6 @@ slug: "why-nevada"
 description: |
     Learn why Nevada is the ideal state for your virtual mailbox service. From business-friendly
     laws to strategic location...
-created_at: "2025-01-08T10:00:00Z"
 ---
 
 Nevada offers unparalleled advantages for virtual mailbox services, making it the ideal choice for

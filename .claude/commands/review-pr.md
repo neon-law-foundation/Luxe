@@ -57,5 +57,5 @@ fundamentally cannot work on Linux (e.g., requires macOS-specific APIs), disable
    - Verify cross-platform compatibility for any platform-specific fixes
 8. **Clean up and commit**:
    - Remove any problematic custom test scripts
-   - Clean up any existing roadmap files: Delete Roadmaps/PullRequestPR*Roadmap.md files
+   - Clean up any existing roadmap issues by marking them as complete.
    - Commit changes with descriptive message detailing the root cause and fix
