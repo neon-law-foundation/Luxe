@@ -26,16 +26,16 @@ import Vapor
 public final class SmartAuthMiddleware: AsyncMiddleware {
     /// Path patterns that don't require authentication
     private let publicPatterns: [String]
-    
+
     /// Path patterns that require admin role
     private let adminPatterns: [String]
-    
+
     /// Path patterns that require staff role or higher
     private let staffPatterns: [String]
-    
+
     /// The authenticator to use for protected routes
     private let authenticator: ALBHeaderAuthenticator
-    
+
     /// Default public patterns for common routes
     public static let defaultPublicPatterns = [
         "/",
@@ -51,22 +51,22 @@ public final class SmartAuthMiddleware: AsyncMiddleware {
         "/login",
         "/logout",
         "/auth/*",
-        "/webhook/*"
+        "/webhook/*",
     ]
-    
+
     /// Default admin patterns
     public static let defaultAdminPatterns = [
         "/admin/*",
-        "/api/admin/*"
+        "/api/admin/*",
     ]
-    
+
     /// Default staff patterns
     public static let defaultStaffPatterns = [
         "/staff/*",
         "/api/staff/*",
-        "/reports/*"
+        "/reports/*",
     ]
-    
+
     /// Creates smart authentication middleware
     ///
     /// - Parameters:
@@ -85,7 +85,7 @@ public final class SmartAuthMiddleware: AsyncMiddleware {
         self.adminPatterns = adminPatterns ?? Self.defaultAdminPatterns
         self.staffPatterns = staffPatterns ?? Self.defaultStaffPatterns
     }
-    
+
     /// Processes requests with smart authentication
     ///
     /// This method:
@@ -102,25 +102,25 @@ public final class SmartAuthMiddleware: AsyncMiddleware {
     public func respond(to request: Request, chainingTo next: AsyncResponder) async throws -> Response {
         let path = request.url.path
         request.logger.debug("🛡️ SmartAuthMiddleware checking path: \(path)")
-        
+
         // Check if route is public
         if isPublicPath(path) {
             request.logger.debug("🌍 Public route, skipping authentication: \(path)")
             return try await next.respond(to: request)
         }
-        
+
         // Authenticate for protected routes
         request.logger.debug("🔒 Protected route, applying authentication: \(path)")
         try await authenticator.authenticate(request: request)
-        
+
         // Check if user was authenticated
         guard let user = request.auth.get(User.self) else {
             request.logger.error("❌ Authentication required but no user authenticated for: \(path)")
             throw Abort(.unauthorized, reason: "Authentication required")
         }
-        
+
         request.logger.info("✅ User authenticated: \(user.username) with role: \(user.role)")
-        
+
         // Check role-based access
         if isAdminPath(path) {
             guard user.hasRole(UserRole.admin) else {
@@ -129,7 +129,7 @@ public final class SmartAuthMiddleware: AsyncMiddleware {
             }
             request.logger.info("👑 Admin access granted for: \(user.username)")
         }
-        
+
         if isStaffPath(path) {
             guard user.hasRole(UserRole.staff) else {
                 request.logger.error("🚫 Staff access denied for user: \(user.username)")
@@ -137,28 +137,28 @@ public final class SmartAuthMiddleware: AsyncMiddleware {
             }
             request.logger.info("🏢 Staff access granted for: \(user.username)")
         }
-        
+
         // Set CurrentUserContext and continue
         return try await CurrentUserContext.$user.withValue(user) {
             try await next.respond(to: request)
         }
     }
-    
+
     /// Checks if a path matches public patterns
     private func isPublicPath(_ path: String) -> Bool {
-        return matchesPattern(path, patterns: publicPatterns)
+        matchesPattern(path, patterns: publicPatterns)
     }
-    
+
     /// Checks if a path matches admin patterns
     private func isAdminPath(_ path: String) -> Bool {
-        return matchesPattern(path, patterns: adminPatterns)
+        matchesPattern(path, patterns: adminPatterns)
     }
-    
+
     /// Checks if a path matches staff patterns
     private func isStaffPath(_ path: String) -> Bool {
-        return matchesPattern(path, patterns: staffPatterns)
+        matchesPattern(path, patterns: staffPatterns)
     }
-    
+
     /// Matches a path against a list of patterns
     ///
     /// Supports exact matches and wildcard patterns (ending with *)
@@ -185,4 +185,3 @@ public final class SmartAuthMiddleware: AsyncMiddleware {
         return false
     }
 }
-

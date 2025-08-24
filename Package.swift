@@ -55,7 +55,6 @@ let package = Package(
         // Cryptography
         .package(url: "https://github.com/apple/swift-crypto.git", from: "3.0.0"),
 
-
         // Queue system with Redis
         .package(url: "https://github.com/vapor/queues.git", from: "1.0.0"),
         .package(url: "https://github.com/vapor/queues-redis-driver.git", from: "1.0.0"),

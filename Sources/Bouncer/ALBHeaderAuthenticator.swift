@@ -26,13 +26,13 @@ import Vapor
 public struct ALBHeaderAuthenticator: AsyncRequestAuthenticator {
     /// OIDC configuration for JWT validation
     public let configuration: OIDCConfiguration
-    
+
     /// ALB header validator for parsing and validating headers
     private let headerValidator: ALBHeaderValidator
-    
+
     /// Audit logger for authentication events
     private let auditLogger: AuthAuditLogger
-    
+
     /// Creates a new ALB header authenticator
     ///
     /// - Parameter configuration: OIDC configuration for the environment
@@ -44,7 +44,7 @@ public struct ALBHeaderAuthenticator: AsyncRequestAuthenticator {
         )
         self.auditLogger = AuthAuditLogger(logger: Logger(label: "auth.audit"))
     }
-    
+
     /// Authenticates requests using ALB-injected headers
     ///
     /// This method:
@@ -58,45 +58,45 @@ public struct ALBHeaderAuthenticator: AsyncRequestAuthenticator {
     /// - Throws: `Abort(.unauthorized)` if authentication fails
     public func authenticate(request: Request) async throws {
         request.logger.info("🔐 ALBHeaderAuthenticator processing request: \(request.url.path)")
-        
+
         // Validate ALB headers
         let validationResult = headerValidator.validate(request: request)
-        
+
         // No headers = public route, allow through
         guard let extractedData = validationResult.extractedData else {
             request.logger.debug("🌍 No ALB headers found, allowing public access")
             return
         }
-        
+
         // Headers present but invalid = authentication failure
         if !validationResult.isValid {
             request.logger.error("❌ Invalid ALB headers: \(validationResult.errors.joined(separator: ", "))")
-            
+
             auditLogger.logAuthenticationFailure(
                 reason: "Invalid ALB headers: \(validationResult.errors.joined(separator: ", "))",
                 requestPath: request.url.path,
                 userAgent: request.headers.first(name: "user-agent"),
                 sourceIP: request.remoteAddress?.hostname
             )
-            
+
             throw Abort(.unauthorized, reason: "Invalid authentication headers")
         }
-        
+
         request.logger.info("🎫 Valid ALB headers found for sub: \(extractedData.cognitoSub)")
-        
+
         // Find existing user in database
         let user = try await findOrCreateUser(
             extractedData: extractedData,
             request: request
         )
-        
+
         // Load person relationship
         try await user.$person.load(on: request.db)
-        
+
         // Set authentication context
         // Note: User itself is stored, not wrapped in another type
         request.auth.login(user)
-        
+
         // Audit log successful authentication
         let albHeaders = extractHeaders(from: request)
         auditLogger.logAuthentication(
@@ -108,10 +108,10 @@ public struct ALBHeaderAuthenticator: AsyncRequestAuthenticator {
             sourceIP: request.remoteAddress?.hostname,
             albHeaders: albHeaders
         )
-        
+
         request.logger.info("✅ User authenticated from ALB headers: \(user.username)")
     }
-    
+
     /// Finds an existing user or returns nil (does not create)
     ///
     /// Lookup strategy:
@@ -129,7 +129,7 @@ public struct ALBHeaderAuthenticator: AsyncRequestAuthenticator {
         request: Request
     ) async throws -> User {
         request.logger.info("🔍 Looking up user with sub: \(extractedData.cognitoSub)")
-        
+
         // Try to find by Cognito sub first
         if let user = try await User.query(on: request.db)
             .filter(\.$sub == extractedData.cognitoSub)
@@ -138,7 +138,7 @@ public struct ALBHeaderAuthenticator: AsyncRequestAuthenticator {
             request.logger.info("🎯 Found user by Cognito sub: \(extractedData.cognitoSub)")
             return user
         }
-        
+
         // Try to find by email
         if let email = extractedData.email {
             if let user = try await User.query(on: request.db)
@@ -155,7 +155,7 @@ public struct ALBHeaderAuthenticator: AsyncRequestAuthenticator {
                 return user
             }
         }
-        
+
         // Try to find by username
         if let user = try await User.query(on: request.db)
             .filter(\.$username == extractedData.username)
@@ -170,21 +170,21 @@ public struct ALBHeaderAuthenticator: AsyncRequestAuthenticator {
             }
             return user
         }
-        
+
         request.logger.error("❌ User not found in database for sub: \(extractedData.cognitoSub)")
         throw Abort(.unauthorized, reason: "User not found in system")
     }
-    
+
     /// Extracts ALB headers for audit logging
     private func extractHeaders(from request: Request) -> [String: String] {
         var headers: [String: String] = [:]
-        
+
         for header in request.headers {
             if header.name.lowercased().hasPrefix("x-amzn-") {
                 headers[header.name] = header.value
             }
         }
-        
+
         return headers
     }
 }
@@ -192,11 +192,11 @@ public struct ALBHeaderAuthenticator: AsyncRequestAuthenticator {
 /// Error type for validation failures
 struct ValidationError: Error, LocalizedError {
     let message: String
-    
+
     init(_ message: String) {
         self.message = message
     }
-    
+
     var errorDescription: String? {
         message
     }
