@@ -235,12 +235,36 @@ private struct HTMLRenderer {
     }
 }
 
-/// Preprocesses markdown content to fix line break issues
+/// Preprocesses markdown content to fix line break issues and remove frontmatter
 ///
-/// This function ensures that lines ending with lowercase letters followed by lines
-/// starting with lowercase letters have proper spacing to prevent word concatenation.
+/// This function:
+/// 1. Removes YAML frontmatter if present (content between --- delimiters at the start)
+/// 2. Ensures that lines ending with lowercase letters followed by lines
+///    starting with lowercase letters have proper spacing to prevent word concatenation.
 private func preprocessMarkdown(_ content: String) -> String {
-    let lines = content.components(separatedBy: .newlines)
+    var processedContent = content
+
+    // Remove frontmatter if present
+    if processedContent.hasPrefix("---") {
+        let lines = processedContent.components(separatedBy: .newlines)
+        var frontmatterEndIndex = -1
+
+        // Find the closing --- (skip the first line which is also ---)
+        for (index, line) in lines.enumerated() where index > 0 {
+            if line.trimmingCharacters(in: .whitespaces) == "---" {
+                frontmatterEndIndex = index
+                break
+            }
+        }
+
+        // If we found the closing ---, remove everything up to and including it
+        if frontmatterEndIndex > 0 {
+            let remainingLines = Array(lines[(frontmatterEndIndex + 1)...])
+            processedContent = remainingLines.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+    }
+
+    let lines = processedContent.components(separatedBy: .newlines)
     var processedLines: [String] = []
 
     for (index, line) in lines.enumerated() {

@@ -332,6 +332,12 @@ public func configureApp(_ app: Application) async throws {
         }
     }
 
+    app.get("mailroom-terms") { _ in
+        HTMLResponse {
+            MailroomTermsPage()
+        }
+    }
+
     app.get("trifecta") { req in
         HTMLResponse {
             TrifectaPage(currentUser: CurrentUserContext.user)
