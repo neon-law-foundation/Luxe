@@ -429,37 +429,44 @@ struct ALBAuthTests {
 ## Migration Path
 
 ### Phase 0: Research (Current)
+
 - Document current authentication patterns
 - Research ALB/Cognito integration
 - Plan local development strategy
 
 ### Phase 1: Data Layer
+
 - Remove session-based database tables
 - Implement structured logging for authentication events
 - Update user models to support Cognito integration
 
 ### Phase 2: Core Authentication (Bouncer)
+
 - Remove Imperial dependencies
 - Implement ALBHeaderAuthenticator
 - Create SmartAuthMiddleware for route pattern matching
 - Add LocalMockAuthenticator for development
 
 ### Phase 3: Infrastructure (Vegas)
+
 - Configure Cognito User Pool with ALB integration
 - Implement ALB listener rules for authentication
 - Set up CloudFormation templates
 
 ### Phase 4: Application Integration (Bazaar/Destined)
+
 - Replace session middleware with ALB authentication
 - Update all protected routes
 - Implement mixed public/protected route handling
 
 ### Phase 5: Testing & Development Tools
+
 - Create comprehensive test utilities
 - Set up local development simulation
 - Document testing procedures
 
 ### Phase 6: Migration & Cleanup
+
 - Remove all session-related code
 - Clean up unused dependencies
 - Update documentation
@@ -605,6 +612,7 @@ to ensure system reliability throughout the transition.
 #### Authentication Route Configuration
 
 **App.swift Middleware Configuration:**
+
 ```swift
 // Current middleware stack
 app.middleware.use(ErrorMiddleware.default(environment: app.environment))
@@ -620,6 +628,7 @@ app.storage[SessionStorageKey.self] = [:] // TO REMOVE
 ```
 
 **Protected Route Groups:**
+
 ```swift
 // App routes (authenticated web pages)
 let protectedRoutes = appRoutes
@@ -663,6 +672,7 @@ apiRoutes.grouped(oidcMiddleware).grouped(PostgresRoleMiddleware())
 #### Session Storage Usage Patterns
 
 **SessionStorageKey Definition:**
+
 ```swift
 // In Bazaar/App.swift
 struct SessionStorageKey: StorageKey {
@@ -704,6 +714,7 @@ struct SessionStorageKey: StorageKey {
 ### Authentication Touchpoint Summary
 
 #### High Priority Changes (Bazaar)
+
 1. **Remove Imperial Dependencies**: Package.swift, ImperialAuthMiddleware.swift
 2. **Remove Session Infrastructure**: SessionStorage.swift, SessionMiddleware.swift, SessionStorageKey
 3. **Remove OAuth Callbacks**: OAuthCallbackHandler.swift, callback routes
@@ -711,16 +722,19 @@ struct SessionStorageKey: StorageKey {
 5. **Update Route Configuration**: Remove session middleware, configure ALB-only auth
 
 #### Medium Priority Changes (Bazaar)
+
 1. **Update Admin Routes**: Ensure all admin functionality works with ALB headers
 2. **Replace Login Flow**: ALB-managed login instead of manual OIDC redirect
 3. **Update Logout**: ALB logout URL instead of session clearing
 4. **Navigation Updates**: Remove session-based authentication state checks
 
 #### Low Priority Changes
+
 1. **Destined Enhancement**: Add optional authentication when user-specific features needed
 2. **Testing Updates**: Replace session-based test utilities with ALB header mocks
 
 #### Dependencies to Remove Completely
+
 - `Imperial` package dependency
 - `SessionStorageKey` and related session storage
 - All session middleware components  
@@ -728,6 +742,7 @@ struct SessionStorageKey: StorageKey {
 - In-memory session management
 
 #### Infrastructure Changes Required
+
 - ALB listener rule configuration in Vegas
 - Cognito User Pool setup with ALB integration
 - CloudFormation template updates for authentication
@@ -856,6 +871,7 @@ public func configureApp(_ app: Application) async throws {
 For teams wanting to simulate the full ALB experience:
 
 **docker-compose.development.yml:**
+
 ```yaml
 services:
   nginx-alb:
@@ -882,6 +898,7 @@ services:
 ```
 
 **nginx-alb-simulator.conf:**
+
 ```nginx
 server {
     listen 80;
@@ -924,6 +941,7 @@ server {
 #### 4. Testing Utilities for Different User Types
 
 **TestUtilities/ALBAuthTestHelpers.swift:**
+
 ```swift
 import Vapor
 
@@ -971,6 +989,7 @@ struct MockALBHeaderMiddleware: AsyncMiddleware {
 Add convenience commands for switching user types:
 
 **scripts/dev-auth.sh:**
+
 ```bash
 #!/bin/bash
 
@@ -1000,6 +1019,7 @@ echo "🎭 User groups: $DEV_USER_GROUPS"
 ```
 
 **Usage:**
+
 ```bash
 # Run as admin (default)
 ./scripts/dev-auth.sh admin && swift run BazaarServer
@@ -1016,6 +1036,7 @@ echo "🎭 User groups: $DEV_USER_GROUPS"
 The project already has Dex configured - we can extend it for ALB simulation:
 
 **dex-config.yaml Enhancement:**
+
 ```yaml
 # Existing Dex config can be enhanced to simulate ALB flows
 staticClients:
@@ -1034,18 +1055,21 @@ staticClients:
 ### Development Workflow Recommendations
 
 #### Quick Development (Recommended)
+
 1. Use environment-based mock authentication
 2. Set DEV_USER_EMAIL and DEV_USER_GROUPS environment variables
 3. ALBAuthMiddleware automatically injects headers in development mode
 4. Switch user types by changing environment variables
 
 #### Full ALB Simulation (Advanced)
+
 1. Use nginx proxy with Dex integration  
 2. Full OAuth flow simulation
 3. Cookie-based session management
 4. More realistic production behavior
 
 #### Testing Strategy
+
 1. Unit tests use MockALBHeaderMiddleware
 2. Integration tests use Application.withALBAuth() extension
 3. Different test user types for role-based testing
