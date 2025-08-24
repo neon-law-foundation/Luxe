@@ -4,7 +4,6 @@ slug: "trademark-protection-guide"
 description: |
     Understand the importance of trademark protection and the 45 USPTO classes that secure your
     brand identity and business assets.
-created_at: "2025-01-19T15:30:00Z"
 ---
 
 Your business name and brand are among your most valuable assets. Trademark protection ensures exclusive

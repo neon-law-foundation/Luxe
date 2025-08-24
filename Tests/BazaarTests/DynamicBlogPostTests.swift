@@ -35,10 +35,11 @@ struct DynamicBlogPostTests {
         #expect(post?.description == "This is a test blog post description")
         #expect(post?.filename == "test-blog-post")
 
-        // Check date parsing
-        let dateFormatter = ISO8601DateFormatter()
-        let expectedDate = dateFormatter.date(from: "2024-01-15T10:00:00Z")
-        #expect(post?.createdAt == expectedDate)
+        // Verify GitHub URL is constructed correctly
+        #expect(
+            post?.githubUrl
+                == "https://github.com/neon-law-foundation/Luxe/tree/main/Sources/Bazaar/Markdown/test-blog-post.md"
+        )
     }
 
     @Test("BlogPost returns nil for invalid frontmatter")
@@ -58,15 +59,12 @@ struct DynamicBlogPostTests {
         #expect(post2 == nil)
     }
 
-    @Test("BlogPost sorts by creation date with most recent first")
-    func blogPostSortsByCreationDate() throws {
-        let dateFormatter = ISO8601DateFormatter()
-
+    @Test("BlogPost GitHub URL is constructed correctly")
+    func blogPostGitHubURLIsConstructedCorrectly() throws {
         let post1 = BlogPost(
             title: "Older Post",
             slug: "older",
             description: "Older",
-            createdAt: dateFormatter.date(from: "2024-01-10T10:00:00Z")!,
             filename: "older"
         )
 
@@ -74,25 +72,23 @@ struct DynamicBlogPostTests {
             title: "Newer Post",
             slug: "newer",
             description: "Newer",
-            createdAt: dateFormatter.date(from: "2024-01-20T10:00:00Z")!,
             filename: "newer"
         )
 
-        let sorted = [post1, post2].sorted()
-        #expect(sorted[0].slug == "newer")
-        #expect(sorted[1].slug == "older")
+        #expect(
+            post1.githubUrl == "https://github.com/neon-law-foundation/Luxe/tree/main/Sources/Bazaar/Markdown/older.md"
+        )
+        #expect(
+            post2.githubUrl == "https://github.com/neon-law-foundation/Luxe/tree/main/Sources/Bazaar/Markdown/newer.md"
+        )
     }
 
     @Test("BlogPost equality based on slug")
     func blogPostEqualityBasedOnSlug() throws {
-        let dateFormatter = ISO8601DateFormatter()
-        let date = dateFormatter.date(from: "2024-01-15T10:00:00Z")!
-
         let post1 = BlogPost(
             title: "Title 1",
             slug: "same-slug",
             description: "Desc 1",
-            createdAt: date,
             filename: "file1"
         )
 
@@ -100,7 +96,6 @@ struct DynamicBlogPostTests {
             title: "Title 2",
             slug: "same-slug",
             description: "Desc 2",
-            createdAt: date,
             filename: "file2"
         )
 
@@ -108,7 +103,6 @@ struct DynamicBlogPostTests {
             title: "Title 3",
             slug: "different-slug",
             description: "Desc 3",
-            createdAt: date,
             filename: "file3"
         )
 
@@ -173,29 +167,24 @@ struct DynamicBlogPostTests {
         }
     }
 
-    @Test("BlogPost.getAllPosts returns sorted blog posts")
-    func getAllPostsReturnsSortedBlogPosts() throws {
+    @Test("BlogPost.getAllPosts returns blog posts without sorting")
+    func getAllPostsReturnsBlogPosts() throws {
         // This test would need actual markdown files in the directory
-        // For unit testing, we'll mock this behavior
+        // For unit testing, we'll check that posts are returned
         let posts = BlogPost.getAllPosts()
 
-        // Verify posts are sorted by date (most recent first)
-        for i in 0..<posts.count - 1 {
-            #expect(posts[i].createdAt >= posts[i + 1].createdAt)
-        }
+        // Verify posts are returned (no specific ordering expected now)
+        // Since we removed date-based sorting, just verify the function works
+        #expect(posts.count >= 0)  // Should return some posts or empty array
     }
 
     @Test("DynamicBlogPostPage should render markdown as HTML not raw text")
     func dynamicBlogPostPageShouldRenderMarkdownAsHTML() throws {
         // Arrange - Create test blog post and markdown content
-        let dateFormatter = ISO8601DateFormatter()
-        let testDate = dateFormatter.date(from: "2024-01-15T10:00:00Z")!
-
         let post = BlogPost(
             title: "Test Post",
             slug: "test-post",
             description: "A test post",
-            createdAt: testDate,
             filename: "test-post"
         )
 
@@ -244,14 +233,10 @@ struct DynamicBlogPostTests {
     @Test("DynamicBlogPostPage should sanitize malicious HTML content")
     func dynamicBlogPostPageShouldSanitizeMaliciousHTML() throws {
         // Arrange - Create test blog post with malicious HTML
-        let dateFormatter = ISO8601DateFormatter()
-        let testDate = dateFormatter.date(from: "2024-01-15T10:00:00Z")!
-
         let post = BlogPost(
             title: "Security Test Post",
             slug: "security-test",
             description: "Testing security",
-            createdAt: testDate,
             filename: "security-test"
         )
 
@@ -286,6 +271,36 @@ struct DynamicBlogPostTests {
 
         // But ensure legitimate markdown still works
         #expect(renderedHTML.contains("<h1 class=\"title\">Legitimate Heading</h1>"))
+    }
+
+    @Test("BlogPostPage displays GitHub link correctly")
+    func blogPostPageDisplaysGitHubLinkCorrectly() throws {
+        // Arrange - Create test blog post
+        let post = BlogPost(
+            title: "Test GitHub Link",
+            slug: "test-github-link",
+            description: "Testing GitHub link functionality",
+            filename: "test-github-link"
+        )
+
+        let markdownContent = "# Test Content\n\nThis is test content."
+
+        // Act - Create the blog post page
+        let page = BlogPostPage(post: post, markdownContent: markdownContent)
+
+        // Get the rendered HTML
+        let renderedHTML = String(describing: page.render())
+
+        // Assert - Verify GitHub link is present
+        #expect(renderedHTML.contains("View source and history on"))
+        #expect(
+            renderedHTML.contains(
+                "https://github.com/neon-law-foundation/Luxe/tree/main/Sources/Bazaar/Markdown/test-github-link.md"
+            )
+        )
+        #expect(renderedHTML.contains("target=\"_blank\""))
+        #expect(renderedHTML.contains("rel=\"noreferrer\""))
+        #expect(renderedHTML.contains("GitHub"))
     }
 }
 

@@ -1,14 +1,13 @@
 import Foundation
 
-struct BlogPost: Comparable {
+struct BlogPost: Equatable {
     let title: String
     let slug: String
     let description: String
-    let createdAt: Date
     let filename: String
 
-    static func < (lhs: BlogPost, rhs: BlogPost) -> Bool {
-        lhs.createdAt > rhs.createdAt  // Most recent first
+    var githubUrl: String {
+        "https://github.com/neon-law-foundation/Luxe/tree/main/Sources/Bazaar/Markdown/\(filename).md"
     }
 
     static func == (lhs: BlogPost, rhs: BlogPost) -> Bool {
@@ -38,9 +37,6 @@ struct BlogPost: Comparable {
         var title: String?
         var slug: String?
         var description: String?
-        var createdAt: Date?
-
-        let dateFormatter = ISO8601DateFormatter()
 
         for line in frontmatterLines {
             let components = line.components(separatedBy: ": ")
@@ -58,7 +54,8 @@ struct BlogPost: Comparable {
             case "description":
                 description = value
             case "created_at":
-                createdAt = dateFormatter.date(from: value)
+                // Skip date fields - we no longer use them
+                break
             default:
                 break
             }
@@ -66,13 +63,12 @@ struct BlogPost: Comparable {
 
         guard let title = title,
             let slug = slug,
-            let description = description,
-            let createdAt = createdAt
+            let description = description
         else {
             return nil
         }
 
-        return BlogPost(title: title, slug: slug, description: description, createdAt: createdAt, filename: filename)
+        return BlogPost(title: title, slug: slug, description: description, filename: filename)
     }
 
     /// Get all blog posts from the Markdown directory
@@ -96,6 +92,6 @@ struct BlogPost: Comparable {
             posts.append(post)
         }
 
-        return posts.sorted()
+        return posts
     }
 }
