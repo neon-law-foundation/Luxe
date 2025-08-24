@@ -24,7 +24,7 @@ public enum UserRole: String, Codable, CaseIterable, Sendable {
     }
 }
 
-public final class User: Model, Content, @unchecked Sendable {
+public final class User: Model, Content, Authenticatable, @unchecked Sendable {
     public static let schema = "users"
     public static let space = "auth"
 

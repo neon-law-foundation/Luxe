@@ -118,7 +118,7 @@ struct CognitoUserServiceTests {
             email: "test@example.com"
         )
 
-        #expect(throws: ValidationError.self) {
+        #expect(throws: Bouncer.ValidationError.self) {
             try cognitoData.validate()
         }
     }
@@ -132,7 +132,7 @@ struct CognitoUserServiceTests {
             email: "test@example.com"
         )
 
-        #expect(throws: ValidationError.self) {
+        #expect(throws: Bouncer.ValidationError.self) {
             try cognitoData.validate()
         }
     }
@@ -146,7 +146,7 @@ struct CognitoUserServiceTests {
             email: "ab@example.com"
         )
 
-        #expect(throws: ValidationError.self) {
+        #expect(throws: Bouncer.ValidationError.self) {
             try cognitoData.validate()
         }
     }
@@ -160,7 +160,7 @@ struct CognitoUserServiceTests {
             email: "invalid-email"
         )
 
-        #expect(throws: ValidationError.self) {
+        #expect(throws: Bouncer.ValidationError.self) {
             try cognitoData.validate()
         }
     }

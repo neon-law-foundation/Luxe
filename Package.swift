@@ -55,9 +55,6 @@ let package = Package(
         // Cryptography
         .package(url: "https://github.com/apple/swift-crypto.git", from: "3.0.0"),
 
-        // OAuth authentication
-        .package(url: "https://github.com/vapor-community/Imperial.git", from: "2.0.0"),
-
         // Queue system with Redis
         .package(url: "https://github.com/vapor/queues.git", from: "1.0.0"),
         .package(url: "https://github.com/vapor/queues-redis-driver.git", from: "1.0.0"),
@@ -155,7 +152,6 @@ let package = Package(
                 .product(name: "Vapor", package: "vapor"),
                 .product(name: "JWT", package: "jwt"),
                 .product(name: "Fluent", package: "fluent"),
-                .product(name: "Imperial", package: "Imperial"),
                 "Dali",
             ],
             exclude: [

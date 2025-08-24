@@ -30,13 +30,20 @@ git diff --cached  # For staged changes
 git diff          # For unstaged changes
 ```
 
+1. **Format Code** (MANDATORY)
+
+```bash
+# Always format Swift code before committing
+swift format --in-place --recursive .
+```
+
 1. **Stage Changes**
 
 ```bash
 git add .
 ```
 
-1. **Verify Formatting** (Optional)
+1. **Verify Formatting**
 
 ```bash
 ./scripts/validate-markdown.sh
