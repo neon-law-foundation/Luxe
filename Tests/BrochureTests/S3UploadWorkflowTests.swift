@@ -199,7 +199,7 @@ struct S3UploadConfiguration {
         """
         {
           "service": "brochure-cli",
-          "repository": "https://github.com/neon-law/Luxe",
+          "repository": "https://github.com/neon-law-foundation/Luxe",
           "last_updated": "\(buildTimestamp)",
           "latest_version": "\(version)",
           "platforms": ["darwin-arm64", "darwin-x64", "linux-arm64", "linux-x64"],

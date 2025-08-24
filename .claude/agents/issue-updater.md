@@ -64,7 +64,7 @@ BRANCH_NAME=$(git branch --show-current)
 gh issue comment {issue_number} --body "🔗 **Pull Request Created**
 - **PR**: #$PR_NUMBER - $PR_TITLE
 - **Branch**: \`$BRANCH_NAME\`
-- **URL**: https://github.com/neon-law/Luxe/pull/$PR_NUMBER
+- **URL**: https://github.com/neon-law-foundation/Luxe/pull/$PR_NUMBER
 - **Status**: Ready for review
 
 **Tasks Included in this PR:**

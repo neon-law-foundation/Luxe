@@ -49,7 +49,7 @@ command_exists() {
 detect_platform() {
     local OS=$(uname -s | tr '[:upper:]' '[:lower:]')
     local ARCH=$(uname -m)
-    
+
     case "$OS" in
         darwin)
             PLATFORM="darwin"
@@ -63,7 +63,7 @@ detect_platform() {
             exit 1
             ;;
     esac
-    
+
     case "$ARCH" in
         x86_64|amd64)
             ARCH="x64"
@@ -77,7 +77,7 @@ detect_platform() {
             exit 1
             ;;
     esac
-    
+
     # Use universal binary for macOS if available
     if [ "$PLATFORM" = "darwin" ]; then
         echo "darwin-universal"
@@ -89,13 +89,13 @@ detect_platform() {
 # Check dependencies
 check_dependencies() {
     log_step "Checking dependencies..."
-    
+
     if ! command_exists curl; then
         log_error "curl is required but not installed"
         log_error "Please install curl and try again"
         exit 1
     fi
-    
+
     # Check for shasum (macOS) or sha256sum (Linux)
     if [ "$PLATFORM" = "darwin" ]; then
         if ! command_exists shasum; then
@@ -110,7 +110,7 @@ check_dependencies() {
         fi
         CHECKSUM_CMD="sha256sum"
     fi
-    
+
     log_info "Dependencies check passed"
 }
 
@@ -121,12 +121,12 @@ download_binary() {
     local CHECKSUM_URL="$BASE_URL/$VERSION/$PLATFORM_ARCH/brochure.sha256"
     local TEMP_DIR=$(mktemp -d)
     local BINARY_PATH="$TEMP_DIR/brochure"
-    
+
     log_step "Downloading Brochure CLI..."
     log_info "Platform: $PLATFORM_ARCH"
     log_info "Version: $VERSION"
     log_info "URL: $URL"
-    
+
     # Download binary
     if ! curl -fsSL -o "$BINARY_PATH" "$URL"; then
         log_error "Failed to download binary from $URL"
@@ -134,9 +134,9 @@ download_binary() {
         rm -rf "$TEMP_DIR"
         exit 1
     fi
-    
+
     log_info "Binary downloaded successfully"
-    
+
     # Download and verify checksum
     log_step "Verifying checksum..."
     local EXPECTED_SHA
@@ -145,14 +145,14 @@ download_binary() {
         rm -rf "$TEMP_DIR"
         exit 1
     fi
-    
+
     local ACTUAL_SHA
     if [ "$PLATFORM" = "darwin" ]; then
         ACTUAL_SHA=$(shasum -a 256 "$BINARY_PATH" | cut -d' ' -f1)
     else
         ACTUAL_SHA=$(sha256sum "$BINARY_PATH" | cut -d' ' -f1)
     fi
-    
+
     if [ "$EXPECTED_SHA" != "$ACTUAL_SHA" ]; then
         log_error "Checksum verification failed!"
         log_error "Expected: $EXPECTED_SHA"
@@ -161,14 +161,14 @@ download_binary() {
         rm -rf "$TEMP_DIR"
         exit 1
     fi
-    
+
     log_info "Checksum verified successfully"
     log_info "Expected: $EXPECTED_SHA"
     log_info "Actual:   $ACTUAL_SHA"
-    
+
     # Make executable
     chmod +x "$BINARY_PATH"
-    
+
     echo "$BINARY_PATH"
 }
 
@@ -176,9 +176,9 @@ download_binary() {
 install_binary() {
     local BINARY_PATH=$1
     local TARGET_PATH="$INSTALL_DIR/brochure"
-    
+
     log_step "Installing binary..."
-    
+
     # Check if we need sudo
     local SUDO=""
     if [ -w "$INSTALL_DIR" ]; then
@@ -187,13 +187,13 @@ install_binary() {
         log_warn "Installation requires sudo access to $INSTALL_DIR"
         SUDO="sudo"
     fi
-    
+
     # Create install directory if it doesn't exist
     if [ ! -d "$INSTALL_DIR" ]; then
         log_info "Creating install directory: $INSTALL_DIR"
         $SUDO mkdir -p "$INSTALL_DIR"
     fi
-    
+
     # Install binary
     if $SUDO mv "$BINARY_PATH" "$TARGET_PATH"; then
         log_info "Binary installed successfully to $TARGET_PATH"
@@ -201,7 +201,7 @@ install_binary() {
         log_error "Failed to install binary to $TARGET_PATH"
         exit 1
     fi
-    
+
     # Set executable permissions (in case they were lost)
     $SUDO chmod +x "$TARGET_PATH"
 }
@@ -209,20 +209,20 @@ install_binary() {
 # Verify installation
 verify_installation() {
     local TARGET_PATH="$INSTALL_DIR/brochure"
-    
+
     log_step "Verifying installation..."
-    
+
     # Check if binary exists and is executable
     if [ ! -f "$TARGET_PATH" ]; then
         log_error "Binary not found at $TARGET_PATH"
         exit 1
     fi
-    
+
     if [ ! -x "$TARGET_PATH" ]; then
         log_error "Binary is not executable: $TARGET_PATH"
         exit 1
     fi
-    
+
     # Test binary execution
     local VERSION_OUTPUT
     if VERSION_OUTPUT=$("$TARGET_PATH" --version 2>/dev/null); then
@@ -232,11 +232,11 @@ verify_installation() {
         log_warn "Binary installed but version check failed"
         log_warn "This may indicate a compatibility issue"
     fi
-    
+
     # Check if binary is in PATH
     if command_exists brochure; then
         log_info "✓ brochure command is available in PATH"
-        
+
         # Test self-verification if the verify command exists
         if brochure verify --self >/dev/null 2>&1; then
             log_info "✓ Self-verification passed"
@@ -246,7 +246,7 @@ verify_installation() {
     else
         log_warn "brochure command not found in PATH"
         log_warn "Add $INSTALL_DIR to your PATH or use full path: $TARGET_PATH"
-        
+
         # Provide instructions to add to PATH
         case "$SHELL" in
             */bash)
@@ -302,14 +302,14 @@ main() {
     log_info "Brochure CLI Installer"
     log_info "====================="
     log_info ""
-    
+
     # Check if already installed
     if command_exists brochure; then
         local CURRENT_VERSION
         CURRENT_VERSION=$(brochure --version 2>/dev/null || echo "unknown")
         log_warn "Brochure CLI is already installed: $CURRENT_VERSION"
         log_warn "This will overwrite the existing installation"
-        
+
         # Give user a chance to cancel
         if [ -t 0 ] && [ -t 1 ]; then  # Check if running interactively
             echo -n "Continue? [y/N] "
@@ -320,31 +320,31 @@ main() {
             fi
         fi
     fi
-    
+
     # Detect platform
     PLATFORM_ARCH=$(detect_platform)
     log_info "Detected platform: $PLATFORM_ARCH"
-    
+
     # Extract platform for dependency checks
     PLATFORM=$(echo "$PLATFORM_ARCH" | cut -d'-' -f1)
-    
+
     # Check dependencies
     check_dependencies
-    
+
     # Download binary
     BINARY_PATH=$(download_binary "$PLATFORM_ARCH")
-    
+
     # Install
     install_binary "$BINARY_PATH"
-    
+
     # Verify
     verify_installation
-    
+
     # Show usage examples
     print_usage_examples
-    
+
     log_info "For documentation and support, visit:"
-    log_info "  https://github.com/neon-law/Luxe"
+    log_info "  https://github.com/neon-law-foundation/Luxe"
 }
 
 # Run main function with all arguments

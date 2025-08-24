@@ -169,7 +169,7 @@ git push origin $(git branch --show-current)
 
 ```bash
 echo "Create PR manually at:"
-echo "https://github.com/neon-law/Luxe/compare/main...$(git branch --show-current)"
+echo "https://github.com/neon-law-foundation/Luxe/compare/main...$(git branch --show-current)"
 ```
 
 ## Reporting Format

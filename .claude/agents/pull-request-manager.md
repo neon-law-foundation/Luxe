@@ -217,7 +217,7 @@ echo "Created PR #$PR_NUMBER"
 1. **Open in Browser**
 
 ```bash
-open "https://github.com/neon-law/Luxe/pull/$PR_NUMBER"
+open "https://github.com/neon-law-foundation/Luxe/pull/$PR_NUMBER"
 ```
 
 1. **Verify Label Applied**
@@ -348,7 +348,7 @@ git push origin $(git branch --show-current)
 
 ```bash
 echo "Create PR manually at:"
-echo "https://github.com/neon-law/Luxe/compare/main...$(git branch --show-current)"
+echo "https://github.com/neon-law-foundation/Luxe/compare/main...$(git branch --show-current)"
 ```
 
 ## PR Templates by Type

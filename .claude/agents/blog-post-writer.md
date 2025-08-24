@@ -144,8 +144,8 @@ When introducing new features:
 ```markdown
 # Introducing Batch Processing for Legal Documents
 
-Today we're releasing batch document processing, a feature requested by 
-over 60% of our legal firm users. This update addresses the specific 
+Today we're releasing batch document processing, a feature requested by
+over 60% of our legal firm users. This update addresses the specific
 workflow challenges we've heard from you.
 
 ## What This Means for Your Practice
@@ -371,7 +371,7 @@ The root cause was our naive approach to shared mutable state:
 ```swift
 class SessionManager {
     private var sessions: [UUID: Session] = [:]
-    
+
     func updateSession(_ id: UUID, data: SessionData) {
         // This wasn't thread-safe!
         sessions[id]?.update(data)
@@ -388,7 +388,7 @@ without manual locking:
 ```swift
 actor SessionManager {
     private var sessions: [UUID: Session] = [:]
-    
+
     func updateSession(_ id: UUID, data: SessionData) async {
         // Automatically thread-safe
         sessions[id]?.update(data)
@@ -409,26 +409,26 @@ actor SessionManager {
     private var sessions: [UUID: Session] = [:]
     private let metrics: MetricsCollector
     private let logger: Logger
-    
+
     init(metrics: MetricsCollector, logger: Logger) {
         self.metrics = metrics
         self.logger = logger
     }
-    
+
     func updateSession(_ id: UUID, data: SessionData) async throws {
         let startTime = Date()
-        
+
         guard var session = sessions[id] else {
             logger.warning("Session not found", metadata: ["id": .string(id.uuidString)])
             throw SessionError.notFound(id)
         }
-        
+
         session.update(data)
         sessions[id] = session
-        
+
         let duration = Date().timeIntervalSince(startTime)
         await metrics.record("session.update.duration", value: duration)
-        
+
         logger.info("Session updated", metadata: [
             "id": .string(id.uuidString),
             "duration_ms": .stringConvertible(duration * 1000)
@@ -484,7 +484,7 @@ provide a production-tested solution. Start with a single service, measure
 the results, and expand from there.
 
 We've open-sourced our session management implementation at
-[github.com/neon-law/luxe](https://github.com/neon-law/luxe). Feel free to
+[github.com/neon-law-foundation/Luxe](https://github.com/neon-law-foundation/Luxe). Feel free to
 use it as a reference or starting point for your own implementations.
 
 Have questions about using actors in production? Join our community discussion
