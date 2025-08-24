@@ -37,7 +37,8 @@ public struct MarkdownContent: HTML {
     ///   - markdown: The markdown content as a string
     ///   - style: Optional styling configuration for HTML output
     public init(markdown: String, style: StyleOptions = .default) {
-        let document = Document(parsing: markdown)
+        let processedMarkdown = preprocessMarkdown(markdown)
+        let document = Document(parsing: processedMarkdown)
         let renderer = HTMLRenderer(style: style)
         self.htmlContent = renderer.render(document)
     }
@@ -57,7 +58,8 @@ public struct MarkdownContent: HTML {
             return
         }
 
-        let document = Document(parsing: content)
+        let processedMarkdown = preprocessMarkdown(content)
+        let document = Document(parsing: processedMarkdown)
         let renderer = HTMLRenderer(style: style)
         self.htmlContent = renderer.render(document)
     }
@@ -76,7 +78,8 @@ public struct MarkdownContent: HTML {
             return
         }
 
-        let document = Document(parsing: content)
+        let processedMarkdown = preprocessMarkdown(content)
+        let document = Document(parsing: processedMarkdown)
         let renderer = HTMLRenderer(style: style)
         self.htmlContent = renderer.render(document)
     }
@@ -230,6 +233,37 @@ private struct HTMLRenderer {
         let className = style.codeClass.map { #" class="\#($0)""# } ?? ""
         return "<code\(className)>\(inlineCode.code.htmlEscaped())</code>"
     }
+}
+
+/// Preprocesses markdown content to fix line break issues
+///
+/// This function ensures that lines ending with lowercase letters followed by lines
+/// starting with lowercase letters have proper spacing to prevent word concatenation.
+private func preprocessMarkdown(_ content: String) -> String {
+    let lines = content.components(separatedBy: .newlines)
+    var processedLines: [String] = []
+
+    for (index, line) in lines.enumerated() {
+        var processedLine = line
+
+        // Check if this line ends with a lowercase letter and the next line starts with a lowercase letter
+        if index < lines.count - 1 {
+            let nextLine = lines[index + 1]
+
+            // Check if current line ends with lowercase and next line starts with lowercase
+            if let lastChar = line.last,
+                let firstChar = nextLine.first,
+                lastChar.isLowercase && firstChar.isLowercase && !nextLine.isEmpty
+            {
+                // Add a trailing space to ensure proper word separation
+                processedLine = line + " "
+            }
+        }
+
+        processedLines.append(processedLine)
+    }
+
+    return processedLines.joined(separator: "\n")
 }
 
 extension String {

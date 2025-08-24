@@ -96,7 +96,7 @@ The application automatically switches PostgreSQL roles based on the authenticat
 This ensures that database-level security policies are enforced automatically without requiring application-level
 permission checks.
 
-## Function Access Control
+## Function Permission Details
 
 PostgreSQL functions have EXECUTE permissions that control which roles can invoke them:
 
