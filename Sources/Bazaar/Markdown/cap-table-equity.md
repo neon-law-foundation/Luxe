@@ -4,7 +4,6 @@ slug: "cap-table-equity"
 description: |
     Learn how cap tables work and why transparent equity sharing matters for Nevada LLCs and C-Corps. From
     vesting schedules to fair compensation...
-created_at: "2025-01-12T10:00:00Z"
 ---
 
 ## What Is a Cap Table?

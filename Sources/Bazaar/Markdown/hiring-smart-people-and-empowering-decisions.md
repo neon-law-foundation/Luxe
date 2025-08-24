@@ -2,7 +2,6 @@
 title: "Hiring Smart People and Empowering Their Decisions"
 slug: "hiring-smart-people-and-empowering-decisions"
 description: "Why we embrace contentious debate and written culture at Sagebrush, inspired by Steve Jobs' philosophy on hiring smart people."
-created_at: "2025-08-23T12:00:00Z"
 ---
 
 Steve Jobs once said, "It doesn't make sense to hire smart people and tell them what to do; we hire smart people so

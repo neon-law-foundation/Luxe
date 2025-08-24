@@ -60,7 +60,7 @@ Create a pull request using specialized agents to ensure code quality and proper
 
 6. **PR Creation with pull-request-manager** - Use the pull-request-manager agent to create pull request:
    - Create PR using `gh pr create` with descriptive title and comprehensive summary
-   - Link to relevant roadmaps/issues in PR description
+   - Link to relevant roadmaps GitHub issues in PR description
    - Add appropriate labels and reviewers
    - Include testing verification and quality gates status
    - Get PR number and URL

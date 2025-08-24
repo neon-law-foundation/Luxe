@@ -16,7 +16,7 @@ nothing is left incomplete.
 
 1. **Orchestrate full roadmap implementation**
 2. **Delegate each task to specialized agents for TDD implementation**
-3. **Track progress and update roadmaps/issues**
+3. **Track progress and update roadmaps GitHub issues**
 4. **Ensure ALL tasks are completed**
 5. **Verify quality at each step**
 6. **Create commits after each successful implementation**

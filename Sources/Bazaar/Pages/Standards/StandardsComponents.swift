@@ -43,12 +43,22 @@ struct StandardsFooterComponent {
                         div(.class("content")) {
                             ul {
                                 li {
-                                    a(.class("has-text-light"), .href("https://www.neonlaw.com"), .target("_blank")) {
+                                    a(
+                                        .class("has-text-light"),
+                                        .href("https://www.neonlaw.com"),
+                                        .target("_blank"),
+                                        .rel("noreferrer")
+                                    ) {
                                         "Neon Law"
                                     }
                                 }
                                 li {
-                                    a(.class("has-text-light"), .href("https://www.neonlaw.org"), .target("_blank")) {
+                                    a(
+                                        .class("has-text-light"),
+                                        .href("https://www.neonlaw.org"),
+                                        .target("_blank"),
+                                        .rel("noreferrer")
+                                    ) {
                                         "Neon Law Foundation"
                                     }
                                 }
@@ -56,14 +66,16 @@ struct StandardsFooterComponent {
                                     a(
                                         .class("has-text-light"),
                                         .href("https://www.sagebrush.services"),
-                                        .target("_blank")
+                                        .target("_blank"),
+                                        .rel("noreferrer")
                                     ) { "Sagebrush Services" }
                                 }
                                 li {
                                     a(
                                         .class("has-text-light"),
                                         .href("https://standards.sagebrush.services"),
-                                        .target("_blank")
+                                        .target("_blank"),
+                                        .rel("noreferrer")
                                     ) { "Sagebrush Standards" }
                                 }
                             }
