@@ -3,7 +3,7 @@ import Foundation
 import Vapor
 
 /// Validates AWS ALB/Cognito OIDC headers for authentication
-public struct ALBHeaderValidator {
+public struct ALBHeaderValidator: Sendable {
 
     /// Required ALB OIDC headers
     public enum RequiredHeader: String, CaseIterable {

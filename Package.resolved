@@ -1,5 +1,5 @@
 {
-  "originHash" : "f63b6554c011a5979c40bc5565dc49f4f60fa8e737fdd8d4df93c7bc78d7c176",
+  "originHash" : "622518d4c956aee6c023c9b421e56677cbdff9e5102d984d4dc639b8119ad7b9",
   "pins" : [
     {
       "identity" : "async-http-client",
@@ -71,15 +71,6 @@
       "state" : {
         "revision" : "095bc5a17ab3363167f4becb270b6f8eb790481c",
         "version" : "2.10.1"
-      }
-    },
-    {
-      "identity" : "imperial",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/vapor-community/Imperial.git",
-      "state" : {
-        "revision" : "fdc90999ec5612fd0fbd80b69bf0c4ff73164809",
-        "version" : "2.0.1"
       }
     },
     {

@@ -309,7 +309,7 @@ struct ALBHeaderValidatorTests {
 
         // Test decoding
         guard let decodedData = Data(base64URLEncodedString: base64URL) else {
-            throw ValidationError("Failed to decode base64URL string")
+            throw Bouncer.ValidationError("Failed to decode base64URL string")
         }
 
         let decodedString = String(data: decodedData, encoding: .utf8)
