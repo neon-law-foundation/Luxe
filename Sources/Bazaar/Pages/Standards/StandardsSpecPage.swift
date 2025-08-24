@@ -2,7 +2,7 @@ import Elementary
 import TouchMenu
 
 struct StandardsSpecPage: HTMLDocument {
-    var title: String { "Neon Notations Specification" }
+    var title: String { "Sagebrush Standards Specification" }
 
     var head: some HTML {
         meta(.charset("utf-8"))
@@ -18,7 +18,7 @@ struct StandardsSpecPage: HTMLDocument {
         section(.class("hero is-primary is-medium")) {
             div(.class("hero-body")) {
                 div(.class("container has-text-centered")) {
-                    h1(.class("title is-1")) { "Neon Notations Specification" }
+                    h1(.class("title is-1")) { "Sagebrush Standards Specification" }
                     h2(.class("subtitle is-3")) { "Technical specification for computable document workflows" }
                 }
             }

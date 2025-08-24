@@ -166,6 +166,40 @@ public func configureApp(_ app: Application) async throws {
         }
     }
 
+    app.get("ceo-search") { req -> Response in
+        // Load the markdown file from the main Markdown directory
+        let markdownDirectory = app.directory.workingDirectory + "Sources/Bazaar/Markdown"
+        let filePath = "\(markdownDirectory)/ceo-search.md"
+
+        guard let content = try? String(contentsOfFile: filePath, encoding: .utf8) else {
+            throw Abort(.notFound, reason: "CEO Search page not found")
+        }
+
+        // Parse the frontmatter to get metadata
+        guard let post = BlogPost.parseFrontmatter(from: content, filename: "ceo-search") else {
+            throw Abort(.internalServerError, reason: "Invalid CEO Search page format")
+        }
+
+        // Extract the actual content (after frontmatter)
+        let lines = content.components(separatedBy: .newlines)
+        var contentStartIndex = 0
+        var frontmatterEndFound = false
+
+        for (index, line) in lines.enumerated() {
+            if index > 0 && line == "---" && !frontmatterEndFound {
+                contentStartIndex = index + 1
+                frontmatterEndFound = true
+                break
+            }
+        }
+
+        let markdownBody = lines[contentStartIndex...].joined(separator: "\n")
+
+        return try await HTMLResponse {
+            BlogPostPage(post: post, markdownContent: markdownBody)
+        }.encodeResponse(for: req)
+    }
+
     app.get("blog") { _ in
         HTMLResponse {
             BlogPage()
@@ -179,7 +213,7 @@ public func configureApp(_ app: Application) async throws {
         }
 
         // Load the markdown file using the app's working directory
-        let markdownDirectory = app.directory.workingDirectory + "Sources/Bazaar/Markdown"
+        let markdownDirectory = app.directory.workingDirectory + "Sources/Bazaar/Markdown/Blog"
         let filePath = "\(markdownDirectory)/\(slug).md"
 
         guard let content = try? String(contentsOfFile: filePath, encoding: .utf8) else {

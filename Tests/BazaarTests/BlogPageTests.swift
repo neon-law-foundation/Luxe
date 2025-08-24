@@ -122,7 +122,7 @@ private func configureBlogApp(_ app: Application) throws {
         }
 
         // Load the markdown file using the app's working directory
-        let markdownDirectory = app.directory.workingDirectory + "Sources/Bazaar/Markdown"
+        let markdownDirectory = app.directory.workingDirectory + "Sources/Bazaar/Markdown/Blog"
         let filePath = "\(markdownDirectory)/\(slug).md"
 
         guard let content = try? String(contentsOfFile: filePath, encoding: .utf8) else {

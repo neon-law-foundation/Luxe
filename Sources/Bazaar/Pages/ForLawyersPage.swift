@@ -409,8 +409,9 @@ struct ForLawyersPage: HTMLDocument {
     func featureHighlight(icon: String, title: String, items: [String]) -> some HTML {
         div(.class("column is-half")) {
             div(.class("box has-ribbon")) {
-                h4(.class("title is-4 has-text-primary")) {
-                    icon + " " + title
+                h4(.class("title is-4")) {
+                    span { icon }
+                    span(.class("has-text-primary")) { " " + title }
                 }
                 ul {
                     for item in items {
@@ -740,9 +741,9 @@ struct ForLawyersPage: HTMLDocument {
                                 }
                                 a(
                                     .class("button is-info is-large"),
-                                    .href("tel:+1-555-SAGE-AI1")
+                                    .href("tel:+1-510-800-2080")
                                 ) {
-                                    "Call Now: 555-SAGE-AI1"
+                                    "Call Now: 510-800-2080"
                                 }
                             }
                         }

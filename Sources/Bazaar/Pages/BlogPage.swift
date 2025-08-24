@@ -53,14 +53,6 @@ struct BlogCard: HTML {
                 div(.class("card-content")) {
                     div(.class("content")) {
                         p { post.description }
-                        a(
-                            .href(post.githubUrl),
-                            .target("_blank"),
-                            .rel("noreferrer"),
-                            .class("has-text-primary is-size-7")
-                        ) {
-                            "View on GitHub"
-                        }
                     }
                 }
                 footer(.class("card-footer")) {
