@@ -8,7 +8,11 @@ import Vapor
 /// Handles OAuth callback from Cognito or Dex after successful authentication.
 ///
 /// This handler processes the authorization code returned by the OIDC provider,
-/// exchanges it for tokens, and creates a session for the user.
+/// exchanges it for tokens, and sets authentication state.
+///
+/// Note: In production with ALB/Cognito, this callback is not used as ALB handles
+/// the authentication flow and injects headers directly. This is primarily for
+/// local development with Dex.
 public func handleOAuthCallback(_ req: Request) async throws -> Response {
     req.logger.info("🔐 OAuth callback handler started")
 
