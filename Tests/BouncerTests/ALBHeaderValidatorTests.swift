@@ -96,8 +96,6 @@ struct ALBHeaderValidatorTests {
             let logger = createTestLogger()
             let validator = ALBHeaderValidator(logger: logger, requireAllHeaders: false)
 
-            let validJWT = createValidJWT()
-
             let request = Request(
                 application: app,
                 method: .GET,
@@ -105,9 +103,18 @@ struct ALBHeaderValidatorTests {
                 on: app.eventLoopGroup.next()
             )
 
-            request.headers.add(name: "x-amzn-oidc-data", value: validJWT)
-            request.headers.add(name: "x-amzn-oidc-accesstoken", value: "access-token-123")
-            request.headers.add(name: "x-amzn-oidc-identity", value: "testuser@example.com")
+            // Use MockALBHeaders utility for consistent header generation
+            let mockHeaders = TestUtilities.createMockALBHeaders(
+                sub: "test-cognito-sub-123",
+                email: "testuser@example.com",
+                name: "Test User",
+                groups: ["staff", "customer"],
+                username: "testuser@example.com"
+            )
+
+            for header in mockHeaders {
+                request.headers.add(name: header.name, value: header.value)
+            }
 
             let result = validator.validate(request: request)
 
@@ -127,8 +134,6 @@ struct ALBHeaderValidatorTests {
             let logger = createTestLogger()
             let validator = ALBHeaderValidator(logger: logger, requireAllHeaders: false)
 
-            let validJWT = createValidJWT()
-
             let request = Request(
                 application: app,
                 method: .GET,
@@ -136,8 +141,17 @@ struct ALBHeaderValidatorTests {
                 on: app.eventLoopGroup.next()
             )
 
-            // Only include the required OIDC data header
-            request.headers.add(name: "x-amzn-oidc-data", value: validJWT)
+            // Use MockALBHeaders but only add the OIDC data header for this test
+            let mockHeaders = TestUtilities.createMockALBHeaders(
+                sub: "test-cognito-sub-123",
+                email: "testuser@example.com",
+                name: "Test User",
+                groups: ["staff", "customer"]
+            )
+
+            // Only include the required OIDC data header to test warnings for missing optional ones
+            let oidcDataHeader = mockHeaders.first { $0.name == "x-amzn-oidc-data" }!
+            request.headers.add(name: oidcDataHeader.name, value: oidcDataHeader.value)
 
             let result = validator.validate(request: request)
 
@@ -233,12 +247,17 @@ struct ALBHeaderValidatorTests {
                 on: app.eventLoopGroup.next()
             )
 
-            request.headers.add(name: "x-amzn-oidc-data", value: "not.a.valid.jwt.format")
+            // Use MockALBHeaders utility to create malformed headers
+            let malformedHeaders = TestUtilities.createMalformedALBHeaders()
+
+            for header in malformedHeaders {
+                request.headers.add(name: header.name, value: header.value)
+            }
 
             let result = validator.validate(request: request)
 
             #expect(result.isValid == false)
-            #expect(result.errors.contains { $0.contains("JWT") || $0.contains("decode") })
+            #expect(result.errors.contains { $0.contains("JWT") || $0.contains("decode") || $0.contains("base64") })
             #expect(result.extractedData == nil)
         }
     }
@@ -249,8 +268,6 @@ struct ALBHeaderValidatorTests {
             let logger = createTestLogger()
             let validator = ALBHeaderValidator(logger: logger, requireAllHeaders: false)
 
-            let expiredJWT = createExpiredJWT()
-
             let request = Request(
                 application: app,
                 method: .GET,
@@ -258,7 +275,15 @@ struct ALBHeaderValidatorTests {
                 on: app.eventLoopGroup.next()
             )
 
-            request.headers.add(name: "x-amzn-oidc-data", value: expiredJWT)
+            // Use MockALBHeaders utility to create expired headers
+            let expiredHeaders = TestUtilities.createExpiredALBHeaders(
+                sub: "expired-user-sub",
+                email: "expired@example.com"
+            )
+
+            for header in expiredHeaders {
+                request.headers.add(name: header.name, value: header.value)
+            }
 
             let result = validator.validate(request: request)
 

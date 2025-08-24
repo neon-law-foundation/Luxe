@@ -133,10 +133,12 @@ struct SmartAuthMiddlewareTests {
             }
 
             // With valid ALB headers, should work
-            let validHeaders = HTTPHeaders([
-                ("X-Amzn-Oidc-Identity", "test@example.com"),
-                ("X-Amzn-Oidc-Accesstoken", "valid-token"),
-            ])
+            let validHeaders = TestUtilities.createMockALBHeaders(
+                sub: "test-customer-sub",
+                email: "test@example.com",
+                name: "Test Customer",
+                groups: ["users"]
+            )
 
             for route in appRoutes {
                 try await app.test(.GET, route, headers: validHeaders) { response in
@@ -161,10 +163,12 @@ struct SmartAuthMiddlewareTests {
             }
 
             // With valid ALB headers, should work
-            let validHeaders = HTTPHeaders([
-                ("X-Amzn-Oidc-Identity", "test@example.com"),
-                ("X-Amzn-Oidc-Accesstoken", "valid-token"),
-            ])
+            let validHeaders = TestUtilities.createMockALBHeaders(
+                sub: "test-customer-sub",
+                email: "test@example.com",
+                name: "Test Customer",
+                groups: ["users"]
+            )
 
             for route in apiRoutes {
                 try await app.test(.GET, route, headers: validHeaders) { response in
@@ -182,10 +186,11 @@ struct SmartAuthMiddlewareTests {
             let adminRoutes = ["/admin", "/admin/users", "/api/admin/settings"]
 
             // Regular user should get forbidden
-            let userHeaders = HTTPHeaders([
-                ("X-Amzn-Oidc-Identity", "user@example.com"),
-                ("X-Amzn-Oidc-Accesstoken", "valid-token"),
-            ])
+            let userHeaders = TestUtilities.createMockALBCustomerHeaders(
+                sub: "customer-user-sub",
+                email: "user@example.com",
+                name: "Regular User"
+            )
 
             for route in adminRoutes {
                 try await app.test(.GET, route, headers: userHeaders) { response in
@@ -194,10 +199,11 @@ struct SmartAuthMiddlewareTests {
             }
 
             // Admin user should have access
-            let adminHeaders = HTTPHeaders([
-                ("X-Amzn-Oidc-Identity", "admin@neonlaw.com"),
-                ("X-Amzn-Oidc-Accesstoken", "admin-token"),
-            ])
+            let adminHeaders = TestUtilities.createMockALBAdminHeaders(
+                sub: "admin-user-sub",
+                email: "admin@neonlaw.com",
+                name: "Admin User"
+            )
 
             for route in adminRoutes {
                 try await app.test(.GET, route, headers: adminHeaders) { response in
@@ -215,10 +221,11 @@ struct SmartAuthMiddlewareTests {
             let staffRoutes = ["/staff", "/staff/reports", "/api/staff/data", "/reports"]
 
             // Regular user should get forbidden
-            let userHeaders = HTTPHeaders([
-                ("X-Amzn-Oidc-Identity", "user@example.com"),
-                ("X-Amzn-Oidc-Accesstoken", "valid-token"),
-            ])
+            let userHeaders = TestUtilities.createMockALBCustomerHeaders(
+                sub: "customer-user-sub",
+                email: "user@example.com",
+                name: "Regular User"
+            )
 
             for route in staffRoutes {
                 try await app.test(.GET, route, headers: userHeaders) { response in
@@ -227,10 +234,11 @@ struct SmartAuthMiddlewareTests {
             }
 
             // Staff user should have access
-            let staffHeaders = HTTPHeaders([
-                ("X-Amzn-Oidc-Identity", "staff@example.com"),
-                ("X-Amzn-Oidc-Accesstoken", "staff-token"),
-            ])
+            let staffHeaders = TestUtilities.createMockALBStaffHeaders(
+                sub: "staff-user-sub",
+                email: "staff@example.com",
+                name: "Staff User"
+            )
 
             for route in staffRoutes {
                 try await app.test(.GET, route, headers: staffHeaders) { response in
@@ -239,10 +247,11 @@ struct SmartAuthMiddlewareTests {
             }
 
             // Admin should also have access (higher role)
-            let adminHeaders = HTTPHeaders([
-                ("X-Amzn-Oidc-Identity", "admin@neonlaw.com"),
-                ("X-Amzn-Oidc-Accesstoken", "admin-token"),
-            ])
+            let adminHeaders = TestUtilities.createMockALBAdminHeaders(
+                sub: "admin-user-sub",
+                email: "admin@neonlaw.com",
+                name: "Admin User"
+            )
 
             for route in staffRoutes {
                 try await app.test(.GET, route, headers: adminHeaders) { response in

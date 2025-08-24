@@ -1,0 +1,529 @@
+{
+	"info": {
+		"_postman_id": "alb-auth-collection-001",
+		"name": "Luxe ALB Authentication Testing",
+		"description": "Postman collection for testing AWS ALB/Cognito header-based authentication in the Luxe application.\n\n## Overview\n\nThis collection simulates AWS Application Load Balancer (ALB) authentication headers that would normally be injected by AWS Cognito when configured with ALB listener rules.\n\n## Authentication Headers\n\nThe ALB injects these headers for authenticated requests:\n- `x-amzn-oidc-data`: Base64-encoded JWT containing user claims\n- `x-amzn-oidc-accesstoken`: Cognito access token\n- `x-amzn-oidc-identity`: User identity (email/username)\n\n## User Roles\n\nThe system supports three user roles:\n- **Customer**: Basic user access (`/app/*` routes)\n- **Staff**: Employee access (`/staff/*` routes)\n- **Admin**: Full system access (`/admin/*` routes)\n\n## Usage\n\n1. Set the `baseUrl` variable to your server (default: `http://localhost:8080`)\n2. Use the pre-configured requests with different user roles\n3. Test public routes (no authentication required)\n4. Test protected routes (authentication required)\n5. Test role-based access control\n\n## Testing Scenarios\n\n- Public routes accessible without headers\n- Protected routes require valid ALB headers\n- Admin routes require admin role\n- Staff routes require staff or admin role\n- Invalid/expired headers are rejected",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Public Routes",
+			"item": [
+				{
+					"name": "Home Page",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/",
+							"host": ["{{baseUrl}}"],
+							"path": [""]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/health",
+							"host": ["{{baseUrl}}"],
+							"path": ["health"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pricing Page",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/html"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/pricing",
+							"host": ["{{baseUrl}}"],
+							"path": ["pricing"]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Public routes that should be accessible without authentication headers."
+		},
+		{
+			"name": "Customer Authentication",
+			"item": [
+				{
+					"name": "App Home (Customer)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-amzn-oidc-data",
+								"value": "eyJpc3MiOiJ0ZXN0LWNvZ25pdG8iLCJhdWQiOlsidGVzdC1jbGllbnQiXSwiZXhwIjoxNzQ2ODE4NDAwLCJzdWIiOiJjdXN0b21lci11c2VyLXN1YiIsImVtYWlsIjoiY3VzdG9tZXJAZXhhbXBsZS5jb20iLCJuYW1lIjoiQ3VzdG9tZXIgVXNlciIsImNvZ25pdG9fZ3JvdXBzIjpbInVzZXJzIiwiY3VzdG9tZXJzIl0sInVzZXJuYW1lIjoiY3VzdG9tZXJAZXhhbXBsZS5jb20ifQ==",
+								"description": "Base64-encoded JWT with customer claims"
+							},
+							{
+								"key": "x-amzn-oidc-accesstoken",
+								"value": "mock-customer-access-token",
+								"description": "Mock Cognito access token"
+							},
+							{
+								"key": "x-amzn-oidc-identity",
+								"value": "customer@example.com",
+								"description": "Customer identity"
+							},
+							{
+								"key": "Accept",
+								"value": "text/html"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/app",
+							"host": ["{{baseUrl}}"],
+							"path": ["app"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "App Me Endpoint (Customer)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-amzn-oidc-data",
+								"value": "eyJpc3MiOiJ0ZXN0LWNvZ25pdG8iLCJhdWQiOlsidGVzdC1jbGllbnQiXSwiZXhwIjoxNzQ2ODE4NDAwLCJzdWIiOiJjdXN0b21lci11c2VyLXN1YiIsImVtYWlsIjoiY3VzdG9tZXJAZXhhbXBsZS5jb20iLCJuYW1lIjoiQ3VzdG9tZXIgVXNlciIsImNvZ25pdG9fZ3JvdXBzIjpbInVzZXJzIiwiY3VzdG9tZXJzIl0sInVzZXJuYW1lIjoiY3VzdG9tZXJAZXhhbXBsZS5jb20ifQ==",
+								"description": "Base64-encoded JWT with customer claims"
+							},
+							{
+								"key": "x-amzn-oidc-accesstoken",
+								"value": "mock-customer-access-token",
+								"description": "Mock Cognito access token"
+							},
+							{
+								"key": "x-amzn-oidc-identity",
+								"value": "customer@example.com",
+								"description": "Customer identity"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/app/me",
+							"host": ["{{baseUrl}}"],
+							"path": ["app", "me"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "API Users (Customer)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-amzn-oidc-data",
+								"value": "eyJpc3MiOiJ0ZXN0LWNvZ25pdG8iLCJhdWQiOlsidGVzdC1jbGllbnQiXSwiZXhwIjoxNzQ2ODE4NDAwLCJzdWIiOiJjdXN0b21lci11c2VyLXN1YiIsImVtYWlsIjoiY3VzdG9tZXJAZXhhbXBsZS5jb20iLCJuYW1lIjoiQ3VzdG9tZXIgVXNlciIsImNvZ25pdG9fZ3JvdXBzIjpbInVzZXJzIiwiY3VzdG9tZXJzIl0sInVzZXJuYW1lIjoiY3VzdG9tZXJAZXhhbXBsZS5jb20ifQ==",
+								"description": "Base64-encoded JWT with customer claims"
+							},
+							{
+								"key": "x-amzn-oidc-accesstoken",
+								"value": "mock-customer-access-token",
+								"description": "Mock Cognito access token"
+							},
+							{
+								"key": "x-amzn-oidc-identity",
+								"value": "customer@example.com",
+								"description": "Customer identity"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users"]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Requests authenticated as a customer user with basic access rights."
+		},
+		{
+			"name": "Staff Authentication",
+			"item": [
+				{
+					"name": "Staff Dashboard",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-amzn-oidc-data",
+								"value": "eyJpc3MiOiJ0ZXN0LWNvZ25pdG8iLCJhdWQiOlsidGVzdC1jbGllbnQiXSwiZXhwIjoxNzQ2ODE4NDAwLCJzdWIiOiJzdGFmZi11c2VyLXN1YiIsImVtYWlsIjoic3RhZmZAbmVvbmxhdy5jb20iLCJuYW1lIjoiU3RhZmYgVXNlciIsImNvZ25pdG9fZ3JvdXBzIjpbInN0YWZmIiwiZW1wbG95ZWVzIl0sInVzZXJuYW1lIjoic3RhZmZAbmVvbmxhdy5jb20ifQ==",
+								"description": "Base64-encoded JWT with staff claims"
+							},
+							{
+								"key": "x-amzn-oidc-accesstoken",
+								"value": "mock-staff-access-token",
+								"description": "Mock Cognito access token"
+							},
+							{
+								"key": "x-amzn-oidc-identity",
+								"value": "staff@neonlaw.com",
+								"description": "Staff identity"
+							},
+							{
+								"key": "Accept",
+								"value": "text/html"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/staff",
+							"host": ["{{baseUrl}}"],
+							"path": ["staff"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Staff Reports",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-amzn-oidc-data",
+								"value": "eyJpc3MiOiJ0ZXN0LWNvZ25pdG8iLCJhdWQiOlsidGVzdC1jbGllbnQiXSwiZXhwIjoxNzQ2ODE4NDAwLCJzdWIiOiJzdGFmZi11c2VyLXN1YiIsImVtYWlsIjoic3RhZmZAbmVvbmxhdy5jb20iLCJuYW1lIjoiU3RhZmYgVXNlciIsImNvZ25pdG9fZ3JvdXBzIjpbInN0YWZmIiwiZW1wbG95ZWVzIl0sInVzZXJuYW1lIjoic3RhZmZAbmVvbmxhdy5jb20ifQ==",
+								"description": "Base64-encoded JWT with staff claims"
+							},
+							{
+								"key": "x-amzn-oidc-accesstoken",
+								"value": "mock-staff-access-token",
+								"description": "Mock Cognito access token"
+							},
+							{
+								"key": "x-amzn-oidc-identity",
+								"value": "staff@neonlaw.com",
+								"description": "Staff identity"
+							},
+							{
+								"key": "Accept",
+								"value": "text/html"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/staff/reports",
+							"host": ["{{baseUrl}}"],
+							"path": ["staff", "reports"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "API Staff Data",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-amzn-oidc-data",
+								"value": "eyJpc3MiOiJ0ZXN0LWNvZ25pdG8iLCJhdWQiOlsidGVzdC1jbGllbnQiXSwiZXhwIjoxNzQ2ODE4NDAwLCJzdWIiOiJzdGFmZi11c2VyLXN1YiIsImVtYWlsIjoic3RhZmZAbmVvbmxhdy5jb20iLCJuYW1lIjoiU3RhZmYgVXNlciIsImNvZ25pdG9fZ3JvdXBzIjpbInN0YWZmIiwiZW1wbG95ZWVzIl0sInVzZXJuYW1lIjoic3RhZmZAbmVvbmxhdy5jb20ifQ==",
+								"description": "Base64-encoded JWT with staff claims"
+							},
+							{
+								"key": "x-amzn-oidc-accesstoken",
+								"value": "mock-staff-access-token",
+								"description": "Mock Cognito access token"
+							},
+							{
+								"key": "x-amzn-oidc-identity",
+								"value": "staff@neonlaw.com",
+								"description": "Staff identity"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/staff/data",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "staff", "data"]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Requests authenticated as a staff user with employee-level access rights."
+		},
+		{
+			"name": "Admin Authentication",
+			"item": [
+				{
+					"name": "Admin Dashboard",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-amzn-oidc-data",
+								"value": "eyJpc3MiOiJ0ZXN0LWNvZ25pdG8iLCJhdWQiOlsidGVzdC1jbGllbnQiXSwiZXhwIjoxNzQ2ODE4NDAwLCJzdWIiOiJhZG1pbi11c2VyLXN1YiIsImVtYWlsIjoiYWRtaW5AbmVvbmxhdy5jb20iLCJuYW1lIjoiQWRtaW4gVXNlciIsImNvZ25pdG9fZ3JvdXBzIjpbImFkbWluIiwiYWRtaW5pc3RyYXRvcnMiXSwidXNlcm5hbWUiOiJhZG1pbkBuZW9ubGF3LmNvbSJ9",
+								"description": "Base64-encoded JWT with admin claims"
+							},
+							{
+								"key": "x-amzn-oidc-accesstoken",
+								"value": "mock-admin-access-token",
+								"description": "Mock Cognito access token"
+							},
+							{
+								"key": "x-amzn-oidc-identity",
+								"value": "admin@neonlaw.com",
+								"description": "Admin identity"
+							},
+							{
+								"key": "Accept",
+								"value": "text/html"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Users Management",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-amzn-oidc-data",
+								"value": "eyJpc3MiOiJ0ZXN0LWNvZ25pdG8iLCJhdWQiOlsidGVzdC1jbGllbnQiXSwiZXhwIjoxNzQ2ODE4NDAwLCJzdWIiOiJhZG1pbi11c2VyLXN1YiIsImVtYWlsIjoiYWRtaW5AbmVvbmxhdy5jb20iLCJuYW1lIjoiQWRtaW4gVXNlciIsImNvZ25pdG9fZ3JvdXBzIjpbImFkbWluIiwiYWRtaW5pc3RyYXRvcnMiXSwidXNlcm5hbWUiOiJhZG1pbkBuZW9ubGF3LmNvbSJ9",
+								"description": "Base64-encoded JWT with admin claims"
+							},
+							{
+								"key": "x-amzn-oidc-accesstoken",
+								"value": "mock-admin-access-token",
+								"description": "Mock Cognito access token"
+							},
+							{
+								"key": "x-amzn-oidc-identity",
+								"value": "admin@neonlaw.com",
+								"description": "Admin identity"
+							},
+							{
+								"key": "Accept",
+								"value": "text/html"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/users",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "users"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "API Admin Settings",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-amzn-oidc-data",
+								"value": "eyJpc3MiOiJ0ZXN0LWNvZ25pdG8iLCJhdWQiOlsidGVzdC1jbGllbnQiXSwiZXhwIjoxNzQ2ODE4NDAwLCJzdWIiOiJhZG1pbi11c2VyLXN1YiIsImVtYWlsIjoiYWRtaW5AbmVvbmxhdy5jb20iLCJuYW1lIjoiQWRtaW4gVXNlciIsImNvZ25pdG9fZ3JvdXBzIjpbImFkbWluIiwiYWRtaW5pc3RyYXRvcnMiXSwidXNlcm5hbWUiOiJhZG1pbkBuZW9ubGF3LmNvbSJ9",
+								"description": "Base64-encoded JWT with admin claims"
+							},
+							{
+								"key": "x-amzn-oidc-accesstoken",
+								"value": "mock-admin-access-token",
+								"description": "Mock Cognito access token"
+							},
+							{
+								"key": "x-amzn-oidc-identity",
+								"value": "admin@neonlaw.com",
+								"description": "Admin identity"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/settings",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "settings"]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Requests authenticated as an admin user with full system access rights."
+		},
+		{
+			"name": "Authentication Error Cases",
+			"item": [
+				{
+					"name": "Protected Route - No Headers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/app/me",
+							"host": ["{{baseUrl}}"],
+							"path": ["app", "me"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Route - Customer User (Forbidden)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-amzn-oidc-data",
+								"value": "eyJpc3MiOiJ0ZXN0LWNvZ25pdG8iLCJhdWQiOlsidGVzdC1jbGllbnQiXSwiZXhwIjoxNzQ2ODE4NDAwLCJzdWIiOiJjdXN0b21lci11c2VyLXN1YiIsImVtYWlsIjoiY3VzdG9tZXJAZXhhbXBsZS5jb20iLCJuYW1lIjoiQ3VzdG9tZXIgVXNlciIsImNvZ25pdG9fZ3JvdXBzIjpbInVzZXJzIiwiY3VzdG9tZXJzIl0sInVzZXJuYW1lIjoiY3VzdG9tZXJAZXhhbXBsZS5jb20ifQ==",
+								"description": "Customer trying to access admin route"
+							},
+							{
+								"key": "x-amzn-oidc-accesstoken",
+								"value": "mock-customer-access-token",
+								"description": "Mock Cognito access token"
+							},
+							{
+								"key": "x-amzn-oidc-identity",
+								"value": "customer@example.com",
+								"description": "Customer identity"
+							},
+							{
+								"key": "Accept",
+								"value": "text/html"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Malformed ALB Headers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-amzn-oidc-data",
+								"value": "invalid-base64-data",
+								"description": "Malformed ALB data"
+							},
+							{
+								"key": "x-amzn-oidc-accesstoken",
+								"value": "invalid-token",
+								"description": "Invalid access token"
+							},
+							{
+								"key": "x-amzn-oidc-identity",
+								"value": "malformed-identity",
+								"description": "Malformed identity"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/app/me",
+							"host": ["{{baseUrl}}"],
+							"path": ["app", "me"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Expired JWT Token",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-amzn-oidc-data",
+								"value": "eyJpc3MiOiJ0ZXN0LWNvZ25pdG8iLCJhdWQiOlsidGVzdC1jbGllbnQiXSwiZXhwIjoxNjAwMDAwMDAwLCJzdWIiOiJleHBpcmVkLXVzZXItc3ViIiwiZW1haWwiOiJleHBpcmVkQGV4YW1wbGUuY29tIiwibmFtZSI6IkV4cGlyZWQgVXNlciIsImNvZ25pdG9fZ3JvdXBzIjpbInVzZXJzIl0sInVzZXJuYW1lIjoiZXhwaXJlZEBleGFtcGxlLmNvbSJ9",
+								"description": "JWT with expired timestamp"
+							},
+							{
+								"key": "x-amzn-oidc-accesstoken",
+								"value": "mock-access-token",
+								"description": "Mock Cognito access token"
+							},
+							{
+								"key": "x-amzn-oidc-identity",
+								"value": "expired@example.com",
+								"description": "Expired user identity"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/app/me",
+							"host": ["{{baseUrl}}"],
+							"path": ["app", "me"]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Test cases for authentication error scenarios including missing headers, insufficient permissions, and malformed tokens."
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Automatically set current timestamp for testing",
+					"const now = Math.floor(Date.now() / 1000) + 3600; // 1 hour from now",
+					"pm.environment.set('currentTimestamp', now);"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string",
+			"description": "Base URL for the Luxe application server"
+		}
+	]
+}
