@@ -114,6 +114,67 @@ public final class User: Model, Content, @unchecked Sendable {
     public func canAccessAdminFeatures() -> Bool {
         hasRole(.admin)
     }
+
+    // MARK: - Cognito Groups Mapping
+
+    /// Maps Cognito groups to UserRole, prioritizing highest access level
+    public static func roleFromCognitoGroups(_ cognitoGroups: [String]) -> UserRole {
+        // Check for admin groups first (highest priority)
+        if cognitoGroups.contains(where: { isAdminGroup($0) }) {
+            return .admin
+        }
+
+        // Check for staff groups
+        if cognitoGroups.contains(where: { isStaffGroup($0) }) {
+            return .staff
+        }
+
+        // Default to customer for any other groups or no groups
+        return .customer
+    }
+
+    /// Determines if a Cognito group indicates admin access
+    private static func isAdminGroup(_ group: String) -> Bool {
+        let adminGroups = [
+            "admin",
+            "administrators",
+            "superadmin",
+            "super-admin",
+            "system-admin",
+            "luxe-admin",
+        ]
+        return adminGroups.contains(group.lowercased())
+    }
+
+    /// Determines if a Cognito group indicates staff access
+    private static func isStaffGroup(_ group: String) -> Bool {
+        let staffGroups = [
+            "staff",
+            "employees",
+            "team",
+            "lawyers",
+            "attorneys",
+            "paralegals",
+            "luxe-staff",
+        ]
+        return staffGroups.contains(group.lowercased())
+    }
+
+    /// Updates user role based on current Cognito groups
+    public func updateRoleFromCognitoGroups(_ cognitoGroups: [String]) {
+        let newRole = User.roleFromCognitoGroups(cognitoGroups)
+
+        // Only update if role has changed to avoid unnecessary database writes
+        if self.role != newRole {
+            self.role = newRole
+        }
+    }
+
+    /// Validates that user's role is appropriate for their Cognito groups
+    public func validateRoleMatchesCognitoGroups(_ cognitoGroups: [String]) -> Bool {
+        let expectedRole = User.roleFromCognitoGroups(cognitoGroups)
+        return self.role == expectedRole
+    }
 }
 
 public struct ValidationError: Error, LocalizedError {
