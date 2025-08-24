@@ -410,8 +410,7 @@ struct ForLawyersPage: HTMLDocument {
         div(.class("column is-half")) {
             div(.class("box has-ribbon")) {
                 h4(.class("title is-4 has-text-primary")) {
-                    span(.class("icon")) { icon }
-                    span { title }
+                    icon + " " + title
                 }
                 ul {
                     for item in items {

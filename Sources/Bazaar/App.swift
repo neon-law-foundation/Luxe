@@ -102,16 +102,49 @@ public func configureApp(_ app: Application) async throws {
     // Configure OIDC
     let oidcConfig = OIDCConfiguration.create(from: app.environment)
     let oidcMiddleware = OIDCMiddleware(configuration: oidcConfig)
-    let albAuthMiddleware = ALBAuthMiddleware(configuration: oidcConfig)
 
-    // Initialize session storage
-    app.storage[SessionStorageKey.self] = [:]
+    // Configure header-based authentication with smart routing
+    let albAuthenticator = ALBHeaderAuthenticator(configuration: oidcConfig)
+    let smartAuth = SmartAuthMiddleware(
+        authenticator: albAuthenticator,
+        publicPatterns: [
+            "/",
+            "/health",
+            "/status",
+            "/favicon.ico",
+            "/robots.txt",
+            "/api/public/*",
+            "/assets/*",
+            "/css/*",
+            "/js/*",
+            "/images/*",
+            "/login",
+            "/logout",
+            "/auth/*",
+            "/webhook/*",
+            "/sagebrush",
+            "/for-lawyers",
+            "/lawyers/*",
+            "/about",
+            "/contact",
+            "/privacy",
+            "/terms",
+            "/blog",
+            "/blog/*",
+            "/newsletters",
+            "/newsletters/*",
+            "/physical-address",
+            "/onboarding",
+        ]
+    )
 
-    // Add session middleware to all routes to check for authentication state
-    // Skip session middleware for public routes in test environment
+    // Use SmartAuthMiddleware for all routes (replaces SessionMiddleware)
     if app.environment != .testing {
-        app.middleware.use(SessionMiddleware())
+        app.middleware.use(smartAuth)
     }
+
+    // Keep session storage for OAuth callback compatibility (temporary)
+    app.storage[SessionStorageKey.self] = [:]
 
     // MARK: - SagebrushWeb Routes
 
@@ -387,9 +420,9 @@ public func configureApp(_ app: Application) async throws {
         return response
     }
 
-    // Protected app routes
+    // Protected app routes - authentication handled by SmartAuthMiddleware
     let appRoutes = app.grouped("app")
-    let protectedRoutes = appRoutes.grouped(albAuthMiddleware).grouped(PostgresRoleMiddleware())
+    let protectedRoutes = appRoutes.grouped(PostgresRoleMiddleware())
 
     protectedRoutes.get("me") { req async throws in
         guard let user = CurrentUserContext.user else {
@@ -487,11 +520,10 @@ public func configureApp(_ app: Application) async throws {
         return req.redirect(to: "/app/settings")
     }
 
-    // Admin routes - only accessible to admin users
+    // Admin routes - authentication and role check handled by SmartAuthMiddleware
+    // PostgresRoleMiddleware sets the database role based on the authenticated user
     let adminRoutes = app.grouped("admin")
-        .grouped(albAuthMiddleware)
         .grouped(PostgresRoleMiddleware())
-        .grouped(AdminAuthMiddleware())
 
     // Admin dashboard route
     adminRoutes.get { req async throws in
