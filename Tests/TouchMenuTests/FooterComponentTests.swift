@@ -154,7 +154,7 @@ struct FooterComponentTests {
             #expect(html.contains("class=\"footer has-background-dark has-text-light\""))
             #expect(html.contains("class=\"container\""))
             #expect(html.contains("class=\"columns\""))
-            #expect(html.contains("class=\"column is-half\""))
+            #expect(html.contains("class=\"column is-one-third\""))
             #expect(html.contains("class=\"title is-5 has-text-light\""))
             #expect(html.contains("class=\"content\""))
             #expect(html.contains("class=\"has-text-light\""))

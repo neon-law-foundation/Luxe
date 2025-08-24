@@ -17,7 +17,7 @@ public struct FooterComponent: HTML {
         ) {
             div(.class("container")) {
                 div(.class("columns")) {
-                    div(.class("column is-half")) {
+                    div(.class("column is-one-third")) {
                         h4(.class("title is-5 has-text-light")) { "Our Network" }
                         div(.class("content")) {
                             ul {
@@ -52,7 +52,7 @@ public struct FooterComponent: HTML {
                             }
                         }
                     }
-                    div(.class("column is-half")) {
+                    div(.class("column is-one-third")) {
                         h4(.class("title is-5 has-text-light")) { "Contact" }
                         div(.class("content")) {
                             p {
@@ -64,6 +64,25 @@ public struct FooterComponent: HTML {
                             p {
                                 a(.class("has-text-light"), .href("/privacy")) {
                                     "Privacy Policy"
+                                }
+                            }
+                            p {
+                                a(.class("has-text-light"), .href("/mailroom-terms")) {
+                                    "Mailroom Terms"
+                                }
+                            }
+                        }
+                    }
+                    div(.class("column is-one-third")) {
+                        h4(.class("title is-5 has-text-light")) { "Follow Us" }
+                        div(.class("content")) {
+                            p {
+                                a(
+                                    .class("has-text-light"),
+                                    .href("https://linkedin.com/company/sagebrush-services-nv"),
+                                    .target(.blank)
+                                ) {
+                                    "LinkedIn"
                                 }
                             }
                         }
