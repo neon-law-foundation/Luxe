@@ -85,7 +85,7 @@ For the **current phase only**:
    - Mark task as completed with checkbox updates
    - Report progress status and link commits
 
-### Phase Completion: Quality Assurance
+### Phase Completion: Quality Assurance & PR Creation
 
 1. **Quality validation** (for current phase only):
    - Run `swift build` - no errors allowed
@@ -97,16 +97,25 @@ For the **current phase only**:
    - Resolve any conflicts
    - Push updates to remote
 
-### Phase PR Creation
+3. **MANDATORY: Execute `/create-pr` Command**:
+   - **CRITICAL**: Run the full `/create-pr` workflow from `.claude/commands/create-pr.md`
+   - This includes all 8 steps with specialized agents:
+     - Pre-check: Detect Swift file changes
+     - Code review with developer agent
+     - Format compliance with swift-formatter and markdown-formatter agents
+     - Final test verification with developer agent
+     - Branch management with git-branch-manager agent
+     - Commit creation with commiter agent
+     - PR creation with pull-request-manager agent
+     - Roadmap integration with issue-updater agent
 
-1. **PR Creation** - Use the **pull-request-manager agent**:
+4. **Phase-Specific PR Requirements**:
    - Title format: `[Roadmap] {RoadmapName} - Phase {N}: {PhaseName}`
    - Example: `[Roadmap] HTTPHeaderAuth - Phase 0: Research`
    - **CRITICAL**: Use "Related to #{issue}" NOT "Fixes #{issue}" (except for final phase)
-   - Verify all phase-specific quality gates pass
-   - Add appropriate labels and reviewers
+   - Include all quality gates verification from `/create-pr`
 
-2. **PR Description Template**:
+5. **PR Description Template**:
 
    ```markdown
    ## Summary
@@ -124,8 +133,8 @@ For the **current phase only**:
    Phase {N+1}: {NextPhaseName} ready to implement after merge
    ```
 
-3. **Issue Updates**:
-   - Use **issue-updater agent** to update roadmap issue
+6. **Post-PR Issue Updates**:
+   - Issue updates handled by `/create-pr` workflow
    - Update Status section with phase completion
    - Check off completed tasks for this phase only
    - Add comment with PR link and commit SHAs
@@ -145,12 +154,18 @@ graph TD
     H -->|No| E
     I --> J[issue-updater: Update Task]
     J --> D
-    D -->|Phase Done| K[git-branch-manager: Sync]
-    K --> L[pull-request-manager: Phase PR]
-    L --> M[issue-updater: Phase Update]
-    M --> N{More Phases?}
-    N -->|Yes| O[Next Phase]
-    N -->|No| P[Roadmap Complete]
+    D -->|Phase Done| K[MANDATORY: Execute /create-pr]
+    K --> L[Pre-check: Detect Changes]
+    L --> M[developer: Code Review]
+    M --> N[Formatters: Compliance]
+    N --> O[developer: Final Test]
+    O --> P[git-branch-manager: Branch Mgmt]
+    P --> Q[commiter: Conventional Commit]
+    Q --> R[pull-request-manager: Create PR]
+    R --> S[issue-updater: Roadmap Integration]
+    S --> T{More Phases?}
+    T -->|Yes| U[Next Phase]
+    T -->|No| V[Roadmap Complete]
 ```
 
 ## Quality Gates Per Phase
@@ -176,12 +191,19 @@ graph TD
 - ✅ `swift test --no-parallel` passes
 - ✅ Build has no errors
 - ✅ Formatting validated
+- ✅ **MANDATORY**: `/create-pr` workflow executed completely
 
-### Phase PR Gates
+### Phase PR Gates (via `/create-pr` workflow)
 
-- ✅ PR created with "Related to #" (pull-request-manager)
-- ✅ Issue Status section updated (issue-updater)
-- ✅ Phase-specific quality standards met
+- ✅ Pre-check: Changes detected and analyzed
+- ✅ Code review completed (developer agent)
+- ✅ Format compliance verified (swift-formatter & markdown-formatter agents)
+- ✅ Final test verification passed (developer agent)
+- ✅ Branch management completed (git-branch-manager agent)
+- ✅ Conventional commit created (commiter agent)
+- ✅ PR created with "Related to #" (pull-request-manager agent)
+- ✅ Roadmap integration completed (issue-updater agent)
+- ✅ All quality gates from `/create-pr` met
 - ✅ PR merged before starting next phase
 
 ## Agent Usage Examples
@@ -262,13 +284,15 @@ The entire roadmap is complete when:
 
 - **NEVER** skip test verification at any step
 - **ALWAYS** implement one phase at a time
-- **MANDATORY**: Create PR after each phase completion
+- **MANDATORY**: Execute `/create-pr` workflow after each phase completion
+- **CRITICAL**: `/create-pr` includes all 8 steps with specialized agents
 - **CRITICAL**: Use "Related to #{issue}" for all PRs except final
 - **MANDATORY**: Only use "Fixes #{issue}" on the final phase PR
 - **CRITICAL**: Tests must pass before any commit
 - **MANDATORY**: Run `swift test --no-parallel` after each phase
+- **MANDATORY**: All quality gates from `/create-pr` must pass
 - Each task gets its own commit (via commiter agent)
-- Update GitHub issue Status section after each phase
+- Update GitHub issue Status section after each phase (via issue-updater agent)
 - Wait for PR merge before starting next phase
 
 ## PR Linking Rules

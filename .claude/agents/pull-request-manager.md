@@ -69,6 +69,7 @@ git push origin $(git branch --show-current)
 ```bash
 gh pr create \
   --title "[Roadmap: {Name}] {Description}" \
+  --label "{type}" \
   --body "$(cat <<'EOF'
 ## Summary
 {Brief description of changes}
@@ -90,13 +91,14 @@ This PR implements tasks from the {RoadmapName} roadmap:
 - ✅ Formatting validated
 - ✅ Quality gates met
 
-## Type of Change
-- [ ] 🐛 Bug fix (non-breaking change which fixes an issue)
-- [ ] ✨ New feature (non-breaking change which adds functionality)
-- [ ] 💥 Breaking change (fix or feature that would cause existing functionality to not work as expected)
-- [ ] 📚 Documentation update
-- [ ] 🔧 Configuration change
-- [ ] 🧹 Code cleanup/refactoring
+## GitHub Labels
+This PR will be automatically labeled with one of these types:
+- `bug` - 🐛 Bug fix (non-breaking change which fixes an issue)
+- `feature` - ✨ New feature (non-breaking change which adds functionality)
+- `breaking` - 💥 Breaking change (fix or feature that would cause existing functionality to not work as expected)
+- `documentation` - 📚 Documentation update
+- `configuration` - 🔧 Configuration change
+- `refactor` - 🧹 Code cleanup/refactoring
 
 ## Checklist
 - [ ] My code follows the project's style guidelines
@@ -129,6 +131,7 @@ EOF
 ```bash
 gh pr create \
   --title "[Feature] {Feature Name}: {Brief Description}" \
+  --label "feature" \
   --body "$(cat <<'EOF'
 ## 🚀 Feature Description
 {Detailed description of the new feature}
@@ -171,6 +174,7 @@ EOF
 ```bash
 gh pr create \
   --title "[Fix] {Component}: {Brief Description}" \
+  --label "bug" \
   --body "$(cat <<'EOF'
 ## 🐛 Bug Description
 {Clear description of the bug}
@@ -216,12 +220,11 @@ echo "Created PR #$PR_NUMBER"
 open "https://github.com/neon-law/Luxe/pull/$PR_NUMBER"
 ```
 
-1. **Add Labels** (if applicable)
+1. **Verify Label Applied**
 
 ```bash
-gh pr edit $PR_NUMBER --add-label "enhancement,roadmap"
-# or for bug fixes:
-gh pr edit $PR_NUMBER --add-label "bug,fix"
+gh pr view $PR_NUMBER --json labels -q '.labels[].name'
+# Should show exactly one type label: bug, feature, breaking, documentation, configuration, or refactor
 ```
 
 1. **Assign Reviewers** (if specified)
@@ -256,7 +259,7 @@ gh pr edit $PR_NUMBER --add-project "Luxe Development"
 ✅ Comprehensive description
 ✅ Roadmap linkage clear
 ✅ Testing verification included
-✅ Change type identified
+✅ Exactly one type label applied
 ✅ Checklist completed
 ✅ Related issues linked
 ```
@@ -353,22 +356,46 @@ echo "https://github.com/neon-law/Luxe/compare/main...$(git branch --show-curren
 ### Documentation PR
 
 ```bash
---title "[Docs] {Area}: {Description}"
---body "Documentation updates for {area}..."
+gh pr create \
+  --title "[Docs] {Area}: {Description}" \
+  --label "documentation" \
+  --body "Documentation updates for {area}..."
 ```
 
 ### Refactoring PR
 
 ```bash
---title "[Refactor] {Component}: {Description}"
---body "Code refactoring to improve {aspects}..."
+gh pr create \
+  --title "[Refactor] {Component}: {Description}" \
+  --label "refactor" \
+  --body "Code refactoring to improve {aspects}..."
 ```
 
 ### Test PR
 
 ```bash
---title "[Test] {Component}: {Description}"
---body "Test coverage improvements for {component}..."
+gh pr create \
+  --title "[Test] {Component}: {Description}" \
+  --label "feature" \
+  --body "Test coverage improvements for {component}..."
+```
+
+### Configuration PR
+
+```bash
+gh pr create \
+  --title "[Config] {Area}: {Description}" \
+  --label "configuration" \
+  --body "Configuration changes for {area}..."
+```
+
+### Breaking Change PR
+
+```bash
+gh pr create \
+  --title "[Breaking] {Component}: {Description}" \
+  --label "breaking" \
+  --body "Breaking changes to {component}..."
 ```
 
 ## Reporting Format
@@ -421,7 +448,7 @@ Status: ✅ Ready for creation
 - Verify all quality gates
 - Link to roadmap issues
 - Include comprehensive descriptions
-- Add appropriate labels
+- Add exactly one type label (bug, feature, breaking, documentation, configuration, or refactor)
 - Coordinate with Informant for updates
 
 ## Integration Points
