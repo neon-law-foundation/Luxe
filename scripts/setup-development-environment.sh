@@ -192,6 +192,21 @@ else
     print_warning "Some Docker services may not be running properly"
 fi
 
+echo "Configuring context7 MCP server for Claude Code.."
+claude mcp add --transport sse context7 https://mcp.context7.com/sse
+
+echo ""
+echo "Configuring OpenAI deep research MCP server for Claude Code.."
+echo -e "${YELLOW}This requires an OpenAI API key for deep research capabilities.${NC}"
+read -p "Enter your OpenAI API key (or press Enter to skip): " OPENAI_API_KEY
+
+if [ -n "$OPENAI_API_KEY" ]; then
+    claude mcp add openai-deep-research -s user npx github:fbettag/openai-deep-research-mcp -e OPENAI_API_KEY=$OPENAI_API_KEY
+    echo -e "${GREEN}✓ OpenAI deep research MCP server configured${NC}"
+else
+    echo -e "${YELLOW}⚠ Skipping OpenAI deep research MCP server (no API key provided)${NC}"
+fi
+
 # Final Success Message
 print_header "🎉 Development Environment Setup Complete!"
 
