@@ -39,7 +39,7 @@ struct StandardsTests {
                 #expect(response.status == .ok)
                 #expect(response.headers.contentType == .html)
                 let responseBody = response.body.string
-                #expect(responseBody.contains("Neon Notations Specification"))
+                #expect(responseBody.contains("Sagebrush Standards Specification"))
                 #expect(responseBody.contains("document workflows"))
                 #expect(responseBody.contains("computable legal document workflows"))
                 #expect(responseBody.contains("standards@sagebrush.services"))

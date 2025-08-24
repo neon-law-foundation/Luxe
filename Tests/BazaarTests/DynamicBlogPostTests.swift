@@ -38,7 +38,7 @@ struct DynamicBlogPostTests {
         // Verify GitHub URL is constructed correctly
         #expect(
             post?.githubUrl
-                == "https://github.com/neon-law-foundation/Luxe/tree/main/Sources/Bazaar/Markdown/test-blog-post.md"
+                == "https://github.com/neon-law-foundation/Luxe/tree/main/Sources/Bazaar/Markdown/Blog/test-blog-post.md"
         )
     }
 
@@ -76,10 +76,12 @@ struct DynamicBlogPostTests {
         )
 
         #expect(
-            post1.githubUrl == "https://github.com/neon-law-foundation/Luxe/tree/main/Sources/Bazaar/Markdown/older.md"
+            post1.githubUrl
+                == "https://github.com/neon-law-foundation/Luxe/tree/main/Sources/Bazaar/Markdown/Blog/older.md"
         )
         #expect(
-            post2.githubUrl == "https://github.com/neon-law-foundation/Luxe/tree/main/Sources/Bazaar/Markdown/newer.md"
+            post2.githubUrl
+                == "https://github.com/neon-law-foundation/Luxe/tree/main/Sources/Bazaar/Markdown/Blog/newer.md"
         )
     }
 
@@ -122,7 +124,7 @@ struct DynamicBlogPostTests {
                 }
 
                 // Load the markdown file
-                let markdownDirectory = app.directory.workingDirectory + "Sources/Bazaar/Markdown"
+                let markdownDirectory = app.directory.workingDirectory + "Sources/Bazaar/Markdown/Blog"
                 let filePath = "\(markdownDirectory)/\(slug).md"
 
                 guard let content = try? String(contentsOfFile: filePath, encoding: .utf8) else {
@@ -295,7 +297,7 @@ struct DynamicBlogPostTests {
         #expect(renderedHTML.contains("View source and history on"))
         #expect(
             renderedHTML.contains(
-                "https://github.com/neon-law-foundation/Luxe/tree/main/Sources/Bazaar/Markdown/test-github-link.md"
+                "https://github.com/neon-law-foundation/Luxe/tree/main/Sources/Bazaar/Markdown/Blog/test-github-link.md"
             )
         )
         #expect(renderedHTML.contains("target=\"_blank\""))

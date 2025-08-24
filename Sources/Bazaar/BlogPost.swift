@@ -8,7 +8,7 @@ struct BlogPost: Equatable, Identifiable {
     let filename: String
 
     var githubUrl: String {
-        "https://github.com/neon-law-foundation/Luxe/tree/main/Sources/Bazaar/Markdown/\(filename).md"
+        "https://github.com/neon-law-foundation/Luxe/tree/main/Sources/Bazaar/Markdown/Blog/\(filename).md"
     }
 
     static func == (lhs: BlogPost, rhs: BlogPost) -> Bool {
@@ -74,7 +74,7 @@ struct BlogPost: Equatable, Identifiable {
 
     /// Get all blog posts from the Markdown directory
     static func getAllPosts(workingDirectory: String = "") -> [BlogPost] {
-        let markdownDirectory = workingDirectory + "Sources/Bazaar/Markdown"
+        let markdownDirectory = workingDirectory + "Sources/Bazaar/Markdown/Blog"
         let fileManager = FileManager.default
 
         guard let files = try? fileManager.contentsOfDirectory(atPath: markdownDirectory) else {
