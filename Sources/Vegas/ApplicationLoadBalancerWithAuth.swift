@@ -1,10 +1,10 @@
 struct ApplicationLoadBalancerWithAuth: Stack {
-    /// Enhanced Application Load Balancer with Cognito authentication for specific paths
-    /// Builds upon the existing ALB to add authentication rules
+    /// Enhanced Application Load Balancer with Cognito authentication and header injection
+    /// Provides ALB-based authentication with automatic header injection for downstream services
     let templateBody: String = """
         {
           "AWSTemplateFormatVersion": "2010-09-09",
-          "Description": "Application Load Balancer with Cognito and OIDC authentication",
+          "Description": "Application Load Balancer with Cognito authentication and OIDC header injection",
           "Parameters": {
             "VPCStackName": {
               "Type": "String",
@@ -19,6 +19,19 @@ struct ApplicationLoadBalancerWithAuth: Stack {
               "Type": "String",
               "Description": "Name of the Cognito User Pool stack to import values from",
               "Default": "sagebrush-cognito"
+            },
+            "EnableHeaderInjection": {
+              "Type": "String",
+              "Description": "Enable automatic header injection for authenticated users",
+              "Default": "true",
+              "AllowedValues": ["true", "false"]
+            },
+            "SessionTimeout": {
+              "Type": "Number",
+              "Description": "Authentication session timeout in seconds",
+              "Default": 604800,
+              "MinValue": 1,
+              "MaxValue": 604800
             }
           },
           "Conditions": {
@@ -31,6 +44,9 @@ struct ApplicationLoadBalancerWithAuth: Stack {
                   ]
                 }
               ]
+            },
+            "HeaderInjectionEnabled": {
+              "Fn::Equals": [{ "Ref": "EnableHeaderInjection" }, "true"]
             }
           },
           "Resources": {
@@ -187,6 +203,62 @@ struct ApplicationLoadBalancerWithAuth: Stack {
               "Value": { "Ref": "HTTPListener" },
               "Export": {
                 "Name": { "Fn::Sub": "${AWS::StackName}-HTTPListenerArn" }
+              }
+            },
+            "CognitoUserPoolArn": {
+              "Description": "ARN of the associated Cognito User Pool",
+              "Value": { "Fn::ImportValue": { "Fn::Sub": "${CognitoStackName}-UserPoolArn" } },
+              "Export": {
+                "Name": { "Fn::Sub": "${AWS::StackName}-CognitoUserPoolArn" }
+              }
+            },
+            "CognitoUserPoolClientId": {
+              "Description": "Client ID of the associated Cognito User Pool",
+              "Value": { "Fn::ImportValue": { "Fn::Sub": "${CognitoStackName}-UserPoolClientId" } },
+              "Export": {
+                "Name": { "Fn::Sub": "${AWS::StackName}-CognitoUserPoolClientId" }
+              }
+            },
+            "CognitoUserPoolDomain": {
+              "Description": "Domain of the associated Cognito User Pool",
+              "Value": { "Fn::ImportValue": { "Fn::Sub": "${CognitoStackName}-UserPoolDomain" } },
+              "Export": {
+                "Name": { "Fn::Sub": "${AWS::StackName}-CognitoUserPoolDomain" }
+              }
+            },
+            "AuthorizationEndpoint": {
+              "Description": "OAuth2 authorization endpoint for ALB authentication",
+              "Value": { "Fn::ImportValue": { "Fn::Sub": "${CognitoStackName}-AuthorizationEndpoint" } },
+              "Export": {
+                "Name": { "Fn::Sub": "${AWS::StackName}-AuthorizationEndpoint" }
+              }
+            },
+            "TokenEndpoint": {
+              "Description": "OAuth2 token endpoint for ALB authentication",
+              "Value": { "Fn::ImportValue": { "Fn::Sub": "${CognitoStackName}-TokenEndpoint" } },
+              "Export": {
+                "Name": { "Fn::Sub": "${AWS::StackName}-TokenEndpoint" }
+              }
+            },
+            "UserInfoEndpoint": {
+              "Description": "OAuth2 user info endpoint for ALB authentication",
+              "Value": { "Fn::ImportValue": { "Fn::Sub": "${CognitoStackName}-UserInfoEndpoint" } },
+              "Export": {
+                "Name": { "Fn::Sub": "${AWS::StackName}-UserInfoEndpoint" }
+              }
+            },
+            "HeaderInjectionEnabled": {
+              "Description": "Whether header injection is enabled for authenticated requests",
+              "Value": { "Ref": "EnableHeaderInjection" },
+              "Export": {
+                "Name": { "Fn::Sub": "${AWS::StackName}-HeaderInjectionEnabled" }
+              }
+            },
+            "SessionTimeoutSeconds": {
+              "Description": "Authentication session timeout in seconds",
+              "Value": { "Ref": "SessionTimeout" },
+              "Export": {
+                "Name": { "Fn::Sub": "${AWS::StackName}-SessionTimeoutSeconds" }
               }
             }
           }
