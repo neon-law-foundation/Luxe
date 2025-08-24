@@ -72,7 +72,7 @@ Create a pull request using specialized agents to ensure code quality and proper
    - Post progress reports on roadmap issues
 
 8. **Final Verification** - Ensure PR is ready:
-   - Open PR in browser: `open https://github.com/neon-law/Luxe/pull/XXXX`
+   - Open PR in browser: `open https://github.com/neon-law-foundation/Luxe/pull/XXXX`
    - Verify all CI checks will pass
    - Confirm roadmap linking is complete
 

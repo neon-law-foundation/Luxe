@@ -50,7 +50,7 @@ public enum TemplateContent {
 
         ## Overview
 
-        This project was generated with [Brochure CLI](https://github.com/neon-law/Luxe) using the Landing Page template.
+        This project was generated with [Brochure CLI](https://github.com/neon-law-foundation/Luxe) using the Landing Page template.
 
         ## Project Structure
 
@@ -128,7 +128,7 @@ public enum TemplateContent {
 
         ---
 
-        Generated with ❤️ by [Brochure CLI](https://github.com/neon-law/Luxe)
+        Generated with ❤️ by [Brochure CLI](https://github.com/neon-law-foundation/Luxe)
         """
 
     // MARK: - Landing Page Template
@@ -687,7 +687,7 @@ public enum TemplateContent {
         ```
 
         ---
-        Generated with [Brochure CLI](https://github.com/neon-law/Luxe)
+        Generated with [Brochure CLI](https://github.com/neon-law-foundation/Luxe)
         """
 
     // MARK: - Other Templates (abbreviated for space)

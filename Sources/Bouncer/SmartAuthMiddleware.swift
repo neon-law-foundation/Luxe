@@ -3,18 +3,35 @@ import Fluent
 import Foundation
 import Vapor
 
-/// Middleware that selectively applies authentication based on route patterns
+/// Protocol for ALB-style authenticators
 ///
-/// This middleware implements a smart routing strategy where certain paths are public
-/// (no authentication required) while others are protected. It replaces the need for
-/// complex route grouping by handling authentication at the middleware level.
+/// This protocol allows SmartAuthMiddleware to work with different authenticator implementations,
+/// making it testable and more flexible.
+public protocol ALBAuthenticatorProtocol: Sendable {
+    /// OIDC configuration for the authenticator
+    var configuration: OIDCConfiguration { get }
+
+    /// Authenticates a request using headers or other methods
+    ///
+    /// - Parameter request: The request to authenticate
+    /// - Throws: `Abort` if authentication fails
+    func authenticate(request: Request) async throws
+}
+
+/// Middleware that applies authentication only to /app and /api routes
+///
+/// This middleware implements a simple authentication strategy where:
+/// - All paths are public by default (no authentication required)
+/// - Only paths starting with "/app" or "/api" require authentication
+/// - Admin routes (/admin, /api/admin) require admin role
+/// - Staff routes (/staff, /api/staff) require staff role or higher
 ///
 /// ## Features
 ///
-/// - **Pattern-based routing**: Define public and protected path patterns
-/// - **Role-based access**: Enforce role requirements for admin routes
-/// - **Performance optimized**: Skip authentication for public routes
-/// - **Configurable**: Easy to customize patterns for your application
+/// - **Simple routing**: Only /app and /api routes require authentication
+/// - **Role-based access**: Enforce role requirements for admin/staff routes
+/// - **Performance optimized**: Skip authentication for all other routes
+/// - **No configuration needed**: Works out of the box
 ///
 /// ## Usage
 ///
@@ -24,9 +41,6 @@ import Vapor
 /// app.middleware.use(smartAuth)
 /// ```
 public final class SmartAuthMiddleware: AsyncMiddleware {
-    /// Path patterns that don't require authentication
-    private let publicPatterns: [String]
-
     /// Path patterns that require admin role
     private let adminPatterns: [String]
 
@@ -34,54 +48,33 @@ public final class SmartAuthMiddleware: AsyncMiddleware {
     private let staffPatterns: [String]
 
     /// The authenticator to use for protected routes
-    private let authenticator: ALBHeaderAuthenticator
-
-    /// Default public patterns for common routes
-    public static let defaultPublicPatterns = [
-        "/",
-        "/health",
-        "/status",
-        "/favicon.ico",
-        "/robots.txt",
-        "/api/public/*",
-        "/assets/*",
-        "/css/*",
-        "/js/*",
-        "/images/*",
-        "/login",
-        "/logout",
-        "/auth/*",
-        "/webhook/*",
-    ]
+    private let authenticator: ALBAuthenticatorProtocol
 
     /// Default admin patterns
     public static let defaultAdminPatterns = [
-        "/admin/*",
-        "/api/admin/*",
+        "/admin",
+        "/api/admin",
     ]
 
     /// Default staff patterns
     public static let defaultStaffPatterns = [
-        "/staff/*",
-        "/api/staff/*",
-        "/reports/*",
+        "/staff",
+        "/api/staff",
+        "/reports",
     ]
 
     /// Creates smart authentication middleware
     ///
     /// - Parameters:
-    ///   - authenticator: The ALB header authenticator to use
-    ///   - publicPatterns: Patterns for public routes (uses defaults if nil)
+    ///   - authenticator: The authenticator to use for protected routes
     ///   - adminPatterns: Patterns for admin-only routes (uses defaults if nil)
     ///   - staffPatterns: Patterns for staff-only routes (uses defaults if nil)
     public init(
-        authenticator: ALBHeaderAuthenticator,
-        publicPatterns: [String]? = nil,
+        authenticator: ALBAuthenticatorProtocol,
         adminPatterns: [String]? = nil,
         staffPatterns: [String]? = nil
     ) {
         self.authenticator = authenticator
-        self.publicPatterns = publicPatterns ?? Self.defaultPublicPatterns
         self.adminPatterns = adminPatterns ?? Self.defaultAdminPatterns
         self.staffPatterns = staffPatterns ?? Self.defaultStaffPatterns
     }
@@ -89,10 +82,11 @@ public final class SmartAuthMiddleware: AsyncMiddleware {
     /// Processes requests with smart authentication
     ///
     /// This method:
-    /// 1. Checks if the route is public (skip authentication)
-    /// 2. Applies authentication for protected routes
-    /// 3. Enforces role-based access for admin/staff routes
-    /// 4. Sets CurrentUserContext for authenticated requests
+    /// 1. Checks if the route requires authentication (/app or /api paths)
+    /// 2. For non-protected routes, skips authentication
+    /// 3. For protected routes, applies authentication
+    /// 4. Enforces role-based access for admin/staff routes
+    /// 5. Sets CurrentUserContext for authenticated requests
     ///
     /// - Parameters:
     ///   - request: The incoming HTTP request
@@ -103,8 +97,8 @@ public final class SmartAuthMiddleware: AsyncMiddleware {
         let path = request.url.path
         request.logger.debug("🛡️ SmartAuthMiddleware checking path: \(path)")
 
-        // Check if route is public
-        if isPublicPath(path) {
+        // Check if route requires authentication (only /app and /api paths)
+        if !requiresAuthentication(path) {
             request.logger.debug("🌍 Public route, skipping authentication: \(path)")
             return try await next.respond(to: request)
         }
@@ -144,31 +138,38 @@ public final class SmartAuthMiddleware: AsyncMiddleware {
         }
     }
 
-    /// Checks if a path matches public patterns
-    private func isPublicPath(_ path: String) -> Bool {
-        matchesPattern(path, patterns: publicPatterns)
+    /// Checks if a path requires authentication
+    ///
+    /// Paths require authentication if they:
+    /// - Start with "/app" or "/api"
+    /// - Match any admin patterns
+    /// - Match any staff patterns
+    /// All other paths are public.
+    ///
+    /// - Parameter path: The path to check
+    /// - Returns: True if the path requires authentication
+    private func requiresAuthentication(_ path: String) -> Bool {
+        // Check standard protected paths
+        if path == "/app" || path.hasPrefix("/app/") || path == "/api" || path.hasPrefix("/api/") {
+            return true
+        }
+
+        // Check admin patterns
+        if isAdminPath(path) {
+            return true
+        }
+
+        // Check staff patterns
+        if isStaffPath(path) {
+            return true
+        }
+
+        return false
     }
 
-    /// Checks if a path matches admin patterns
+    /// Checks if a path requires admin role
     private func isAdminPath(_ path: String) -> Bool {
-        matchesPattern(path, patterns: adminPatterns)
-    }
-
-    /// Checks if a path matches staff patterns
-    private func isStaffPath(_ path: String) -> Bool {
-        matchesPattern(path, patterns: staffPatterns)
-    }
-
-    /// Matches a path against a list of patterns
-    ///
-    /// Supports exact matches and wildcard patterns (ending with *)
-    ///
-    /// - Parameters:
-    ///   - path: The path to check
-    ///   - patterns: The patterns to match against
-    /// - Returns: True if the path matches any pattern
-    private func matchesPattern(_ path: String, patterns: [String]) -> Bool {
-        for pattern in patterns {
+        for pattern in adminPatterns {
             if pattern.hasSuffix("*") {
                 // Wildcard pattern - check prefix match
                 let prefix = String(pattern.dropLast())
@@ -176,8 +177,27 @@ public final class SmartAuthMiddleware: AsyncMiddleware {
                     return true
                 }
             } else {
-                // Exact match
-                if path == pattern {
+                // Exact match or prefix match for patterns without wildcards
+                if path == pattern || path.hasPrefix(pattern + "/") {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    /// Checks if a path requires staff role
+    private func isStaffPath(_ path: String) -> Bool {
+        for pattern in staffPatterns {
+            if pattern.hasSuffix("*") {
+                // Wildcard pattern - check prefix match
+                let prefix = String(pattern.dropLast())
+                if path.hasPrefix(prefix) {
+                    return true
+                }
+            } else {
+                // Exact match or prefix match for patterns without wildcards
+                if path == pattern || path.hasPrefix(pattern + "/") {
                     return true
                 }
             }
