@@ -1,5 +1,5 @@
 ---
-name: Delete Old Packages
+name: Delete Old Images
 
 on:
   schedule:
