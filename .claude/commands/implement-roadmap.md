@@ -3,40 +3,45 @@
 ## Usage
 
 ```txt
-/implement-roadmap ISSUE_NUMBER
+/implement-roadmap ISSUE_NUMBER [PHASE_NUMBER]
 ```
 
-Where `ISSUE_NUMBER` is the GitHub issue number containing the roadmap tasks (e.g., `11`, `15`).
+Where:
+- `ISSUE_NUMBER` is the GitHub issue number containing the roadmap tasks (e.g., `11`, `15`)
+- `PHASE_NUMBER` (optional) specifies which phase to implement (e.g., `0`, `1`, `2`).
+  If omitted, implements the next uncompleted phase.
 
 ## Overview
 
-This comprehensive roadmap implementation leverages specialized Claude Code agents for each phase of development,
-ensuring better context management, task specialization, and quality control. The workflow orchestrates multiple
-agents to implement complete roadmaps from start to finish.
+This per-phase roadmap implementation leverages specialized Claude Code agents for focused development,
+ensuring better context management, incremental progress, and reviewable PRs. Each phase is implemented
+and merged separately, allowing for continuous integration and reduced risk.
 
-## Implementation Phases
+## Implementation Strategy
 
-### Phase 1: Project Setup & Research
+### IMPORTANT: Per-Phase Approach
 
-1. **Branch Management** - Use the **git-branch-manager agent** to handle branch operations:
-   - Check current branch status
-   - Create feature branch if needed: `roadmap/{roadmap-name}`
+**Each phase is implemented separately with its own PR**. This ensures:
+- Smaller, reviewable pull requests
+- Incremental progress tracking
+- Reduced risk and easier rollback
+- Continuous integration of changes
+
+### Phase 0: Initial Setup
+
+1. **Read the GitHub issue** to identify:
+   - Current phase status from the Status section
+   - Next uncompleted phase to implement
+   - Tasks specific to that phase only
+
+2. **Branch Management** - Use the **git-branch-manager agent**:
+   - Create phase-specific branch: `roadmap/{issue-number}-phase-{phase-number}`
+   - Example: `roadmap/13-phase-0` for Phase 0 of issue #13
    - Ensure branch is properly tracked and pushed
 
-2. **Issue Tracking** - Use the **issue-creator agent** to create GitHub issue for roadmap:
-   - Creates structured issue with task breakdown
-   - Provides sample implementations
-   - Better tracking and visibility
-   - Set up proper labels and milestones
+### Phase-Specific Implementation
 
-3. **Research current implementation**:
-   - Read the GitHub issue with roadmap tasks
-   - Understand current status and next steps from issue description
-   - Identify dependencies and impacts from issue technical details
-
-### Phase 2: Implementation Cycle
-
-For each uncompleted task in the roadmap:
+For the **current phase only**:
 
 1. **Mark task as in progress** by updating the GitHub issue with progress comments
 
@@ -80,9 +85,9 @@ For each uncompleted task in the roadmap:
    - Mark task as completed with checkbox updates
    - Report progress status and link commits
 
-### Phase 3: Quality Assurance
+### Phase Completion: Quality Assurance
 
-1. **Quality validation**:
+1. **Quality validation** (for current phase only):
    - Run `swift build` - no errors allowed
    - Run `swift test --no-parallel` - must exit with code 0
    - Run `./scripts/validate-markdown.sh --fix` on any markdown changes
@@ -92,83 +97,105 @@ For each uncompleted task in the roadmap:
    - Resolve any conflicts
    - Push updates to remote
 
-### Phase 4: Pull Request
+### Phase PR Creation
 
 1. **PR Creation** - Use the **pull-request-manager agent**:
-   - Verify all quality gates pass
-   - Create comprehensive PR with roadmap linkage
+   - Title format: `[Roadmap] {RoadmapName} - Phase {N}: {PhaseName}`
+   - Example: `[Roadmap] HTTPHeaderAuth - Phase 0: Research`
+   - **CRITICAL**: Use "Related to #{issue}" NOT "Fixes #{issue}" (except for final phase)
+   - Verify all phase-specific quality gates pass
    - Add appropriate labels and reviewers
-   - Link to GitHub issue
 
-2. **Final Updates**:
-   - Use **issue-updater agent** to link PR to roadmap issue
-   - Update issue status section with completion percentage
-   - Note any remaining tasks in issue comments
+2. **PR Description Template**:
 
-## Agent Coordination Flow
+   ```markdown
+   ## Summary
+   Implements Phase {N}: {PhaseName} for {RoadmapName} roadmap
+   
+   Related to #{issue}  <!-- Use "Fixes #{issue}" only for final phase -->
+   
+   ## Completed Tasks
+   - ✅ [List completed tasks from this phase]
+   
+   ## Test Status
+   All tests pass with `swift test --no-parallel`
+   
+   ## Next Phase
+   Phase {N+1}: {NextPhaseName} ready to implement after merge
+   ```
+
+3. **Issue Updates**:
+   - Use **issue-updater agent** to update roadmap issue
+   - Update Status section with phase completion
+   - Check off completed tasks for this phase only
+   - Add comment with PR link and commit SHAs
+
+## Agent Coordination Flow (Per Phase)
 
 ```mermaid
 graph TD
-    A[Start Roadmap] --> B[git-branch-manager: Branch Setup]
-    B --> C[issue-creator: GitHub Issue]
-    C --> D[Main: Read Roadmap]
-    D --> E{For Each Task}
-    E --> F[Main: Implement]
-    F --> G[swift-documenter: Document]
-    G --> H[Main: Test]
-    H --> I{Tests Pass?}
-    I -->|Yes| J[commiter: Commit]
-    I -->|No| F
-    J --> K[issue-updater: Update Issue]
-    K --> E
-    E -->|All Done| L[git-branch-manager: Sync Branch]
-    L --> M[pull-request-manager: Create PR]
-    M --> N[issue-updater: Final Update]
-    N --> O[Complete]
+    A[Start Phase N] --> B[Read Issue: Current Phase]
+    B --> C[git-branch-manager: Phase Branch]
+    C --> D{For Each Phase Task}
+    D --> E[Main: Implement Task]
+    E --> F[swift-documenter: Document]
+    F --> G[Main: Test]
+    G --> H{Tests Pass?}
+    H -->|Yes| I[commiter: Commit]
+    H -->|No| E
+    I --> J[issue-updater: Update Task]
+    J --> D
+    D -->|Phase Done| K[git-branch-manager: Sync]
+    K --> L[pull-request-manager: Phase PR]
+    L --> M[issue-updater: Phase Update]
+    M --> N{More Phases?}
+    N -->|Yes| O[Next Phase]
+    N -->|No| P[Roadmap Complete]
 ```
 
-## Quality Gates at Each Step
+## Quality Gates Per Phase
 
-### Pre-Implementation Gates
+### Phase Start Gates
 
-- ✅ Branch created and pushed (git-branch-manager)
-- ✅ GitHub issue created with tasks (issue-creator)
-- ✅ Roadmap understood and current
+- ✅ Issue read and current phase identified
+- ✅ Phase-specific branch created (git-branch-manager)
+- ✅ Phase tasks understood and scoped
 
-### Per-Task Gates
+### Per-Task Gates (Within Phase)
 
-- ✅ Implementation complete
+- ✅ Task implementation complete
 - ✅ Documentation added (swift-documenter)
 - ✅ Tests written and passing
 - ✅ Commit created with SHA (commiter)
-- ✅ Issue updated (issue-updater)
+- ✅ Issue task checked off (issue-updater)
 
-### Pre-PR Gates
+### Phase Completion Gates
 
-- ✅ All tasks completed
+- ✅ All phase tasks completed
 - ✅ Branch synchronized (git-branch-manager)
-- ✅ Full test suite passes
+- ✅ `swift test --no-parallel` passes
 - ✅ Build has no errors
 - ✅ Formatting validated
 
-### PR Creation Gates
+### Phase PR Gates
 
-- ✅ PR created and linked (pull-request-manager)
-- ✅ Issue updated with PR (issue-updater)
-- ✅ All quality standards met
+- ✅ PR created with "Related to #" (pull-request-manager)
+- ✅ Issue Status section updated (issue-updater)
+- ✅ Phase-specific quality standards met
+- ✅ PR merged before starting next phase
 
 ## Agent Usage Examples
 
-### git-branch-manager for Branch Management
+### git-branch-manager for Phase Branch
 
 ```bash
-Use the git-branch-manager agent to create feature branch for AuthRoadmap implementation
+Use the git-branch-manager agent to create branch roadmap/13-phase-0 for Phase 0 implementation
 ```
 
-### issue-creator for Issue Creation
+### issue-updater for Phase Progress
 
 ```bash
-Use the issue-creator agent to create GitHub issue for AuthRoadmap with sample implementations
+Use the issue-updater agent to update issue #13 Status section marking Phase 0 as complete
 ```
 
 ### swift-documenter for Documentation
@@ -189,20 +216,20 @@ Use the commiter agent to create conventional commit for completed authenticatio
 Use the issue-updater agent to update issue #123 with commit SHA abc123
 ```
 
-### pull-request-manager for PR
+### pull-request-manager for Phase PR
 
 ```bash
-Use the pull-request-manager agent to create pull request for completed AuthRoadmap implementation
+Use the pull-request-manager agent to create PR "[Roadmap] HTTPHeaderAuth - Phase 0: Research" related to issue #13
 ```
 
-## Benefits of Agentic Approach
+## Benefits of Per-Phase Approach
 
-1. **Context Preservation**: Each agent operates in its own context, preventing pollution
-2. **Specialized Expertise**: Agents are optimized for their specific tasks
-3. **Better Error Recovery**: Isolated contexts mean failures don't affect main thread
-4. **Consistent Quality**: Each agent enforces its specific quality gates
-5. **Improved Tracking**: Automatic updates to issues and roadmaps
-6. **Parallel Processing**: Multiple agents can work on different aspects simultaneously
+1. **Incremental Progress**: Each phase delivers value independently
+2. **Smaller PRs**: Easier to review and less risky to merge
+3. **Continuous Integration**: Changes integrated regularly, not all at once
+4. **Better Tracking**: Clear visibility of which phase is active
+5. **Reduced Context**: Each PR focuses on one phase's concerns
+6. **Easier Rollback**: Problems isolated to specific phase changes
 
 ## Error Handling with Agents
 
@@ -212,28 +239,46 @@ If any agent fails:
 3. Can retry specific agent task without losing progress
 4. Each agent provides specific error recovery steps
 
-## Completion Criteria
+## Phase Completion Criteria
 
-The roadmap is complete when:
-- ✅ All tasks checked in GitHub issue
-- ✅ All commit SHAs recorded in issue comments
-- ✅ GitHub issue shows 100% task completion
-- ✅ PR is created and linked to issue
-- ✅ All tests pass with exit code 0
-- ✅ Build succeeds with no warnings
+A phase is complete when:
+- ✅ All phase tasks checked in GitHub issue
+- ✅ Phase commit SHAs recorded in issue comments
+- ✅ Phase PR created with "Related to #" (not "Fixes #")
+- ✅ Tests pass with `swift test --no-parallel`
+- ✅ PR reviewed and merged
+- ✅ Issue Status section updated
+
+## Roadmap Completion Criteria
+
+The entire roadmap is complete when:
+- ✅ All phases implemented and merged
+- ✅ Final PR uses "Fixes #{issue}" to close issue
+- ✅ All tasks across all phases checked
+- ✅ Full test suite passes
+- ✅ Issue automatically closed by final PR
 
 ## CRITICAL REQUIREMENTS
 
 - **NEVER** skip test verification at any step
-- **ALWAYS** use agents for their specialized tasks
-- **MANDATORY**: Every task must have a commit SHA recorded in the issue
+- **ALWAYS** implement one phase at a time
+- **MANDATORY**: Create PR after each phase completion
+- **CRITICAL**: Use "Related to #{issue}" for all PRs except final
+- **MANDATORY**: Only use "Fixes #{issue}" on the final phase PR
 - **CRITICAL**: Tests must pass before any commit
-- **MANDATORY**: Run `swift test --no-parallel` after each step and after issue updates
-- Each roadmap step gets its own commit (via commiter)
-- Update GitHub issue with commit SHA after each step
-- Continue until entire GitHub issue roadmap is completed
+- **MANDATORY**: Run `swift test --no-parallel` after each phase
+- Each task gets its own commit (via commiter agent)
+- Update GitHub issue Status section after each phase
+- Wait for PR merge before starting next phase
 
-This agentic approach ensures higher quality, better tracking, and more reliable roadmap implementation
-through specialized task delegation and isolated context management.
+## PR Linking Rules
+
+| Phase | PR Title Format | Issue Reference |
+|-------|----------------|-----------------|
+| Phase 0-N (not final) | `[Roadmap] Name - Phase N: Title` | `Related to #{issue}` |
+| Final Phase | `[Roadmap] Name - Phase N: Title` | `Fixes #{issue}` |
+
+This per-phase approach ensures incremental delivery, reduced risk, and continuous integration
+while maintaining high quality through specialized agent delegation.
 
 
