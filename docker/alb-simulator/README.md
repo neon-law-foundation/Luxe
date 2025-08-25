@@ -4,11 +4,13 @@ This Docker setup simulates AWS Application Load Balancer (ALB) authentication b
 
 ## Overview
 
-AWS ALB with Cognito integration automatically injects authentication headers into requests to protected routes. This simulation uses Nginx to replicate that behavior locally, allowing developers to test ALB-based authentication without AWS infrastructure.
+AWS ALB with Cognito integration automatically injects authentication headers into requests to protected routes. This
+simulation uses Nginx to replicate that behavior locally, allowing developers to test ALB-based authentication without
+AWS infrastructure.
 
 ## Architecture
 
-```
+```text
 [Browser] → [Nginx ALB Simulator:8081] → [Luxe Server:8080] → [PostgreSQL:5432]
 ```
 
@@ -39,8 +41,8 @@ docker-compose -f docker-compose.alb-simulation.yml logs -f alb-simulator
 
 | Service | URL | Description |
 |---------|-----|-------------|
-| ALB Simulator | http://localhost:8081 | Nginx proxy with header injection |
-| Direct Server | http://localhost:8080 | Direct access (no ALB simulation) |
+| ALB Simulator | <http://localhost:8081> | Nginx proxy with header injection |
+| Direct Server | <http://localhost:8080> | Direct access (no ALB simulation) |
 | PostgreSQL | localhost:5432 | Database (luxe/postgres/luxe) |
 
 ### Authentication Modes
@@ -97,17 +99,20 @@ curl http://localhost:8081/test/no-auth
 ## User Roles & Permissions
 
 ### Admin User
-- **Email**: admin@neonlaw.com
+
+- **Email**: <admin@neonlaw.com>
 - **Groups**: admin, administrators
 - **Access**: Full system access (all routes)
 
 ### Staff User
-- **Email**: staff@neonlaw.com
+
+- **Email**: <staff@neonlaw.com>
 - **Groups**: staff, employees  
 - **Access**: Employee-level access (/staff, /reports routes)
 
 ### Customer User
-- **Email**: customer@example.com
+
+- **Email**: <customer@example.com>
 - **Groups**: users, customers
 - **Access**: Basic user access (/app routes)
 
@@ -116,6 +121,7 @@ curl http://localhost:8081/test/no-auth
 The simulation uses pre-generated JWT payloads for each user type:
 
 ### Admin JWT (Decoded)
+
 ```json
 {
   "iss": "test-cognito",
@@ -130,6 +136,7 @@ The simulation uses pre-generated JWT payloads for each user type:
 ```
 
 ### Staff JWT (Decoded)
+
 ```json
 {
   "iss": "test-cognito",
@@ -144,6 +151,7 @@ The simulation uses pre-generated JWT payloads for each user type:
 ```
 
 ### Customer JWT (Decoded)
+
 ```json
 {
   "iss": "test-cognito",
@@ -160,6 +168,7 @@ The simulation uses pre-generated JWT payloads for each user type:
 ## Testing Scenarios
 
 ### 1. Public Routes (No Authentication)
+
 ```bash
 curl http://localhost:8081/
 curl http://localhost:8081/health
@@ -167,6 +176,7 @@ curl http://localhost:8081/pricing
 ```
 
 ### 2. Protected Routes (Require Authentication)
+
 ```bash
 # These will get customer headers automatically
 curl http://localhost:8081/app
@@ -175,6 +185,7 @@ curl http://localhost:8081/api/users
 ```
 
 ### 3. Role-Based Access Control
+
 ```bash
 # Admin access required
 curl http://localhost:8081/admin?auth=admin        # ✅ Success
@@ -186,6 +197,7 @@ curl http://localhost:8081/staff?auth=customer     # ❌ Forbidden
 ```
 
 ### 4. Error Cases
+
 ```bash
 # No authentication headers (should fail for protected routes)
 curl http://localhost:8081/test/no-auth/app/me
@@ -197,12 +209,14 @@ curl http://localhost:8081/app?auth=invalid
 ## Debugging
 
 ### View Headers Being Injected
+
 ```bash
 # Check nginx logs to see headers being set
 docker-compose -f docker-compose.alb-simulation.yml logs alb-simulator
 ```
 
 ### Direct Server Access (Bypass ALB)
+
 ```bash
 # Test without ALB simulation
 curl http://localhost:8080/app/me
@@ -210,6 +224,7 @@ curl http://localhost:8080/app/me
 ```
 
 ### Database Access
+
 ```bash
 # Connect to PostgreSQL
 docker exec -it luxe-postgres psql -U postgres -d luxe
