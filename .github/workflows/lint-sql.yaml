@@ -1,0 +1,31 @@
+---
+name: Lint SQL
+
+on:
+  pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    runs-on:
+      - ubuntu-latest
+
+    steps:
+      - uses: "actions/checkout@v4"
+
+      - uses: "actions/setup-python@v5"
+        with:
+          python-version: "3.11"
+
+      - name: Install markdownlint-cli2
+        run: npm install -g markdownlint-cli2
+
+      - name: Install SQLFluff
+        run: pip install sqlfluff
+
+      - name: Lint migrations
+        run: sqlfluff lint --dialect postgres .

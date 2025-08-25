@@ -1,7 +1,9 @@
 ---
 title: "CEO Search: Leading Sagebrush Services Into the Future"
-slug: "ceo-search"
-description: "Sagebrush Services is seeking an exceptional CEO with legal expertise or startup law experience to lead our growing legal technology platform."
+slug: ceo-search
+description: |
+  Sagebrush Services is seeking an exceptional CEO with legal expertise or startup law experience to lead our growing
+  legal technology platform.
 ---
 
 We're excited to announce that Sagebrush Services is searching for an exceptional Chief Executive
@@ -52,10 +54,12 @@ ready to take on the challenge of leading a growing company with tremendous pote
 hear from you.
 
 Please send your resume, a cover letter explaining why you're interested in this opportunity,
-and any relevant information about your background and vision to [support@sagebrush.services](mailto:support@sagebrush.services).
+and any relevant information about your background and vision to [support@sagebrush.services][1].
 
 We're excited to meet the leader who will help write the next chapter of Sagebrush Services' story.
 
 ---
 
 *Sagebrush Services is an equal opportunity employer committed to diversity and inclusion.*
+
+[1]: mailto:support@sagebrush.services

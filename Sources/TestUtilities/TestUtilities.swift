@@ -111,7 +111,8 @@ public struct TestUtilities {
         name: String,
         email: String,
         username: String,
-        role: String
+        role: String,
+        sub: String? = nil
     ) async throws -> UUID {
         let postgres = database as! PostgresDatabase
 
@@ -125,16 +126,30 @@ public struct TestUtilities {
         ).run()
 
         // Create user with specified role using email as username
-        let userResult = try await postgres.sql().raw(
-            """
-            INSERT INTO auth.users (username, person_id, role)
-            SELECT \(bind: username), p.id, \(bind: role)::auth.user_role
-            FROM directory.people p
-            WHERE p.email = \(bind: email)
-            ON CONFLICT (username) DO UPDATE SET person_id = EXCLUDED.person_id, role = EXCLUDED.role
-            RETURNING id
-            """
-        ).first()
+        let userResult: SQLRow?
+        if let sub = sub {
+            userResult = try await postgres.sql().raw(
+                """
+                INSERT INTO auth.users (username, person_id, role, sub)
+                SELECT \(bind: username), p.id, \(bind: role)::auth.user_role, \(bind: sub)
+                FROM directory.people p
+                WHERE p.email = \(bind: email)
+                ON CONFLICT (username) DO UPDATE SET person_id = EXCLUDED.person_id, role = EXCLUDED.role, sub = EXCLUDED.sub
+                RETURNING id
+                """
+            ).first()
+        } else {
+            userResult = try await postgres.sql().raw(
+                """
+                INSERT INTO auth.users (username, person_id, role)
+                SELECT \(bind: username), p.id, \(bind: role)::auth.user_role
+                FROM directory.people p
+                WHERE p.email = \(bind: email)
+                ON CONFLICT (username) DO UPDATE SET person_id = EXCLUDED.person_id, role = EXCLUDED.role
+                RETURNING id
+                """
+            ).first()
+        }
 
         guard let userId = try userResult?.decode(column: "id", as: UUID.self) else {
             throw Abort(.internalServerError, reason: "Failed to create test user")
@@ -587,5 +602,273 @@ public struct TestUtilities {
                 "pool_strategy": .string("single_connection_per_loop"),
             ]
         )
+    }
+}
+
+// MARK: - ALB Header Mock Utilities
+
+/// Extension providing mock ALB header utilities for testing header-based authentication
+extension TestUtilities {
+
+    /// Creates mock ALB/Cognito headers for testing authentication
+    ///
+    /// This utility creates the complete set of ALB OIDC headers that would be injected
+    /// by AWS Application Load Balancer with Cognito authentication configured.
+    ///
+    /// ## Usage
+    ///
+    /// ```swift
+    /// try await app.test(.GET, "/app/me")
+    ///     .withALBAuth(sub: "user123", email: "test@example.com", groups: ["admin"])
+    ///     .assertStatus(.ok)
+    /// ```
+    ///
+    /// - Parameters:
+    ///   - sub: Cognito subject ID (defaults to "test-user-sub")
+    ///   - email: User email address (defaults to "test@example.com")
+    ///   - name: User full name (defaults to "Test User")
+    ///   - groups: Cognito groups/roles (defaults to ["users"])
+    ///   - username: Username (defaults to email value)
+    ///   - issuer: JWT issuer (defaults to "test-cognito")
+    ///   - audience: JWT audience (defaults to ["test-client"])
+    ///   - expiration: Token expiration (defaults to 1 hour from now)
+    /// - Returns: HTTPHeaders containing mock ALB OIDC headers
+    public static func createMockALBHeaders(
+        sub: String = "test-user-sub",
+        email: String = "test@example.com",
+        name: String = "Test User",
+        groups: [String] = ["users"],
+        username: String? = nil,
+        issuer: String = "https://cognito-idp.us-west-2.amazonaws.com/us-west-2_TestPool",
+        audience: String = "test-client",
+        expiration: Date? = nil
+    ) -> HTTPHeaders {
+        let finalUsername = username ?? email
+        let finalExpiration = expiration ?? Date().addingTimeInterval(3600)
+
+        // Create JWT header
+        let header = [
+            "typ": "JWT",
+            "alg": "RS256",
+        ]
+
+        // Create JWT payload matching ALBJWTPayload structure
+        let payload = MockALBJWTPayload(
+            iss: issuer,
+            aud: audience,
+            exp: Int(finalExpiration.timeIntervalSince1970),
+            sub: sub,
+            email: email,
+            name: name,
+            cognitoGroups: groups,
+            preferredUsername: finalUsername
+        )
+
+        // Encode header and payload
+        let headerData = try! JSONSerialization.data(withJSONObject: header)
+        let payloadData = try! JSONEncoder().encode(payload)
+
+        // Create base64 URL-encoded strings
+        let headerBase64 = headerData.base64URLEncodedString()
+        let payloadBase64 = payloadData.base64URLEncodedString()
+
+        // Create mock signature
+        let signature = "mock-signature"
+
+        // Combine into JWT format
+        let jwt = "\(headerBase64).\(payloadBase64).\(signature)"
+
+        return HTTPHeaders([
+            ("x-amzn-oidc-data", jwt),
+            ("x-amzn-oidc-accesstoken", "mock-access-token"),
+            ("x-amzn-oidc-identity", finalUsername),
+        ])
+    }
+
+    /// Creates mock ALB headers for an admin user
+    /// Convenience method for testing admin-only routes
+    public static func createMockALBAdminHeaders(
+        sub: String = "admin-user-sub",
+        email: String = "admin@neonlaw.com",
+        name: String = "Admin User"
+    ) -> HTTPHeaders {
+        createMockALBHeaders(
+            sub: sub,
+            email: email,
+            name: name,
+            groups: ["admin", "administrators"],
+            username: email
+        )
+    }
+
+    /// Creates mock ALB headers for a staff user
+    /// Convenience method for testing staff-level access
+    public static func createMockALBStaffHeaders(
+        sub: String = "staff-user-sub",
+        email: String = "staff@neonlaw.com",
+        name: String = "Staff User"
+    ) -> HTTPHeaders {
+        createMockALBHeaders(
+            sub: sub,
+            email: email,
+            name: name,
+            groups: ["staff", "employees"],
+            username: email
+        )
+    }
+
+    /// Creates mock ALB headers for a customer user
+    /// Convenience method for testing customer-level access
+    public static func createMockALBCustomerHeaders(
+        sub: String = "customer-user-sub",
+        email: String = "customer@example.com",
+        name: String = "Customer User"
+    ) -> HTTPHeaders {
+        createMockALBHeaders(
+            sub: sub,
+            email: email,
+            name: name,
+            groups: ["users", "customers"],
+            username: email
+        )
+    }
+
+    /// Creates expired ALB headers for testing token expiration
+    public static func createExpiredALBHeaders(
+        sub: String = "expired-user-sub",
+        email: String = "expired@example.com"
+    ) -> HTTPHeaders {
+        createMockALBHeaders(
+            sub: sub,
+            email: email,
+            expiration: Date().addingTimeInterval(-3600)  // Expired 1 hour ago
+        )
+    }
+
+    /// Creates malformed ALB headers for testing error handling
+    public static func createMalformedALBHeaders() -> HTTPHeaders {
+        HTTPHeaders([
+            ("x-amzn-oidc-data", "invalid-base64-data"),
+            ("x-amzn-oidc-accesstoken", "invalid-token"),
+            ("x-amzn-oidc-identity", "malformed-identity"),
+        ])
+    }
+}
+
+/// Mock JWT payload structure for ALB OIDC data
+private struct MockALBJWTPayload: Codable {
+    let iss: String
+    let aud: String  // Changed from [String] to String to match ALBJWTPayload
+    let exp: Int
+    let sub: String
+    let email: String
+    let name: String
+    let cognitoGroups: [String]
+    let preferredUsername: String
+
+    enum CodingKeys: String, CodingKey {
+        case iss, aud, exp, sub, email, name
+        case cognitoGroups = "cognito:groups"
+        case preferredUsername = "preferred_username"
+    }
+}
+
+// MARK: - HTTPHeaders Extensions for ALB Testing
+
+/// Extension to HTTPHeaders for convenient ALB authentication testing
+extension HTTPHeaders {
+
+    /// Adds ALB authentication headers to existing headers
+    ///
+    /// This method allows chaining ALB headers with other headers:
+    ///
+    /// ```swift
+    /// let headers = HTTPHeaders([("Content-Type", "application/json")])
+    ///     .withALBAuth(email: "test@example.com", groups: ["admin"])
+    /// ```
+    public func withALBAuth(
+        sub: String = "test-user-sub",
+        email: String = "test@example.com",
+        name: String = "Test User",
+        groups: [String] = ["users"],
+        username: String? = nil,
+        issuer: String = "https://cognito-idp.us-west-2.amazonaws.com/us-west-2_TestPool",
+        audience: String = "test-client",
+        expiration: Date? = nil
+    ) -> HTTPHeaders {
+        let albHeaders = TestUtilities.createMockALBHeaders(
+            sub: sub,
+            email: email,
+            name: name,
+            groups: groups,
+            username: username,
+            issuer: issuer,
+            audience: audience,
+            expiration: expiration
+        )
+
+        var combinedHeaders = self
+        for header in albHeaders {
+            combinedHeaders.add(name: header.name, value: header.value)
+        }
+
+        return combinedHeaders
+    }
+
+    /// Adds admin ALB headers to existing headers
+    public func withALBAdmin(
+        sub: String = "admin-user-sub",
+        email: String = "admin@neonlaw.com",
+        name: String = "Admin User"
+    ) -> HTTPHeaders {
+        withALBAuth(
+            sub: sub,
+            email: email,
+            name: name,
+            groups: ["admin", "administrators"],
+            username: email
+        )
+    }
+
+    /// Adds staff ALB headers to existing headers
+    public func withALBStaff(
+        sub: String = "staff-user-sub",
+        email: String = "staff@neonlaw.com",
+        name: String = "Staff User"
+    ) -> HTTPHeaders {
+        withALBAuth(
+            sub: sub,
+            email: email,
+            name: name,
+            groups: ["staff", "employees"],
+            username: email
+        )
+    }
+
+    /// Adds customer ALB headers to existing headers
+    public func withALBCustomer(
+        sub: String = "customer-user-sub",
+        email: String = "customer@example.com",
+        name: String = "Customer User"
+    ) -> HTTPHeaders {
+        withALBAuth(
+            sub: sub,
+            email: email,
+            name: name,
+            groups: ["users", "customers"],
+            username: email
+        )
+    }
+}
+
+// MARK: - Base64 URL Encoding Extension
+
+extension Data {
+    /// Encodes data as base64 URL-safe string (no padding)
+    func base64URLEncodedString() -> String {
+        self.base64EncodedString()
+            .replacingOccurrences(of: "+", with: "-")
+            .replacingOccurrences(of: "/", with: "_")
+            .replacingOccurrences(of: "=", with: "")
     }
 }

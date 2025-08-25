@@ -42,7 +42,7 @@ struct ForLawyersPage: HTMLDocument {
             div(.class("hero-body")) {
                 div(.class("container has-text-centered")) {
                     h1(.class("title is-1 has-text-white")) {
-                        "AI-Powered Legal Services That Actually Protect Your Clients"
+                        "Private AI-Powered Legal Software Services"
                     }
                     h2(.class("subtitle is-3 has-text-white-bis")) {
                         "Your Own Secure AWS Infrastructure + White-Labeled Legal AI Platform"
@@ -77,7 +77,7 @@ struct ForLawyersPage: HTMLDocument {
                         }
                         div(.class("content is-large")) {
                             p(.class("has-text-weight-bold")) {
-                                "Using ChatGPT, Claude, or other public AI services for legal work creates serious liability exposure:"
+                                "Using public AI services for legal work creates serious liability exposure:"
                             }
 
                             riskList([
@@ -145,7 +145,7 @@ struct ForLawyersPage: HTMLDocument {
                             "Your client data never leaves your control. It lives entirely within your private AWS infrastructure, not shared servers.",
                         benefits: [
                             "Dedicated hardware with no shared tenancy",
-                            "You control encryption keys through AWS CloudHSM",
+                            "You control your own encryption keys",
                             "Full audit trail of every data access",
                             "Immediate compliance with Bar ethics rules",
                         ]
@@ -171,7 +171,7 @@ struct ForLawyersPage: HTMLDocument {
                             "Meet and exceed bar association requirements with enterprise-grade security standards.",
                         benefits: [
                             "HIPAA, GDPR, and SOC 2 compliance built-in",
-                            "143 AWS security certifications",
+                            "Ability to easily obtain other security certifications",
                             "Detailed audit logs for malpractice defense",
                             "Regular compliance reporting",
                         ]
@@ -448,8 +448,7 @@ struct ForLawyersPage: HTMLDocument {
                             "✅ Informed consent not required for secure systems",
                             "✅ Technical safeguards properly implemented",
                             "✅ Vendor agreements ensure confidentiality",
-                        ],
-                        status: "FULLY COMPLIANT"
+                        ]
                     )
 
                     complianceCard(
@@ -460,8 +459,7 @@ struct ForLawyersPage: HTMLDocument {
                             "✅ Reasonable security measures implemented",
                             "✅ Staff training on proper AI usage",
                             "✅ Regular security updates and monitoring",
-                        ],
-                        status: "FULLY COMPLIANT"
+                        ]
                     )
 
                     complianceCard(
@@ -472,8 +470,7 @@ struct ForLawyersPage: HTMLDocument {
                             "✅ Supervision of AI-assisted work product",
                             "✅ Training on confidentiality requirements",
                             "✅ Regular compliance monitoring",
-                        ],
-                        status: "FULLY COMPLIANT"
+                        ]
                     )
 
                     complianceCard(
@@ -484,8 +481,7 @@ struct ForLawyersPage: HTMLDocument {
                             "✅ New York: SHIELD Act data protection",
                             "✅ Illinois: Personal Information Protection Act",
                             "✅ Texas: Identity Theft Enforcement and Protection Act",
-                        ],
-                        status: "MEETS REQUIREMENTS"
+                        ]
                     )
                 }
             }
@@ -493,14 +489,13 @@ struct ForLawyersPage: HTMLDocument {
     }
 
     @HTMLBuilder
-    func complianceCard(title: String, description: String, requirements: [String], status: String) -> some HTML {
+    func complianceCard(title: String, description: String, requirements: [String]) -> some HTML {
         div(.class("column is-half")) {
             div(.class("card")) {
                 div(.class("card-header has-background-success")) {
                     p(.class("card-header-title has-text-white")) {
                         title
                     }
-                    span(.class("tag is-light is-medium")) { status }
                 }
                 div(.class("card-content")) {
                     p(.class("content has-text-weight-semibold mb-3")) { description }
@@ -645,7 +640,7 @@ struct ForLawyersPage: HTMLDocument {
                         div(.class("notification is-warning mt-5")) {
                             h4(.class("title is-4")) { "💰 AWS Infrastructure Costs" }
                             p {
-                                "AWS costs are separate but typically range from $300-1,200/month depending on usage. We optimize your infrastructure to minimize costs while maintaining security. Compare this to the $2,000-5,000/month you might pay for traditional case management software with inferior AI capabilities."
+                                "AWS costs are separate but typically range from $300-1,200/month depending on usage. We optimize your infrastructure to minimize costs while maintaining security. Compare this to the $2,000-5,000/month you might pay for traditional case management software with less secure AI capabilities."
                             }
                         }
 

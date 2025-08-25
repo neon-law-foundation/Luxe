@@ -16,23 +16,6 @@ services:
       timeout: 5s
       retries: 5
 
-  dex:
-    image: ghcr.io/dexidp/dex:latest
-    ports:
-      - "127.0.0.1:2222:8080"
-    volumes:
-      - ./dex-config.yaml:/etc/dex/config.yaml
-      - dex_data:/var/dex
-    command: ["dex", "serve", "/etc/dex/config.yaml"]
-    environment:
-      - GITHUB_ACTIONS_CLIENT_ID=${GITHUB_ACTIONS_CLIENT_ID:-github-actions}
-      - GITHUB_ACTIONS_CLIENT_SECRET=${GITHUB_ACTIONS_CLIENT_SECRET:-github-actions-secret}
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080/healthz || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   localstack:
     image: localstack/localstack:3.8.1
     container_name: localstack
@@ -69,5 +52,4 @@ services:
 
 volumes:
   postgres_data: {}
-  dex_data: {}
   redis_data: {}

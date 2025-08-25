@@ -76,7 +76,6 @@ Establish credibility through:
 title: "Clear, Descriptive Title That Sets Expectations"
 slug: "url-friendly-slug-in-kebab-case"
 description: "Concise summary that accurately represents the content (150-160 chars)"
-created_at: "2024-01-15T10:00:00Z"
 ---
 
 # Engaging Title That Delivers on Promise
