@@ -1,4 +1,3 @@
 generate:
   - types
   - server
-accessModifier: package

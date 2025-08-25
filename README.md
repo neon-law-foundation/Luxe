@@ -83,7 +83,7 @@ The project includes specialized AI agents (`.claude/agents/`) that automate dev
   - <www.neonlaw.com> - Neon Law primary website
   - <www.neonlaw.org> - Neon Law Foundation nonprofit website
   - <www.tarotswift.me> - Tarot reading service
-- **Concierge** macOS app for `support@{neonlaw.com,neonlaw.org,sagebrush.services}`. Works with PaperPusher.
+- **TBD Concierge** macOS app for `support@{neonlaw.com,neonlaw.org,sagebrush.services}`. Works with PaperPusher.
 - **Dali** Data Access Layer (DAL) for Postgres tables, S3 buckets, and vendor data
 - **Destined** A vibrational travel agency <https://www.destined.travel>
 - **TBD FoodCart** OpenAPI Client for the Bazaar API

@@ -112,13 +112,14 @@ struct ALBIntegrationTests {
         try await TestUtilities.withApp { app, database in
             try await configureALBApp(app)
 
-            // Create test user in database first
+            // Create test user using app's database connection for visibility in HTTP handlers
             try await TestUtilities.createTestUser(
-                database,
+                app.db,  // Use app's database, not the transaction database
                 name: "Test User",
                 email: "test@example.com",
                 username: "test@example.com",
-                role: "customer"
+                role: "customer",
+                sub: "test-cognito-sub"
             )
 
             let protectedRoutes = ["/app", "/app/me", "/app/dashboard", "/api/users"]
@@ -154,22 +155,24 @@ struct ALBIntegrationTests {
         try await TestUtilities.withApp { app, database in
             try await configureALBApp(app)
 
-            // Create regular user
+            // Create regular user with matching sub using app's database
             try await TestUtilities.createTestUser(
-                database,
+                app.db,  // Use app's database
                 name: "Regular User",
                 email: "user@example.com",
                 username: "user@example.com",
-                role: "customer"
+                role: "customer",
+                sub: "user-cognito-sub"
             )
 
-            // Create admin user
+            // Create admin user with matching sub using app's database
             try await TestUtilities.createTestUser(
-                database,
+                app.db,  // Use app's database
                 name: "Admin User",
                 email: "admin@neonlaw.com",
                 username: "admin@neonlaw.com",
-                role: "admin"
+                role: "admin",
+                sub: "admin-cognito-sub"
             )
 
             let adminRoutes = ["/admin", "/admin/users"]
@@ -254,13 +257,14 @@ struct ALBIntegrationTests {
         try await TestUtilities.withApp { app, database in
             try await configureALBApp(app)
 
-            // Create test user
+            // Create test user with matching sub using app's database
             let userId = try await TestUtilities.createTestUser(
-                database,
+                app.db,  // Use app's database
                 name: "Context Test User",
                 email: "context@example.com",
                 username: "context@example.com",
-                role: "staff"
+                role: "staff",
+                sub: "context-cognito-sub"
             )
 
             // Create route that returns current user context

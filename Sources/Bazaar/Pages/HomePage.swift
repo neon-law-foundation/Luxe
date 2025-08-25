@@ -40,8 +40,8 @@ struct HomePage: HTMLDocument {
                         GradientFeatureGridComponent(features: [
                             GradientFeatureGridComponent.Feature(
                                 icon: "🏢",
-                                title: "Nevada Business Address",
-                                description: "Real Nevada business address for your company"
+                                title: "NV Address",
+                                description: "Incorporate in Nevada with an an address"
                             ),
                             GradientFeatureGridComponent.Feature(
                                 icon: "🔔",
@@ -55,7 +55,7 @@ struct HomePage: HTMLDocument {
                             ),
                             GradientFeatureGridComponent.Feature(
                                 icon: "💼",
-                                title: "Cap Table Management",
+                                title: "Cap Table",
                                 description: "Stock issuance and equity tracking"
                             ),
                         ])

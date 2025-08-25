@@ -109,9 +109,8 @@ public func configureApp(_ app: Application) async throws {
     let smartAuth = SmartAuthMiddleware(authenticator: albAuthenticator)
 
     // Use SmartAuthMiddleware for all routes (replaces SessionMiddleware)
-    if app.environment != .testing {
-        app.middleware.use(smartAuth)
-    }
+    // In testing environment, mock headers will be injected by test utilities
+    app.middleware.use(smartAuth)
 
     // Keep session storage for OAuth callback compatibility (temporary)
     app.storage[SessionStorageKey.self] = [:]

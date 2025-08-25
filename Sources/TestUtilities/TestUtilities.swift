@@ -111,7 +111,8 @@ public struct TestUtilities {
         name: String,
         email: String,
         username: String,
-        role: String
+        role: String,
+        sub: String? = nil
     ) async throws -> UUID {
         let postgres = database as! PostgresDatabase
 
@@ -125,16 +126,30 @@ public struct TestUtilities {
         ).run()
 
         // Create user with specified role using email as username
-        let userResult = try await postgres.sql().raw(
-            """
-            INSERT INTO auth.users (username, person_id, role)
-            SELECT \(bind: username), p.id, \(bind: role)::auth.user_role
-            FROM directory.people p
-            WHERE p.email = \(bind: email)
-            ON CONFLICT (username) DO UPDATE SET person_id = EXCLUDED.person_id, role = EXCLUDED.role
-            RETURNING id
-            """
-        ).first()
+        let userResult: SQLRow?
+        if let sub = sub {
+            userResult = try await postgres.sql().raw(
+                """
+                INSERT INTO auth.users (username, person_id, role, sub)
+                SELECT \(bind: username), p.id, \(bind: role)::auth.user_role, \(bind: sub)
+                FROM directory.people p
+                WHERE p.email = \(bind: email)
+                ON CONFLICT (username) DO UPDATE SET person_id = EXCLUDED.person_id, role = EXCLUDED.role, sub = EXCLUDED.sub
+                RETURNING id
+                """
+            ).first()
+        } else {
+            userResult = try await postgres.sql().raw(
+                """
+                INSERT INTO auth.users (username, person_id, role)
+                SELECT \(bind: username), p.id, \(bind: role)::auth.user_role
+                FROM directory.people p
+                WHERE p.email = \(bind: email)
+                ON CONFLICT (username) DO UPDATE SET person_id = EXCLUDED.person_id, role = EXCLUDED.role
+                RETURNING id
+                """
+            ).first()
+        }
 
         guard let userId = try userResult?.decode(column: "id", as: UUID.self) else {
             throw Abort(.internalServerError, reason: "Failed to create test user")
@@ -624,8 +639,8 @@ extension TestUtilities {
         name: String = "Test User",
         groups: [String] = ["users"],
         username: String? = nil,
-        issuer: String = "test-cognito",
-        audience: [String] = ["test-client"],
+        issuer: String = "https://cognito-idp.us-west-2.amazonaws.com/us-west-2_TestPool",
+        audience: String = "test-client",
         expiration: Date? = nil
     ) -> HTTPHeaders {
         let finalUsername = username ?? email
@@ -634,7 +649,7 @@ extension TestUtilities {
         // Create JWT header
         let header = [
             "typ": "JWT",
-            "alg": "RS256"
+            "alg": "RS256",
         ]
 
         // Create JWT payload matching ALBJWTPayload structure
@@ -652,14 +667,14 @@ extension TestUtilities {
         // Encode header and payload
         let headerData = try! JSONSerialization.data(withJSONObject: header)
         let payloadData = try! JSONEncoder().encode(payload)
-        
+
         // Create base64 URL-encoded strings
         let headerBase64 = headerData.base64URLEncodedString()
         let payloadBase64 = payloadData.base64URLEncodedString()
-        
+
         // Create mock signature
         let signature = "mock-signature"
-        
+
         // Combine into JWT format
         let jwt = "\(headerBase64).\(payloadBase64).\(signature)"
 
@@ -743,14 +758,14 @@ extension TestUtilities {
 /// Mock JWT payload structure for ALB OIDC data
 private struct MockALBJWTPayload: Codable {
     let iss: String
-    let aud: [String]
+    let aud: String  // Changed from [String] to String to match ALBJWTPayload
     let exp: Int
     let sub: String
     let email: String
     let name: String
     let cognitoGroups: [String]
     let preferredUsername: String
-    
+
     enum CodingKeys: String, CodingKey {
         case iss, aud, exp, sub, email, name
         case cognitoGroups = "cognito:groups"
@@ -777,8 +792,8 @@ extension HTTPHeaders {
         name: String = "Test User",
         groups: [String] = ["users"],
         username: String? = nil,
-        issuer: String = "test-cognito",
-        audience: [String] = ["test-client"],
+        issuer: String = "https://cognito-idp.us-west-2.amazonaws.com/us-west-2_TestPool",
+        audience: String = "test-client",
         expiration: Date? = nil
     ) -> HTTPHeaders {
         let albHeaders = TestUtilities.createMockALBHeaders(

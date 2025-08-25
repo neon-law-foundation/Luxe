@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: "actions/checkout@v4"
+
       - name: Configure AWS CLI
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -18,56 +20,18 @@ jobs:
           aws-secret-access-key: ${{ secrets.SAGEBRUSH_AWS_SECRET_ACCESS_KEY }}
           aws-region: us-west-2
 
+      - name: Install Swift toolchain
+        uses: vapor/swiftly-action@v0.2
+        with:
+          toolchain: latest
+
       - name: Update ECS Services
         run: |
           set +x  # Disable bash output
 
           echo "🔄 Starting ECS service updates..."
 
-          # List all clusters
-          clusters=$(aws ecs list-clusters --region us-west-2 --query 'clusterArns[]' --output text)
-
-          for cluster_arn in $clusters; do
-            cluster_name=$(basename $cluster_arn)
-            echo "📋 Processing cluster: $cluster_name"
-
-            # List services in cluster
-            services=$(aws ecs list-services --cluster $cluster_name --region us-west-2 --query 'serviceArns[]' --output text)
-
-            for service_arn in $services; do
-              service_name=$(basename $service_arn)
-
-              # Only update Bazaar and Destined services
-              if [[ "$service_name" == "Bazaar" || "$service_name" == "Destined" ]]; then
-                echo "🔄 Updating service: $service_name in cluster: $cluster_name"
-
-                aws ecs update-service \
-                  --cluster $cluster_name \
-                  --service $service_name \
-                  --force-new-deployment \
-                  --region us-west-2 > /dev/null 2>&1
-
-                if [ $? -eq 0 ]; then
-                  echo "✅ Successfully triggered update for $service_name"
-                else
-                  echo "❌ Failed to update $service_name"
-                fi
-
-                # Wait for service to stabilize
-                echo "⏳ Waiting for $service_name to stabilize..."
-                aws ecs wait services-stable \
-                  --cluster $cluster_name \
-                  --services $service_name \
-                  --region us-west-2 > /dev/null 2>&1
-
-                if [ $? -eq 0 ]; then
-                  echo "✅ Service $service_name is stable"
-                else
-                  echo "⚠️ Service $service_name may still be updating"
-                fi
-              fi
-            done
-          done
+          swift run Vegas update-services
 
           set -x  # Re-enable bash output
           echo "🎉 ECS service update process completed"

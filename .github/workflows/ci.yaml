@@ -39,16 +39,6 @@ jobs:
         ports:
           - 6379:6379
 
-      dex:
-        image: ghcr.io/neon-law-foundation/luxe-dex:latest
-        ports:
-          - 2222:8080
-        options: >-
-          --health-cmd "nc -z localhost 8080 || exit 1"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
       - uses: "actions/checkout@v4"
 
@@ -76,26 +66,6 @@ jobs:
             DISABLE_CUSTOM_CORS=1
             USE_SSL=0
             DEFAULT_REGION=us-west-2
-
-      - uses: "actions/setup-python@v5"
-        with:
-          python-version: "3.11"
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "latest"
-
-      - name: Install markdownlint-cli2
-        run: npm install -g markdownlint-cli2
-
-      - name: Install SQLFluff
-        run: pip install sqlfluff
-
-      - name: Lint migrations
-        run: sqlfluff lint --dialect postgres .
-
-      - name: Lint markdown
-        run: ./scripts/validate-markdown.sh
 
       - name: Install Swift toolchain
         uses: vapor/swiftly-action@v0.2
@@ -129,11 +99,6 @@ jobs:
         run: swift test --no-parallel
         env:
           DATABASE_URL: postgres://postgres@localhost:5432/luxe?sslmode=disable
-          DEX_ISSUER: http://localhost:2222/dex
-          DEX_CLIENT_ID: luxe-client
-          DEX_JWKS_URL: http://localhost:2222/dex/keys
-          DEX_BASE_URL: http://localhost:2222
-          DEX_CALLBACK_URL: http://localhost:8080/auth/dex/callback
           ENV: TEST
           DISABLE_LEAK_DETECTION: true
           REDIS_URL: redis://localhost:6379

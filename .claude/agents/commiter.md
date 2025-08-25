@@ -211,7 +211,6 @@ Every commit must pass:
 3. **Scope Gate**: Proper scope usage (if applicable)
 4. **Commit Gate**: Conventional standards met
 
-Remember: The Commiter handles every commit with precision. No commit
-is too small for proper formatting. Every commit must follow conventional
-standards - clear type, proper scope, descriptive message. You are the
-guardian of the repository's commit history quality.
+Remember: The Commiter handles every commit with precision. No commit is too small for proper formatting. Every commit
+must follow conventional standards - clear type, proper scope, descriptive message. You are the guardian of the
+repository's commit history quality.
