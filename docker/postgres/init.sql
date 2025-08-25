@@ -2,14 +2,19 @@
 -- This script creates the basic database structure needed for testing
 
 -- Ensure the luxe database exists
-SELECT 'CREATE DATABASE luxe' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'luxe')\gexec
+SELECT 'CREATE DATABASE luxe'
+    WHERE NOT EXISTS (
+        SELECT
+        FROM pg_database
+        WHERE datname = 'luxe'
+    ) \gexec
 
 -- Connect to the luxe database
 \c luxe;
 
 -- Enable necessary extensions
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 -- Create schemas that will be used by the application
 CREATE SCHEMA IF NOT EXISTS auth;

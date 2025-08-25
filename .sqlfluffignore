@@ -1,1 +1,2 @@
 schema.sql
+docker/postgres/init.sql

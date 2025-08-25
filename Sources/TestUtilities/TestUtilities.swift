@@ -631,6 +631,12 @@ extension TestUtilities {
         let finalUsername = username ?? email
         let finalExpiration = expiration ?? Date().addingTimeInterval(3600)
 
+        // Create JWT header
+        let header = [
+            "typ": "JWT",
+            "alg": "RS256"
+        ]
+
         // Create JWT payload matching ALBJWTPayload structure
         let payload = MockALBJWTPayload(
             iss: issuer,
@@ -639,16 +645,26 @@ extension TestUtilities {
             sub: sub,
             email: email,
             name: name,
-            cognito_groups: groups,
-            username: finalUsername
+            cognitoGroups: groups,
+            preferredUsername: finalUsername
         )
 
-        // Encode as base64 JSON (ALB doesn't require signature verification)
+        // Encode header and payload
+        let headerData = try! JSONSerialization.data(withJSONObject: header)
         let payloadData = try! JSONEncoder().encode(payload)
-        let payloadBase64 = payloadData.base64EncodedString()
+        
+        // Create base64 URL-encoded strings
+        let headerBase64 = headerData.base64URLEncodedString()
+        let payloadBase64 = payloadData.base64URLEncodedString()
+        
+        // Create mock signature
+        let signature = "mock-signature"
+        
+        // Combine into JWT format
+        let jwt = "\(headerBase64).\(payloadBase64).\(signature)"
 
         return HTTPHeaders([
-            ("x-amzn-oidc-data", payloadBase64),
+            ("x-amzn-oidc-data", jwt),
             ("x-amzn-oidc-accesstoken", "mock-access-token"),
             ("x-amzn-oidc-identity", finalUsername),
         ])
@@ -732,8 +748,14 @@ private struct MockALBJWTPayload: Codable {
     let sub: String
     let email: String
     let name: String
-    let cognito_groups: [String]
-    let username: String
+    let cognitoGroups: [String]
+    let preferredUsername: String
+    
+    enum CodingKeys: String, CodingKey {
+        case iss, aud, exp, sub, email, name
+        case cognitoGroups = "cognito:groups"
+        case preferredUsername = "preferred_username"
+    }
 }
 
 // MARK: - HTTPHeaders Extensions for ALB Testing
@@ -821,5 +843,17 @@ extension HTTPHeaders {
             groups: ["users", "customers"],
             username: email
         )
+    }
+}
+
+// MARK: - Base64 URL Encoding Extension
+
+extension Data {
+    /// Encodes data as base64 URL-safe string (no padding)
+    func base64URLEncodedString() -> String {
+        self.base64EncodedString()
+            .replacingOccurrences(of: "+", with: "-")
+            .replacingOccurrences(of: "/", with: "_")
+            .replacingOccurrences(of: "=", with: "")
     }
 }
