@@ -459,6 +459,14 @@ struct Infrastructure: AsyncParsableCommand {
                 name: "engineering-system-account"
             )
 
+            // Sagebrush GitHub System Account for CI/CD operations
+            try await luxeCloud.upsertStack(
+                stack: SagebrushGithubSystemAccount(),
+                region: primaryRegion,
+                stackParameters: [:],
+                name: "sagebrush-github-system-account"
+            )
+
             // Bastion Host for secure access to VPC resources
             try await luxeCloud.upsertStack(
                 stack: BastionHost(),
