@@ -42,8 +42,8 @@ awslocal s3 mb s3://sagebrush-emails
 # Set public read access for the public bucket
 awslocal s3api put-bucket-acl --bucket luxe-public-bucket --acl public-read
 
-# Create holiday/vacation mode buckets
-awslocal s3 mb s3://luxe-holiday-bucket
+# Create temporary storage bucket
+awslocal s3 mb s3://luxe-temp-bucket
 
 # Configure S3 bucket notification for email processing
 EMAIL_QUEUE_ARN=$(awslocal sqs get-queue-attributes --queue-url $MAIN_QUEUE_URL --attribute-names QueueArn --query 'Attributes.QueueArn' --output text)
@@ -61,7 +61,7 @@ echo "S3 buckets created successfully:"
 echo "- Private bucket: luxe-private-bucket"
 echo "- Public bucket: luxe-public-bucket"
 echo "- Email processing bucket: sagebrush-emails"
-echo "- Holiday bucket: luxe-holiday-bucket"
+echo "- Temporary bucket: luxe-temp-bucket"
 
 # List all buckets to verify
 echo "Available buckets:"

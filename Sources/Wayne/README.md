@@ -85,7 +85,7 @@ Wayne works with any executable target in your Package.swift that's designed for
 
 - **Vegas**: Infrastructure management CLI
 
-- **Holiday**: Deployment management tool
+- **Brochure**: Static website deployment tool
 
 ## How It Works
 
