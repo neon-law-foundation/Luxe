@@ -329,12 +329,36 @@ struct ForLawyersPage: HTMLDocument {
                             }
 
                             ul {
-                                li { "🎨 **Branded with your law firm's identity** - logo, colors, and messaging" }
-                                li { "🔧 **Customized workflows** for your practice areas and client needs" }
-                                li { "📱 **Modern, responsive interface** that your staff will actually want to use" }
-                                li { "🔄 **Seamless integrations** with your existing legal software" }
-                                li { "📊 **Built-in analytics** to track productivity improvements" }
-                                li { "🛠️ **Ongoing updates** deployed securely without accessing your data" }
+                                li {
+                                    "🎨 "
+                                    strong { "Branded with your law firm's identity" }
+                                    " - logo, colors, and messaging"
+                                }
+                                li {
+                                    "🔧 "
+                                    strong { "Customized workflows" }
+                                    " for your practice areas and client needs"
+                                }
+                                li {
+                                    "📱 "
+                                    strong { "Modern, responsive interface" }
+                                    " that your staff will actually want to use"
+                                }
+                                li {
+                                    "🔄 "
+                                    strong { "Seamless integrations" }
+                                    " with your existing legal software"
+                                }
+                                li {
+                                    "📊 "
+                                    strong { "Built-in analytics" }
+                                    " to track productivity improvements"
+                                }
+                                li {
+                                    "🛠️ "
+                                    strong { "Ongoing updates" }
+                                    " deployed securely without accessing your data"
+                                }
                             }
                         }
                     }

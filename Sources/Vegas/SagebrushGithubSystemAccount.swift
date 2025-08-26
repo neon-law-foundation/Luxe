@@ -47,9 +47,17 @@ struct SagebrushGithubSystemAccount: Stack {
                         "ecs:DescribeServices"
                       ],
                       "Resource": [
-                        "arn:aws:ecs:*:*:service/*/Bazaar",
-                        "arn:aws:ecs:*:*:service/*/Destined"
+                        "arn:aws:ecs:*:*:service/bazaar-cluster/bazaar",
+                        "arn:aws:ecs:*:*:service/destined-cluster/destined"
                       ]
+                    },
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "ecs:DescribeTaskDefinition",
+                        "ecs:RegisterTaskDefinition"
+                      ],
+                      "Resource": "*"
                     },
                     {
                       "Effect": "Allow",
