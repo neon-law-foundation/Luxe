@@ -27,11 +27,6 @@ jobs:
 
       - name: Update ECS Services
         run: |
-          set +x  # Disable bash output
-
           echo "🔄 Starting ECS service updates..."
 
           swift run Vegas update-services
-
-          set -x  # Re-enable bash output
-          echo "🎉 ECS service update process completed"
