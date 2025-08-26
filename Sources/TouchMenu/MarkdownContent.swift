@@ -94,7 +94,7 @@ extension MarkdownContent {
     ///
     /// Use this to apply CSS classes to different markdown elements when rendering to HTML.
     /// This enables consistent styling across different web targets while maintaining flexibility.
-    public struct StyleOptions: Sendable {
+    public struct StyleOptions: Sendable, Equatable {
         public let headingClass: String?
         public let paragraphClass: String?
         public let linkClass: String?
@@ -150,6 +150,8 @@ private struct HTMLRenderer {
             return renderParagraph(paragraph)
         case let text as Text:
             return renderText(text)
+        case let softBreak as SoftBreak:
+            return renderSoftBreak(softBreak)
         case let strong as Strong:
             return renderStrong(strong)
         case let emphasis as Emphasis:
@@ -188,6 +190,11 @@ private struct HTMLRenderer {
 
     private func renderText(_ text: Text) -> String {
         text.string.htmlEscaped()
+    }
+
+    private func renderSoftBreak(_ softBreak: SoftBreak) -> String {
+        // According to CommonMark spec, soft breaks should be rendered as a space in HTML
+        " "
     }
 
     private func renderStrong(_ strong: Strong) -> String {
@@ -235,12 +242,10 @@ private struct HTMLRenderer {
     }
 }
 
-/// Preprocesses markdown content to fix line break issues and remove frontmatter
+/// Preprocesses markdown content to remove frontmatter only
 ///
-/// This function:
-/// 1. Removes YAML frontmatter if present (content between --- delimiters at the start)
-/// 2. Ensures that lines ending with lowercase letters followed by lines
-///    starting with lowercase letters have proper spacing to prevent word concatenation.
+/// This function removes YAML frontmatter if present (content between --- delimiters at the start)
+/// The Swift Markdown library should handle line breaks correctly according to CommonMark spec
 private func preprocessMarkdown(_ content: String) -> String {
     var processedContent = content
 
@@ -264,30 +269,7 @@ private func preprocessMarkdown(_ content: String) -> String {
         }
     }
 
-    let lines = processedContent.components(separatedBy: .newlines)
-    var processedLines: [String] = []
-
-    for (index, line) in lines.enumerated() {
-        var processedLine = line
-
-        // Check if this line ends with a lowercase letter and the next line starts with a lowercase letter
-        if index < lines.count - 1 {
-            let nextLine = lines[index + 1]
-
-            // Check if current line ends with lowercase and next line starts with lowercase
-            if let lastChar = line.last,
-                let firstChar = nextLine.first,
-                lastChar.isLowercase && firstChar.isLowercase && !nextLine.isEmpty
-            {
-                // Add a trailing space to ensure proper word separation
-                processedLine = line + " "
-            }
-        }
-
-        processedLines.append(processedLine)
-    }
-
-    return processedLines.joined(separator: "\n")
+    return processedContent
 }
 
 extension String {

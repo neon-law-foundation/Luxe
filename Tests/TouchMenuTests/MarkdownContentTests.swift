@@ -122,4 +122,129 @@ struct MarkdownContentTests {
             #expect(html.contains("&lt;div&gt;") || html.contains("HTML"))
         }
     }
+
+    @Suite("Word Concatenation Fix", .serialized)
+    struct WordConcatenationTests {
+
+        @Test("prevents word concatenation at line breaks")
+        func preventsWordConcatenation() throws {
+            let markdown = """
+                We're excited to announce that Sagebrush Services is searching for an exceptional Chief Executive
+                Officer to lead our company into its next phase of growth and innovation.
+
+                We're now seeking a visionary
+                leader who can expand our impact and drive our mission forward with both strategic insight and
+                operational excellence.
+                """
+
+            let content = MarkdownContent(markdown: markdown)
+            let html = String(describing: content.content).replacingOccurrences(of: "HTMLRaw(text: \"", with: "")
+                .replacingOccurrences(of: "\")", with: "").replacingOccurrences(of: "\\\"", with: "\"")
+
+            // Should have proper spacing between words
+            #expect(html.contains("Chief Executive Officer"))
+            #expect(!html.contains("ExecutiveOfficer"))
+            #expect(html.contains("visionary leader"))
+            #expect(!html.contains("visionaryleader"))
+            #expect(html.contains("and operational"))
+            #expect(!html.contains("andoperational"))
+        }
+
+        @Test("preserves proper markdown structure without concatenation")
+        func preservesMarkdownStructure() throws {
+            let markdown = """
+                from virtual mailbox solutions to corporate formation and legal support. We're now seeking a visionary
+                leader who can expand our impact and drive our mission forward with both strategic insight and
+                operational excellence.
+                """
+
+            let content = MarkdownContent(markdown: markdown)
+            let html = String(describing: content.content).replacingOccurrences(of: "HTMLRaw(text: \"", with: "")
+                .replacingOccurrences(of: "\")", with: "").replacingOccurrences(of: "\\\"", with: "\"")
+
+            // Should contain proper spacing
+            #expect(html.contains("visionary leader"))
+            #expect(html.contains("and operational"))
+            #expect(!html.contains("visionaryleader"))
+            #expect(!html.contains("andoperational"))
+        }
+
+        @Test("debug with built-in formatter")
+        func debugBuiltInFormatter() throws {
+            let markdown = """
+                Chief Executive
+                Officer test
+                """
+
+            let content = MarkdownContent(markdown: markdown)
+            let html = String(describing: content.content).replacingOccurrences(of: "HTMLRaw(text: \"", with: "")
+                .replacingOccurrences(of: "\")", with: "").replacingOccurrences(of: "\\\"", with: "\"")
+
+            print("Input: '\(markdown)'")
+            print("Output HTML: '\(html)'")
+
+            #expect(html.contains("Chief Executive Officer"))
+        }
+
+        private func debugPreprocess(_ content: String) -> String {
+            var processedContent = content
+
+            // Remove frontmatter if present (copied from the real function)
+            if processedContent.hasPrefix("---") {
+                let lines = processedContent.components(separatedBy: .newlines)
+                var frontmatterEndIndex = -1
+
+                for (index, line) in lines.enumerated() where index > 0 {
+                    if line.trimmingCharacters(in: .whitespaces) == "---" {
+                        frontmatterEndIndex = index
+                        break
+                    }
+                }
+
+                if frontmatterEndIndex > 0 {
+                    let remainingLines = Array(lines[(frontmatterEndIndex + 1)...])
+                    processedContent = remainingLines.joined(separator: "\n").trimmingCharacters(
+                        in: .whitespacesAndNewlines
+                    )
+                }
+            }
+
+            // Copy the preprocessing logic exactly
+            let lines = processedContent.components(separatedBy: .newlines)
+            var result: [String] = []
+            var inParagraph = false
+
+            for (index, line) in lines.enumerated() {
+                let trimmedLine = line.trimmingCharacters(in: .whitespacesAndNewlines)
+                let originalLine = line.trimmingCharacters(in: .newlines)  // Keep spaces but remove newlines
+
+                if trimmedLine.isEmpty {
+                    // Empty line - paragraph break
+                    result.append("")
+                    inParagraph = false
+                } else {
+                    // Line has content
+                    if inParagraph && index > 0 {
+                        // We're continuing a paragraph - check if previous line should have a soft break
+                        let prevIndex = result.count - 1
+                        if prevIndex >= 0 && !result[prevIndex].isEmpty {
+                            let prevLine = result[prevIndex]
+
+                            // Check if previous line already ends with hard break markers
+                            if !prevLine.hasSuffix("  ") && !prevLine.hasSuffix("\\") {
+                                // No hard break marker - this should be a soft break (space)
+                                result[prevIndex] = prevLine.trimmingCharacters(in: .whitespaces) + " "
+                            }
+                        }
+                    }
+
+                    result.append(originalLine)
+                    inParagraph = true
+                }
+            }
+
+            return result.joined(separator: "\n")
+        }
+
+    }
 }
