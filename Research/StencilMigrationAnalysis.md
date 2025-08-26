@@ -2,7 +2,8 @@
 
 ## Overview
 
-This document provides a comprehensive analysis of migrating from Liquid templating to Stencil templating for the Standards system, based on Phase 1 research and planning.
+This document provides a comprehensive analysis of migrating from Liquid templating to Stencil templating
+for the Standards system, based on Phase 1 research and planning.
 
 ## Current State Analysis
 
@@ -11,6 +12,7 @@ This document provides a comprehensive analysis of migrating from Liquid templat
 Based on audit of existing notation files, the following Liquid patterns are currently used:
 
 #### 1. Variable Interpolation
+
 ```liquid
 {{client_name}}
 {{organization_name}}
@@ -21,6 +23,7 @@ Based on audit of existing notation files, the following Liquid patterns are cur
 ```
 
 #### 2. Conditional Logic
+
 ```liquid
 {% if respondent_type == "org_and_person" %}
 This agreement covers both the organization and individual signatory.
@@ -34,6 +37,7 @@ on behalf of {{taxpayer.name}}.
 ```
 
 #### 3. Filter Usage
+
 ```liquid
 {{start_date | date: "%B %d, %Y"}}
 {{neon_representative.signature.inserted_at|date}}
@@ -42,6 +46,7 @@ on behalf of {{taxpayer.name}}.
 ```
 
 #### 4. Complex Object Navigation
+
 ```liquid
 {{issuance.share_class.org.name}}
 {{issuance.share_class.org.org_type.name}}
@@ -190,32 +195,39 @@ on behalf of {{taxpayer.name}}.
 ### Example 1: Simple Variable with Date Filter
 
 **Current Liquid:**
+
 ```liquid
 Date: {{neon_representative.signature.inserted_at|date}}
 ```
 
 **Stencil Conversion:**
+
 ```stencil
 Date: {{neon_representative.signature.inserted_at|date}}
 ```
-*Note: Custom date filter implementation required*
+
+**Note:** Custom date filter implementation required
 
 ### Example 2: Currency Formatting
 
 **Current Liquid:**
+
 ```liquid
 Amount: {{issuance.fair_market_value_per_share|currency}}
 ```
 
 **Stencil Conversion:**
+
 ```stencil
 Amount: {{issuance.fair_market_value_per_share|currency}}
 ```
-*Note: Custom currency filter implementation required*
+
+**Note:** Custom currency filter implementation required
 
 ### Example 3: Complex Conditional
 
 **Current Liquid:**
+
 ```liquid
 {% if respondent_type == "org_and_person" %}
 This covers both organization and individual.
@@ -225,6 +237,7 @@ This covers organization only.
 ```
 
 **Stencil Conversion:**
+
 ```stencil
 {% if respondent_type == "org_and_person" %}
 This covers both organization and individual.
@@ -232,7 +245,8 @@ This covers both organization and individual.
 This covers organization only.
 {% endif %}
 ```
-*Note: Identical syntax, no changes needed*
+
+**Note:** Identical syntax, no changes needed
 
 ## Next Phase Preparation
 
