@@ -264,3 +264,125 @@ struct ServiceUpdateConfig {
 enum UpdateServicesError: Error {
     case serviceNotFound(String)
 }
+
+// MARK: - Security Types
+
+/// Security errors for container registry operations
+enum SecurityError: Error, LocalizedError {
+    case invalidGitHubContainerRegistry(String)
+
+    var errorDescription: String? {
+        switch self {
+        case .invalidGitHubContainerRegistry(let path):
+            return
+                "Invalid GitHub Container Registry repository path: \(path). Only valid ghcr.io repository paths are allowed."
+        }
+    }
+}
+
+/// Secure wrapper for GitHub Container Registry URLs
+struct SecureGitHubRegistry {
+    let imageURL: String
+
+    /// Creates a secure GitHub Container Registry URL
+    /// - Parameter repository: The repository path (e.g., "org/repo")
+    /// - Throws: SecurityError.invalidGitHubContainerRegistry if the repository path is invalid
+    init(repository: String) throws {
+        // Validate the repository path for security
+        guard Self.isValidRepositoryPath(repository) else {
+            throw SecurityError.invalidGitHubContainerRegistry(repository)
+        }
+
+        // Always use ghcr.io - never trust user input for the domain
+        self.imageURL = "ghcr.io/\(repository)"
+    }
+
+    /// Validates that a repository path is safe to use
+    /// - Parameter path: The repository path to validate
+    /// - Returns: true if the path is safe, false otherwise
+    private static func isValidRepositoryPath(_ path: String) -> Bool {
+        // Reject empty or whitespace-only paths
+        guard !path.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return false
+        }
+
+        // Reject paths containing protocols
+        guard !path.contains("://") else {
+            return false
+        }
+
+        // Reject paths starting with domains (potential fishing attacks)
+        let suspiciousDomains = [
+            "github.io", "ghcr.com", "gcr.io", "docker.io", "quay.io",
+            "dockerhub.com", "registry.hub.docker.com", "ghcr.io.evil.com",
+        ]
+
+        for domain in suspiciousDomains {
+            if path.hasPrefix(domain) {
+                return false
+            }
+        }
+
+        // Additional check: reject any path containing 'ghcr.io' but not starting with org/repo pattern
+        // This prevents domains like "malicious.ghcr.io" or "ghcr.io.evil.com"
+        if path.contains("ghcr.io") {
+            return false
+        }
+
+        // Reject path traversal attempts
+        guard !path.contains("..") && !path.hasPrefix(".") && !path.hasPrefix("/") else {
+            return false
+        }
+
+        // Reject file:// or other protocol schemes
+        guard !path.contains("file:") && !path.contains("://") else {
+            return false
+        }
+
+        // Ensure it contains at least org/repo format
+        let components = path.split(separator: "/")
+        guard components.count >= 2 else {
+            return false
+        }
+
+        // Validate each component contains only safe characters
+        let allowedCharacters = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "-_."))
+        for component in components {
+            guard component.unicodeScalars.allSatisfy(allowedCharacters.contains) else {
+                return false
+            }
+
+            // Reject components that are too short or too long
+            guard component.count >= 1 && component.count <= 255 else {
+                return false
+            }
+        }
+
+        return true
+    }
+}
+
+/// Secure wrapper for ServiceUpdateConfig that ensures only ghcr.io is used
+struct SecureServiceUpdateConfig {
+    let serviceName: String
+    let stackName: String
+    let clusterName: String
+    let imageRepository: String
+
+    /// Creates a secure service update configuration
+    /// - Parameters:
+    ///   - serviceName: Name of the ECS service
+    ///   - stackName: CloudFormation stack name
+    ///   - clusterName: ECS cluster name
+    ///   - repository: GitHub repository path (e.g., "org/repo")
+    /// - Throws: SecurityError.invalidGitHubContainerRegistry if repository is invalid
+    init(serviceName: String, stackName: String, clusterName: String, repository: String) throws {
+        self.serviceName = serviceName
+        self.stackName = stackName
+        self.clusterName = clusterName
+
+        // Use SecureGitHubRegistry to ensure only ghcr.io URLs
+        let secureRegistry = try SecureGitHubRegistry(repository: repository)
+        self.imageRepository = secureRegistry.imageURL
+    }
+}
