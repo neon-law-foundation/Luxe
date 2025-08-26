@@ -10,7 +10,15 @@ struct BlogPostPage: HTMLDocument {
     var title: String { "\(post.title) - Sagebrush" }
 
     var head: some HTML {
-        HeaderComponent.sagebrushTheme()
+        let ogMetadata = TouchMenu.OpenGraphMetadata(
+            title: post.title,
+            description: post.description,
+            image: "https://www.sagebrush.services/sagebrush.svg",
+            url: "https://www.sagebrush.services/\(post.slug)",
+            type: "article"
+        )
+
+        HeaderComponent.sagebrushTheme(openGraphMetadata: ogMetadata)
         Elementary.title { title }
     }
 
