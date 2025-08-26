@@ -42,6 +42,43 @@ verify_issue_open() {
 }
 ```
 
+## Common GitHub CLI Mistakes to Avoid
+
+**🚨 CRITICAL:** Always validate `gh` command syntax before execution. Common errors include:
+
+### Invalid JSON Field Names
+
+❌ **WRONG**: `gh pr view 30 --json statusCheckRollupState`
+✅ **CORRECT**: `gh pr view 30 --json statusCheckRollup`
+
+**Available PR JSON fields:**
+
+```text
+additions, assignees, author, autoMergeRequest, baseRefName, baseRefOid, body,
+changedFiles, closed, closedAt, closingIssuesReferences, comments, commits,
+createdAt, deletions, files, fullDatabaseId, headRefName, headRefOid,
+headRepository, headRepositoryOwner, id, isCrossRepository, isDraft, labels,
+latestReviews, maintainerCanModify, mergeCommit, mergeStateStatus, mergeable,
+mergedAt, mergedBy, milestone, number, potentialMergeCommit, projectCards,
+projectItems, reactionGroups, reviewDecision, reviewRequests, reviews, state,
+statusCheckRollup, title, updatedAt, url
+```
+
+### Proper Issue Search Strategy
+
+When no roadmap issues are found, provide clear feedback:
+
+```bash
+# Search for roadmap issues with error handling
+ROADMAP_ISSUES=$(gh issue list --label "roadmap" --state "open" --json number,title,body 2>/dev/null)
+if [ "$ROADMAP_ISSUES" = "[]" ] || [ -z "$ROADMAP_ISSUES" ]; then
+    echo "📋 No open roadmap issues found"
+    echo "This feature was implemented as a standalone enhancement"
+    echo "No roadmap tracking required for this PR"
+    exit 0
+fi
+```
+
 ## Roadmap Update Protocol
 
 ### After Commits (via Cashier)
@@ -50,7 +87,13 @@ verify_issue_open() {
 
 ```bash
 # Find issues related to current work (ONLY open issues)
-gh issue list --label "roadmap" --state "open" --json number,title,body
+# Always handle empty results gracefully
+ISSUES_JSON=$(gh issue list --label "roadmap" --state "open" --json number,title,body 2>/dev/null)
+if [ "$ISSUES_JSON" = "[]" ] || [ -z "$ISSUES_JSON" ]; then
+    echo "📋 No open roadmap issues found - no updates needed"
+    exit 0
+fi
+echo "$ISSUES_JSON"
 ```
 
 1. **Update Issue with Commit**
@@ -79,9 +122,16 @@ gh issue comment {issue_number} --body "✅ **Task Completed**
 1. **Get PR Information**
 
 ```bash
-PR_NUMBER=$(gh pr view --json number -q .number)
-PR_TITLE=$(gh pr view --json title -q .title)
-BRANCH_NAME=$(git branch --show-current)
+# Get current PR info with proper error handling
+if gh pr view --json number,title > /dev/null 2>&1; then
+    PR_NUMBER=$(gh pr view --json number -q .number)
+    PR_TITLE=$(gh pr view --json title -q .title)
+    BRANCH_NAME=$(git branch --show-current)
+else
+    echo "❌ No current PR found or not in PR context"
+    echo "Run from branch with associated PR"
+    exit 1
+fi
 ```
 
 1. **Link PR to Roadmap Issue**
@@ -435,7 +485,12 @@ update_branch_status() {
 if ! gh issue view {issue_number} &>/dev/null; then
     echo "❌ Issue #{issue_number} not found"
     echo "Available roadmap issues:"
-    gh issue list --label "roadmap" --state "open" --json number,title
+    AVAILABLE=$(gh issue list --label "roadmap" --state "open" --json number,title 2>/dev/null)
+    if [ "$AVAILABLE" = "[]" ] || [ -z "$AVAILABLE" ]; then
+        echo "📋 No open roadmap issues found"
+    else
+        echo "$AVAILABLE" | jq -r '.[] | "#\(.number): \(.title)"'
+    fi
 fi
 ```
 
@@ -447,6 +502,33 @@ if ! gh issue comment {issue_number} --body "{message}"; then
     echo "Retrying with simplified message..."
     gh issue comment {issue_number} --body "Update: {simplified_message}"
 fi
+```
+
+### GitHub CLI Command Validation
+
+Always validate commands before execution:
+
+```bash
+# Test if gh command is available and authenticated
+if ! command -v gh &> /dev/null; then
+    echo "❌ GitHub CLI not installed"
+    exit 1
+fi
+
+if ! gh auth status &> /dev/null; then
+    echo "❌ GitHub CLI not authenticated"
+    echo "Run: gh auth login"
+    exit 1
+fi
+
+# Test command syntax before real execution
+validate_gh_command() {
+    local cmd="$1"
+    if ! $cmd --help &> /dev/null; then
+        echo "❌ Invalid GitHub CLI command: $cmd"
+        return 1
+    fi
+}
 ```
 
 ## Reporting Format
@@ -486,6 +568,9 @@ Last Update: {timestamp}
 - Forget to link commits/PRs
 - Search or modify closed issues
 - Reopen closed issues for updates
+- Use invalid JSON field names in `gh` commands
+- Execute commands without error handling
+- Assume roadmap issues exist without checking
 
 ### ALWAYS
 
@@ -496,6 +581,11 @@ Last Update: {timestamp}
 - Maintain timeline accuracy
 - Work only with open issues
 - Respect issue closure status
+- Validate `gh` command syntax before execution
+- Handle empty search results gracefully
+- Provide clear feedback when no roadmap issues exist
+- Use proper error handling for all GitHub CLI operations
+- Check authentication and tool availability before proceeding
 
 Remember: The Issue Updater keeps roadmaps alive and accurate. Your updates ensure that GitHub issues reflect the true
 state of development progress, enabling effective project tracking and team coordination. **You only work with open
