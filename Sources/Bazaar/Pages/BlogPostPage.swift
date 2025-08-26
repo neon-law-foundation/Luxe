@@ -13,7 +13,7 @@ struct BlogPostPage: HTMLDocument {
         let ogMetadata = TouchMenu.OpenGraphMetadata(
             title: post.title,
             description: post.description,
-            image: "https://www.sagebrush.services/sagebrush.svg",
+            image: "https://www.sagebrush.services/sagebrush.png",
             url: "https://www.sagebrush.services/\(post.slug)",
             type: "article"
         )
