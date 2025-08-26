@@ -1,13 +1,37 @@
 import Elementary
 import VaporElementary
 
+public struct OpenGraphMetadata {
+    public let title: String?
+    public let description: String?
+    public let image: String?
+    public let url: String?
+    public let type: String
+
+    public init(
+        title: String? = nil,
+        description: String? = nil,
+        image: String? = nil,
+        url: String? = nil,
+        type: String = "website"
+    ) {
+        self.title = title
+        self.description = description
+        self.image = image
+        self.url = url
+        self.type = type
+    }
+}
+
 public struct HeaderComponent: HTML {
     public let primaryColor: String
     public let secondaryColor: String
+    public let openGraphMetadata: OpenGraphMetadata?
 
-    public init(primaryColor: String, secondaryColor: String) {
+    public init(primaryColor: String, secondaryColor: String, openGraphMetadata: OpenGraphMetadata? = nil) {
         self.primaryColor = primaryColor
         self.secondaryColor = secondaryColor
+        self.openGraphMetadata = openGraphMetadata
     }
 
     public var content: some HTML {
@@ -15,6 +39,35 @@ public struct HeaderComponent: HTML {
         meta(.name(.viewport), .content("width=device-width, initial-scale=1"))
         link(.rel(.icon), .href("/favicon.ico"))
         link(.rel(.stylesheet), .href("https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"))
+
+        // Open Graph meta tags
+        if let ogData = openGraphMetadata {
+            meta(.property("og:type"), .content(ogData.type))
+            if let title = ogData.title {
+                meta(.property("og:title"), .content(title))
+            }
+            if let description = ogData.description {
+                meta(.property("og:description"), .content(description))
+            }
+            if let image = ogData.image {
+                meta(.property("og:image"), .content(image))
+            }
+            if let url = ogData.url {
+                meta(.property("og:url"), .content(url))
+            }
+
+            // Twitter Card meta tags for better compatibility
+            meta(.name("twitter:card"), .content("summary_large_image"))
+            if let title = ogData.title {
+                meta(.name("twitter:title"), .content(title))
+            }
+            if let description = ogData.description {
+                meta(.name("twitter:description"), .content(description))
+            }
+            if let image = ogData.image {
+                meta(.name("twitter:image"), .content(image))
+            }
+        }
         style {
             """
             :root {
@@ -420,15 +473,15 @@ public struct HeaderComponent: HTML {
 
 // Convenience initializers for specific color schemes
 extension HeaderComponent {
-    public static func sagebrushTheme() -> HeaderComponent {
-        HeaderComponent(primaryColor: "#006400", secondaryColor: "#DAA520")
+    public static func sagebrushTheme(openGraphMetadata: OpenGraphMetadata? = nil) -> HeaderComponent {
+        HeaderComponent(primaryColor: "#006400", secondaryColor: "#DAA520", openGraphMetadata: openGraphMetadata)
     }
 
-    public static func standardsTheme() -> HeaderComponent {
-        HeaderComponent(primaryColor: "#663399", secondaryColor: "#FFB6C1")
+    public static func standardsTheme(openGraphMetadata: OpenGraphMetadata? = nil) -> HeaderComponent {
+        HeaderComponent(primaryColor: "#663399", secondaryColor: "#FFB6C1", openGraphMetadata: openGraphMetadata)
     }
 
-    public static func neonLawTheme() -> HeaderComponent {
-        HeaderComponent(primaryColor: "#4169E1", secondaryColor: "#E19741")
+    public static func neonLawTheme(openGraphMetadata: OpenGraphMetadata? = nil) -> HeaderComponent {
+        HeaderComponent(primaryColor: "#4169E1", secondaryColor: "#E19741", openGraphMetadata: openGraphMetadata)
     }
 }

@@ -13,7 +13,15 @@ struct HomePage: HTMLDocument {
     var title: String { "Sagebrush Physical Address - Nevada's Premier Mail Service" }
 
     var head: some HTML {
-        HeaderComponent.sagebrushTheme()
+        let ogMetadata = TouchMenu.OpenGraphMetadata(
+            title: "Sagebrush Physical Address - Nevada's Premier Mail Service",
+            description:
+                "Complete mail management, compliance, and equity services for Nevada businesses and individuals. Physical address + license compliance + cap table guidance.",
+            image: "https://www.sagebrush.services/sagebrush.svg",
+            url: "https://www.sagebrush.services"
+        )
+
+        HeaderComponent.sagebrushTheme(openGraphMetadata: ogMetadata)
         Elementary.title { title }
     }
 
