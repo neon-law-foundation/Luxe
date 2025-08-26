@@ -26,17 +26,17 @@ struct UpdateServices: AsyncParsableCommand {
     var timeout: Int = 300
 
     func run() async throws {
-        fputs("🔄 Updating ECS services with latest container images from GitHub Container Registry...\n", stderr)
+        print("🔄 Updating ECS services with latest container images from GitHub Container Registry...")
 
         let primaryRegion = Region.uswest2
 
         guard let accessKey = ProcessInfo.processInfo.environment["AWS_ACCESS_KEY_ID"] else {
-            fputs("❌ AWS_ACCESS_KEY_ID environment variable not set\n", stderr)
+            print("❌ AWS_ACCESS_KEY_ID environment variable not set")
             throw ExitCode.failure
         }
 
         guard let secretKey = ProcessInfo.processInfo.environment["AWS_SECRET_ACCESS_KEY"] else {
-            fputs("❌ AWS_SECRET_ACCESS_KEY environment variable not set\n", stderr)
+            print("❌ AWS_SECRET_ACCESS_KEY environment variable not set")
             throw ExitCode.failure
         }
 
@@ -62,13 +62,13 @@ struct UpdateServices: AsyncParsableCommand {
                 ),
             ]
 
-            fputs("📋 Services to update:\n", stderr)
+            print("📋 Services to update:")
             for service in servicesToUpdate {
-                fputs("  • \(service.serviceName) (\(service.imageRepository):latest)\n", stderr)
+                print("  • \(service.serviceName) (\(service.imageRepository):latest)")
             }
 
             for serviceConfig in servicesToUpdate {
-                fputs("\n🚀 Updating \(serviceConfig.serviceName) service...\n", stderr)
+                print("\n🚀 Updating \(serviceConfig.serviceName) service...")
 
                 // Update the service by forcing a new deployment
                 try await updateECSService(
@@ -80,10 +80,10 @@ struct UpdateServices: AsyncParsableCommand {
             }
 
             try await luxeCloud.client.shutdown()
-            fputs("\n🎉 All ECS services updated successfully!\n", stderr)
+            print("\n🎉 All ECS services updated successfully!")
 
         } catch {
-            fputs("❌ Error updating ECS services: \(error)\n", stderr)
+            print("❌ Error updating ECS services: \(error)")
             try await luxeCloud.client.shutdown()
             throw error
         }
@@ -104,16 +104,16 @@ struct UpdateServices: AsyncParsableCommand {
         let describeResponse = try await ecs.describeServices(describeServicesRequest)
 
         guard let service = describeResponse.services?.first else {
-            fputs("⚠️ Service \(serviceConfig.serviceName) not found in cluster \(serviceConfig.clusterName)\n", stderr)
+            print("⚠️ Service \(serviceConfig.serviceName) not found in cluster \(serviceConfig.clusterName)")
             return
         }
 
         guard let taskDefinitionArn = service.taskDefinition else {
-            fputs("⚠️ No task definition found for service \(serviceConfig.serviceName)\n", stderr)
+            print("⚠️ No task definition found for service \(serviceConfig.serviceName)")
             return
         }
 
-        fputs("📋 Current task definition: \(taskDefinitionArn)\n", stderr)
+        print("📋 Current task definition: \(taskDefinitionArn)")
 
         // Get the current task definition details
         let describeTaskDefRequest = ECS.DescribeTaskDefinitionRequest(
@@ -123,12 +123,12 @@ struct UpdateServices: AsyncParsableCommand {
         let taskDefResponse = try await ecs.describeTaskDefinition(describeTaskDefRequest)
 
         guard let taskDefinition = taskDefResponse.taskDefinition else {
-            fputs("⚠️ Could not retrieve task definition details for \(serviceConfig.serviceName)\n", stderr)
+            print("⚠️ Could not retrieve task definition details for \(serviceConfig.serviceName)")
             return
         }
 
         guard let containerDefinitions = taskDefinition.containerDefinitions else {
-            fputs("⚠️ No container definitions found in task definition for \(serviceConfig.serviceName)\n", stderr)
+            print("⚠️ No container definitions found in task definition for \(serviceConfig.serviceName)")
             return
         }
 
@@ -139,7 +139,7 @@ struct UpdateServices: AsyncParsableCommand {
             {
                 // Update to latest tag
                 let newImage = "\(serviceConfig.imageRepository):latest"
-                fputs("📦 Updating container image from \(currentImage) to \(newImage)\n", stderr)
+                print("📦 Updating container image from \(currentImage) to \(newImage)")
 
                 // Create new container definition with updated image
                 return ECS.ContainerDefinition(
@@ -174,11 +174,11 @@ struct UpdateServices: AsyncParsableCommand {
         let registerResponse = try await ecs.registerTaskDefinition(registerRequest)
 
         guard let newTaskDefinitionArn = registerResponse.taskDefinition?.taskDefinitionArn else {
-            fputs("⚠️ Failed to register new task definition for \(serviceConfig.serviceName)\n", stderr)
+            print("⚠️ Failed to register new task definition for \(serviceConfig.serviceName)")
             return
         }
 
-        fputs("✅ New task definition registered: \(newTaskDefinitionArn)\n", stderr)
+        print("✅ New task definition registered: \(newTaskDefinitionArn)")
 
         // Update the service to use the new task definition
         let updateServiceRequest = ECS.UpdateServiceRequest(
@@ -191,14 +191,14 @@ struct UpdateServices: AsyncParsableCommand {
         let updateResponse = try await ecs.updateService(updateServiceRequest)
 
         if let updatedService = updateResponse.service {
-            fputs("✅ Service \(serviceConfig.serviceName) updated successfully\n", stderr)
-            fputs("📋 New task definition: \(updatedService.taskDefinition ?? "unknown")\n", stderr)
+            print("✅ Service \(serviceConfig.serviceName) updated successfully")
+            print("📋 New task definition: \(updatedService.taskDefinition ?? "unknown")")
         } else {
-            fputs("⚠️ Service update response did not contain service details\n", stderr)
+            print("⚠️ Service update response did not contain service details")
         }
 
         // Wait for deployment to complete
-        fputs("⏳ Waiting for service deployment to complete...\n", stderr)
+        print("⏳ Waiting for service deployment to complete...")
         try await waitForServiceDeployment(
             serviceName: serviceConfig.serviceName,
             clusterName: serviceConfig.clusterName,
@@ -238,19 +238,19 @@ struct UpdateServices: AsyncParsableCommand {
                     let desiredCount = deployment.desiredCount ?? 0
 
                     if runningCount == desiredCount && desiredCount > 0 {
-                        fputs("✅ Service \(serviceName) deployment completed successfully\n", stderr)
-                        fputs("📊 Running tasks: \(runningCount)/\(desiredCount)\n", stderr)
+                        print("✅ Service \(serviceName) deployment completed successfully")
+                        print("📊 Running tasks: \(runningCount)/\(desiredCount)")
                         return
                     }
                 }
             }
 
-            fputs("⏳ Deployment in progress for \(serviceName)...\n", stderr)
+            print("⏳ Deployment in progress for \(serviceName)...")
             try await Task.sleep(nanoseconds: UInt64(checkInterval * 1_000_000_000))
         }
 
-        fputs("⚠️ Timeout: Service \(serviceName) deployment did not complete within \(Int(timeout)) seconds\n", stderr)
-        fputs("💡 The deployment may still be in progress. Check AWS console for details.\n", stderr)
+        print("⚠️ Timeout: Service \(serviceName) deployment did not complete within \(Int(timeout)) seconds")
+        print("💡 The deployment may still be in progress. Check AWS console for details.")
     }
 }
 
