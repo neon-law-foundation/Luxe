@@ -74,21 +74,6 @@ let package = Package(
                 "S3_BUCKET_STRUCTURE.md",
             ]
         ),
-        .executableTarget(
-            name: "Holiday",
-            dependencies: [
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
-                .product(name: "ServiceLifecycle", package: "swift-service-lifecycle"),
-                .product(name: "SotoS3", package: "soto"),
-                .product(name: "SotoECS", package: "soto"),
-                .product(name: "SotoElasticLoadBalancingV2", package: "soto"),
-                .product(name: "SotoCloudFormation", package: "soto"),
-                .product(name: "AsyncHTTPClient", package: "async-http-client"),
-            ],
-            exclude: [
-                "README.md"
-            ]
-        ),
         .target(
             name: "Dali",
             dependencies: [
@@ -321,12 +306,6 @@ let package = Package(
             ],
             resources: [
                 .copy("Resources")
-            ]
-        ),
-        .testTarget(
-            name: "HolidayTests",
-            dependencies: [
-                "Holiday"
             ]
         ),
         .testTarget(

@@ -87,8 +87,6 @@ The project includes specialized AI agents (`.claude/agents/`) that automate dev
 - **Dali** Data Access Layer (DAL) for Postgres tables, S3 buckets, and vendor data
 - **Destined** A vibrational travel agency <https://www.destined.travel>
 - **TBD FoodCart** OpenAPI Client for the Bazaar API
-- **Holiday** Toggle between static holiday pages and ECS services for unified Bazaar. Useful for saving money or
-  databaes operations like save and restore.
 - **MiseEnPlace** Create a private GitHub repository for a `matters.project` for attorney-client work
 - **NLFWeb** <https://www.neonlaw.org> a 501(c)(3) nonprofit organization
 - **TBD NeonLaw** Apple app for Neon Law customers
