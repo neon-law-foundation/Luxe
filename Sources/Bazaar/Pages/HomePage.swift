@@ -10,14 +10,14 @@ struct HomePage: HTMLDocument {
         self.currentUser = currentUser
     }
 
-    var title: String { "Sagebrush Physical Address - Nevada's Premier Mail Service" }
+    var title: String { "Sagebrush Services" }
 
     var head: some HTML {
         let ogMetadata = TouchMenu.OpenGraphMetadata(
-            title: "Sagebrush Physical Address - Nevada's Premier Mail Service",
+            title: "Sagebrush Services",
             description:
                 "Complete mail management, compliance, and equity services for Nevada businesses and individuals. Physical address + license compliance + cap table guidance.",
-            image: "https://www.sagebrush.services/sagebrush.svg",
+            image: "https://www.sagebrush.services/sagebrush.png",
             url: "https://www.sagebrush.services"
         )
 
