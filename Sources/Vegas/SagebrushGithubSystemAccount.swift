@@ -66,6 +66,16 @@ struct SagebrushGithubSystemAccount: Stack {
                         "ecs:ListClusters"
                       ],
                       "Resource": "*"
+                    },
+                    {
+                      "Effect": "Allow",
+                      "Action": "iam:PassRole",
+                      "Resource": [
+                        "arn:aws:iam::*:role/bazaar-service-TaskRole-*",
+                        "arn:aws:iam::*:role/destined-service-TaskRole-*",
+                        "arn:aws:iam::*:role/bazaar-service-TaskExecutionRole-*",
+                        "arn:aws:iam::*:role/destined-service-TaskExecutionRole-*"
+                      ]
                     }
                   ]
                 }
