@@ -1,7 +1,13 @@
 import ArgumentParser
 import Foundation
 import Logging
+
+#if canImport(Security)
 import Security
+#endif
+#if os(Linux)
+import Glibc
+#endif
 
 @main
 struct RouletteCommand: ParsableCommand {
@@ -230,8 +236,11 @@ struct FileSelector {
 }
 
 /// Cryptographically secure random number generator for fair file selection
+/// Uses platform-specific secure random APIs when available, with cross-platform fallbacks
 public struct SecureRandomNumberGenerator: RandomNumberGenerator {
     public func next() -> UInt64 {
+        #if canImport(Security) && !os(Linux)
+        // Use macOS Security framework for cryptographically secure random
         var randomBytes = Data(count: 8)
         let result = randomBytes.withUnsafeMutableBytes { bytes in
             SecRandomCopyBytes(kSecRandomDefault, 8, bytes.bindMemory(to: UInt8.self).baseAddress!)
@@ -245,6 +254,28 @@ public struct SecureRandomNumberGenerator: RandomNumberGenerator {
         return randomBytes.withUnsafeBytes { bytes in
             bytes.bindMemory(to: UInt64.self)[0]
         }
+        #elseif os(Linux)
+        // Use Linux /dev/urandom for cryptographically secure random
+        var randomValue: UInt64 = 0
+        let fd = open("/dev/urandom", O_RDONLY)
+        guard fd >= 0 else {
+            // Fallback to system random if /dev/urandom fails
+            return UInt64.random(in: UInt64.min...UInt64.max)
+        }
+
+        defer { close(fd) }
+
+        let bytesRead = read(fd, &randomValue, MemoryLayout<UInt64>.size)
+        guard bytesRead == MemoryLayout<UInt64>.size else {
+            // Fallback to system random if read fails
+            return UInt64.random(in: UInt64.min...UInt64.max)
+        }
+
+        return randomValue
+        #else
+        // Generic fallback for other platforms
+        return UInt64.random(in: UInt64.min...UInt64.max)
+        #endif
     }
 }
 
