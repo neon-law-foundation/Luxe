@@ -11,9 +11,9 @@ by Sagebrush Services, LLC.
 
 ## 1. Service Authorization and Mail Pickup Requirements
 
-By completing this form and USPS Form 1583, which will be made available to the United States Postal Service, Applicant
-appoints Mail Service as Agent for the receipt of mail and packages from common carriers as defined by Mail Service for
-a period not to exceed that for which rent has been paid in advance.
+By signing up for Sagebrush Services and submitting a USPS Form 1583, which will be made available to the United States
+Postal Service, Applicant appoints Mail Service as Agent for the receipt of mail and packages from common carriers as
+defined by Mail Service for a period not to exceed that for which rent has been paid in advance.
 
 Applicants will pick up mail at least once each week (or more often if needed to ensure that mailbox will not be
 overfull) or make other suitable arrangements, in advance, with Mail Service. Mail Service may provide a lockbox key to
