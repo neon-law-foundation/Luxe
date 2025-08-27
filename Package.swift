@@ -37,6 +37,9 @@ let package = Package(
         // Markdown processing
         .package(url: "https://github.com/swiftlang/swift-markdown.git", branch: "main"),
 
+        // Templating engine
+        .package(url: "https://github.com/stencilproject/Stencil.git", from: "0.15.1"),
+
         // JWT and OIDC
         .package(url: "https://github.com/vapor/jwt.git", from: "5.0.0"),
 
@@ -366,6 +369,7 @@ let package = Package(
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
                 .product(name: "Yams", package: "Yams"),
                 .product(name: "Logging", package: "swift-log"),
+                .product(name: "Stencil", package: "Stencil"),
             ],
             exclude: [
                 "README.md"
