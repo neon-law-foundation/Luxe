@@ -392,5 +392,18 @@ let package = Package(
                 "Standards"
             ]
         ),
+        .executableTarget(
+            name: "Roulette",
+            dependencies: [
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                .product(name: "Logging", package: "swift-log"),
+            ]
+        ),
+        .testTarget(
+            name: "RouletteTests",
+            dependencies: [
+                "Roulette"
+            ]
+        ),
     ]
 )
