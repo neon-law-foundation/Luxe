@@ -2,6 +2,13 @@ import ArgumentParser
 import Foundation
 import Logging
 
+#if canImport(Security)
+import Security
+#endif
+#if os(Linux)
+import Glibc
+#endif
+
 @main
 struct RouletteCommand: ParsableCommand {
     static let configuration = CommandConfiguration(
@@ -71,13 +78,204 @@ enum RouletteError: Error, LocalizedError {
     }
 }
 
-// Placeholder services for Phase 1
+// File selection service with git integration and secure randomization
 struct FileSelector {
     let logger: Logger
+    private let gitDiscovery: GitFileDiscovery
+    private let duplicateStore: DuplicatePreventionStore
+
+    init(logger: Logger) {
+        self.logger = logger
+        self.gitDiscovery = GitFileDiscovery(logger: logger)
+        self.duplicateStore = DuplicatePreventionStore(logger: logger)
+    }
 
     func selectRandomFiles(count: Int, excludeTests: Bool) throws -> [String] {
-        logger.info("File selection not yet implemented - returning placeholder")
-        return ["Sources/Example/Placeholder.swift"]
+        logger.info(
+            "Starting file selection",
+            metadata: [
+                "requestedCount": .stringConvertible(count),
+                "excludeTests": .stringConvertible(excludeTests),
+            ]
+        )
+
+        // Discover all available Swift files
+        let discoveredFiles = try gitDiscovery.discoverSwiftFiles(excludeTests: excludeTests)
+
+        // Filter out recently selected files to prevent duplicates
+        let availableFiles = try duplicateStore.filterRecentlySelected(discoveredFiles)
+
+        guard !availableFiles.isEmpty else {
+            // If all files were recently selected, fall back to original list
+            logger.warning("All files were recently selected, ignoring duplicate prevention")
+            let fallbackFiles = discoveredFiles
+
+            guard !fallbackFiles.isEmpty else {
+                throw RouletteError.noSwiftFiles
+            }
+
+            return try performSelection(from: fallbackFiles, count: count, recordSelection: true)
+        }
+
+        // Perform selection on filtered files
+        let selectedFiles = try performSelection(from: availableFiles, count: count, recordSelection: true)
+
+        logger.info(
+            "File selection complete",
+            metadata: [
+                "selectedCount": .stringConvertible(selectedFiles.count),
+                "files": .array(selectedFiles.map { .string($0) }),
+            ]
+        )
+
+        return selectedFiles
+    }
+
+    /// Performs the actual file selection with optional recording
+    private func performSelection(from availableFiles: [String], count: Int, recordSelection: Bool) throws -> [String] {
+        // If we have fewer files than requested, return all
+        let actualCount = min(count, availableFiles.count)
+        logger.debug(
+            "Selecting files",
+            metadata: [
+                "availableFiles": .stringConvertible(availableFiles.count),
+                "actualCount": .stringConvertible(actualCount),
+            ]
+        )
+
+        // Get file info for weighted selection
+        let fileInfos: [FileInfo]
+        do {
+            fileInfos = try availableFiles.map { try gitDiscovery.getFileInfo($0) }
+        } catch {
+            logger.warning(
+                "Failed to get file weights, using uniform selection",
+                metadata: [
+                    "error": .string(String(describing: error))
+                ]
+            )
+            // Fallback to uniform selection if weight calculation fails
+            var rng = SecureRandomNumberGenerator()
+            let selectedFiles = Array(availableFiles.shuffled(using: &rng).prefix(actualCount))
+
+            // Record selection if requested
+            if recordSelection {
+                try duplicateStore.recordSelection(selectedFiles)
+            }
+
+            return selectedFiles
+        }
+
+        // Perform weighted selection
+        let selectedFiles = performWeightedSelection(from: fileInfos, count: actualCount)
+
+        // Record selection if requested
+        if recordSelection {
+            try duplicateStore.recordSelection(selectedFiles)
+        }
+
+        return selectedFiles
+    }
+
+    /// Performs weighted random selection based on file age and size
+    private func performWeightedSelection(from fileInfos: [FileInfo], count: Int) -> [String] {
+        logger.debug(
+            "Performing weighted selection",
+            metadata: [
+                "totalFiles": .stringConvertible(fileInfos.count),
+                "requestedCount": .stringConvertible(count),
+            ]
+        )
+
+        // Calculate total weight
+        let totalWeight = fileInfos.reduce(0.0) { $0 + $1.selectionWeight }
+        guard totalWeight > 0 else {
+            // Fallback to uniform if weights are zero
+            var rng = SecureRandomNumberGenerator()
+            return Array(fileInfos.map(\.path).shuffled(using: &rng).prefix(count))
+        }
+
+        var selectedFiles: [String] = []
+        var availableInfos = fileInfos
+        var rng = SecureRandomNumberGenerator()
+
+        // Select files using weighted sampling without replacement
+        for _ in 0..<count {
+            guard !availableInfos.isEmpty else { break }
+
+            // Calculate current total weight
+            let currentTotalWeight = availableInfos.reduce(0.0) { $0 + $1.selectionWeight }
+
+            // Generate random value between 0 and total weight
+            let randomValue = Double.random(in: 0..<currentTotalWeight, using: &rng)
+
+            // Find the selected file using cumulative weights
+            var cumulativeWeight = 0.0
+            for (index, fileInfo) in availableInfos.enumerated() {
+                cumulativeWeight += fileInfo.selectionWeight
+                if randomValue < cumulativeWeight {
+                    selectedFiles.append(fileInfo.path)
+                    availableInfos.remove(at: index)
+
+                    logger.debug(
+                        "Selected file",
+                        metadata: [
+                            "file": .string(fileInfo.path),
+                            "weight": .stringConvertible(fileInfo.selectionWeight),
+                            "ageInDays": .stringConvertible(fileInfo.ageInDays),
+                            "sizeKB": .stringConvertible(Double(fileInfo.size) / 1024.0),
+                        ]
+                    )
+                    break
+                }
+            }
+        }
+
+        return selectedFiles
+    }
+}
+
+/// Cryptographically secure random number generator for fair file selection
+/// Uses platform-specific secure random APIs when available, with cross-platform fallbacks
+public struct SecureRandomNumberGenerator: RandomNumberGenerator {
+    public func next() -> UInt64 {
+        #if canImport(Security) && !os(Linux)
+        // Use macOS Security framework for cryptographically secure random
+        var randomBytes = Data(count: 8)
+        let result = randomBytes.withUnsafeMutableBytes { bytes in
+            SecRandomCopyBytes(kSecRandomDefault, 8, bytes.bindMemory(to: UInt8.self).baseAddress!)
+        }
+
+        guard result == errSecSuccess else {
+            // Fallback to system random if SecRandomCopyBytes fails
+            return UInt64.random(in: UInt64.min...UInt64.max)
+        }
+
+        return randomBytes.withUnsafeBytes { bytes in
+            bytes.bindMemory(to: UInt64.self)[0]
+        }
+        #elseif os(Linux)
+        // Use Linux /dev/urandom for cryptographically secure random
+        var randomValue: UInt64 = 0
+        let fd = open("/dev/urandom", O_RDONLY)
+        guard fd >= 0 else {
+            // Fallback to system random if /dev/urandom fails
+            return UInt64.random(in: UInt64.min...UInt64.max)
+        }
+
+        defer { close(fd) }
+
+        let bytesRead = read(fd, &randomValue, MemoryLayout<UInt64>.size)
+        guard bytesRead == MemoryLayout<UInt64>.size else {
+            // Fallback to system random if read fails
+            return UInt64.random(in: UInt64.min...UInt64.max)
+        }
+
+        return randomValue
+        #else
+        // Generic fallback for other platforms
+        return UInt64.random(in: UInt64.min...UInt64.max)
+        #endif
     }
 }
 
