@@ -60,6 +60,8 @@ public struct AuthenticationMiddleware: AsyncMiddleware {
             return try await handleOAuthAuth(request: request, next: next)
         case .hybrid:
             return try await handleHybridAuth(request: request, next: next)
+        case .serviceAccount:
+            return try await handleServiceAccountAuth(request: request, next: next)
         }
     }
 
@@ -129,6 +131,20 @@ public struct AuthenticationMiddleware: AsyncMiddleware {
 
         request.logger.error("❌ No valid authentication found (neither JWT nor OAuth)")
         throw Abort(.unauthorized, reason: "Authentication required")
+    }
+
+    /// Handle service account authentication
+    private func handleServiceAccountAuth(request: Request, next: AsyncResponder) async throws -> Response {
+        request.logger.info("🔐 Checking service account authentication")
+
+        guard request.headers.bearerAuthorization != nil else {
+            request.logger.error("❌ Missing authorization header for service account")
+            throw Abort(.unauthorized, reason: "Missing authorization header")
+        }
+
+        // Use the ServiceAccountAuthenticationMiddleware for actual validation
+        let serviceAccountMiddleware = ServiceAccountAuthenticationMiddleware()
+        return try await serviceAccountMiddleware.respond(to: request, chainingTo: next)
     }
 }
 
