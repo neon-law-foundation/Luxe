@@ -63,7 +63,7 @@ public struct ServiceAccountAuthenticationMiddleware: AsyncMiddleware {
 
     /// Creates a new service account authentication middleware
     public init() {
-        self.logger = Logger(label: "service.account.auth")
+        self.logger = Logger(label: "bouncer.service.account.auth")
     }
 
     /// Validates service account token and sets authentication context
@@ -201,7 +201,7 @@ public struct ServiceTypeAuthorizationMiddleware: AsyncMiddleware {
     /// - Parameter allowedTypes: Set of service types that are allowed
     internal init(allowedTypes: Set<ServiceType>) {
         self.allowedTypes = allowedTypes
-        self.logger = Logger(label: "service.type.auth")
+        self.logger = Logger(label: "bouncer.service.type.auth")
     }
 
     /// Validates that the authenticated service account has an allowed service type
