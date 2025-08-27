@@ -1,8 +1,8 @@
 ---
 title: "CEO Search: Leading Sagebrush Services Into the Future"
 slug: ceo-search
-description: |
-  Sagebrush Services is seeking an exceptional CEO with legal expertise or startup law experience to lead our growing
+description: >
+  Sagebrush Services is seeking an exceptional CEO with legal expertise or startup law experience to lead our growin
   legal technology platform.
 ---
 
