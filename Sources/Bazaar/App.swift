@@ -165,7 +165,7 @@ public func configureApp(_ app: Application) async throws {
         let markdownBody = lines[contentStartIndex...].joined(separator: "\n")
 
         return try await HTMLResponse {
-            BlogPostPage(post: post, markdownContent: markdownBody)
+            MarkdownPage(post: post, markdownContent: markdownBody)
         }.encodeResponse(for: req)
     }
 
