@@ -15,7 +15,7 @@ struct AuthenticationRoutingTests {
     /// Configures the Bazaar application for AuthenticationRoutingTests with comprehensive authentication routing.
     ///
     /// This function sets up authentication routes for testing different authentication patterns:
-    /// - Web routes use session-based authentication (SessionTestAuthMiddleware)
+    /// - Web routes use ALB header-based authentication (ALBTestAuthMiddleware)
     /// - API routes use Bearer token authentication only (OIDCMiddleware)
     /// - OAuth login/callback flows
     /// - ALB header authentication support
@@ -30,19 +30,13 @@ struct AuthenticationRoutingTests {
         // Configure DALI models and database
         try configureDali(app)
 
-        // Initialize session storage for testing
-        app.storage[SessionStorageKey.self] = [:]
-
-        // Add session middleware
-        app.middleware.use(SessionMiddleware())
         app.middleware.use(PostgresRoleMiddleware())
 
         // Create authentication middlewares
-        let sessionTestMiddleware = SessionTestAuthMiddleware()
+        let albTestMiddleware = ALBTestAuthMiddleware()
 
-        // Web routes - use session authentication and a test ALB middleware
-        let testALBMiddleware = TestALBMiddleware()
-        let webRoutes = app.grouped(sessionTestMiddleware, testALBMiddleware)
+        // Web routes - use ALB header authentication
+        let webRoutes = app.grouped(albTestMiddleware)
 
         // Home route
         webRoutes.get { req in
@@ -67,7 +61,7 @@ struct AuthenticationRoutingTests {
 
         // Protected app routes
         let appRoutes = app.grouped("app")
-        let protectedAppRoutes = appRoutes.grouped(sessionTestMiddleware, testALBMiddleware)
+        let protectedAppRoutes = appRoutes.grouped(albTestMiddleware)
         protectedAppRoutes.get("me") { req async throws in
             guard let user = CurrentUserContext.user else {
                 return req.redirect(to: "/login?redirect=/app/me")
@@ -130,13 +124,13 @@ struct AuthenticationRoutingTests {
         }
     }
 
-    /// Test authentication middleware that handles both session cookies and Bearer tokens.
+    /// Test authentication middleware that handles ALB headers and Bearer tokens.
     ///
     /// This middleware is designed specifically for AuthenticationRouting tests that need to test
-    /// session-based authentication behavior in a transaction-safe environment.
-    struct SessionTestAuthMiddleware: AsyncMiddleware {
+    /// ALB header-based authentication behavior in a transaction-safe environment.
+    struct ALBTestAuthMiddleware: AsyncMiddleware {
         func respond(to request: Request, chainingTo next: AsyncResponder) async throws -> Response {
-            // First check for Bearer token (like TestAuthMiddleware)
+            // First check for Bearer token
             if let authorization = request.headers.bearerAuthorization {
                 let mockUser = try createMockUserFromToken(authorization.token, logger: request.logger)
                 return try await CurrentUserContext.$user.withValue(mockUser) {
@@ -144,13 +138,27 @@ struct AuthenticationRoutingTests {
                 }
             }
 
-            // Then check for session cookie
-            if let sessionId = request.cookies["luxe-session"]?.string {
-                if let sessionToken = request.application.storage[SessionStorageKey.self]?[sessionId] {
-                    let mockUser = try createMockUserFromToken(sessionToken, logger: request.logger)
-                    return try await CurrentUserContext.$user.withValue(mockUser) {
-                        try await next.respond(to: request)
-                    }
+            // Check for ALB OIDC headers (new format)
+            if let oidcData = request.headers.first(name: "x-amzn-oidc-data") {
+                let mockUser = try createMockUserFromALBHeaders(
+                    oidcData: oidcData,
+                    request: request,
+                    logger: request.logger
+                )
+                return try await CurrentUserContext.$user.withValue(mockUser) {
+                    try await next.respond(to: request)
+                }
+            }
+
+            // Check for legacy ALB headers (X-Amzn-Oidc-Identity format)
+            if let identity = request.headers.first(name: "X-Amzn-Oidc-Identity") {
+                let mockUser = try createMockUserFromLegacyALB(
+                    identity: identity,
+                    request: request,
+                    logger: request.logger
+                )
+                return try await CurrentUserContext.$user.withValue(mockUser) {
+                    try await next.respond(to: request)
                 }
             }
 
@@ -180,38 +188,42 @@ struct AuthenticationRoutingTests {
             mockUser.sub = username
             mockUser.role = role
 
-            logger.info("✅ SessionTestAuth created mock user - username: \(username), role: \(role)")
+            logger.info("✅ ALBTestAuth created mock user from token - username: \(username), role: \(role)")
             return mockUser
         }
-    }
 
-    /// Test ALB authentication middleware that handles ALB headers without database lookups.
-    ///
-    /// This middleware creates mock users based on ALB headers for testing purposes.
-    struct TestALBMiddleware: AsyncMiddleware {
-        func respond(to request: Request, chainingTo next: AsyncResponder) async throws -> Response {
-            // Check for ALB authentication headers
-            if let identity = request.headers.first(name: "X-Amzn-Oidc-Identity") {
-                let mockUser = try createMockUser(from: identity, logger: request.logger)
-                return try await CurrentUserContext.$user.withValue(mockUser) {
-                    try await next.respond(to: request)
-                }
-            }
+        private func createMockUserFromALBHeaders(oidcData: String, request: Request, logger: Logger) throws -> User {
+            // Extract email from ALB headers or use identity header
+            let username = request.headers.first(name: "x-amzn-oidc-identity") ?? "test@example.com"
 
-            // No ALB headers found - continue without authentication
-            return try await next.respond(to: request)
+            // Determine role based on email/groups
+            let role: UserRole = username.contains("admin@neonlaw.com") ? .admin : .customer
+
+            // Create mock User object
+            let mockUser = User()
+            mockUser.id = UUID()
+            mockUser.username = username
+            mockUser.sub = username
+            mockUser.role = role
+
+            logger.info("✅ ALBTestAuth created mock user from ALB headers - username: \(username), role: \(role)")
+            return mockUser
         }
 
-        private func createMockUser(from identity: String, logger: Logger) throws -> User {
-            let role: UserRole = identity == "admin@neonlaw.com" ? .admin : .customer
+        private func createMockUserFromLegacyALB(identity: String, request: Request, logger: Logger) throws -> User {
+            // Determine role based on email/identity
+            let role: UserRole = identity.contains("admin@neonlaw.com") ? .admin : .customer
 
+            // Create mock User object
             let mockUser = User()
             mockUser.id = UUID()
             mockUser.username = identity
             mockUser.sub = identity
             mockUser.role = role
 
-            logger.info("✅ TestALB created mock user - username: \(identity), role: \(role)")
+            logger.info(
+                "✅ ALBTestAuth created mock user from legacy ALB headers - username: \(identity), role: \(role)"
+            )
             return mockUser
         }
     }
@@ -256,22 +268,16 @@ struct AuthenticationRoutingTests {
         }
     }
 
-    @Test("Web routes should use session-based authentication")
-    func webRoutesUseSessionAuthentication() async throws {
+    @Test("Web routes should use ALB header-based authentication")
+    func webRoutesUseALBHeaderAuthentication() async throws {
         try await TestUtilities.withApp { app, database in
             try await configureApp(app)
 
-            // Create the admin user in the test database
-            // No need to create database users - mock middleware handles authentication
+            // Use ALB headers for authentication
+            let mockHeaders = MockALBHeaders.adminUser()
+            let headers = mockHeaders.httpHeaders
 
-            // Create a session to simulate logged in user
-            let sessionId = "test-session-web-auth"
-            let testToken = "admin@neonlaw.com:valid-token"
-            app.storage[SessionStorageKey.self] = [sessionId: testToken]
-
-            let headers = HTTPHeaders([("Cookie", "luxe-session=\(sessionId)")])
-
-            // Web routes should work with session authentication
+            // Web routes should work with ALB header authentication
             try await app.test(.GET, "/", headers: headers) { response in
                 #expect(response.status == .ok)
                 let html = response.body.string
@@ -314,19 +320,16 @@ struct AuthenticationRoutingTests {
         }
     }
 
-    @Test("API routes should reject session-based authentication")
-    func apiRoutesRejectSessionAuthentication() async throws {
+    @Test("API routes should reject ALB authentication headers")
+    func apiRoutesRejectALBAuthentication() async throws {
         try await TestUtilities.withApp { app, database in
             try await configureApp(app)
 
-            // Create a session (should not work for API routes)
-            let sessionId = "test-session-api-reject"
-            let testToken = "admin@neonlaw.com:valid-token"
-            app.storage[SessionStorageKey.self] = [sessionId: testToken]
+            // Use ALB headers (should not work for API routes in this test configuration)
+            let mockHeaders = MockALBHeaders.adminUser()
+            let headers = mockHeaders.httpHeaders
 
-            let headers = HTTPHeaders([("Cookie", "luxe-session=\(sessionId)")])
-
-            // API routes should not accept session authentication
+            // API routes should not accept ALB authentication headers in this test
             try await app.test(.GET, "/api/me", headers: headers) { response in
                 #expect(response.status == .unauthorized)
             }
@@ -407,20 +410,14 @@ struct AuthenticationRoutingTests {
         }
     }
 
-    @Test("Session middleware should set user context for all routes")
-    func sessionMiddlewareSetUserContextForAllRoutes() async throws {
+    @Test("ALB middleware should set user context for all routes")
+    func albMiddlewareSetUserContextForAllRoutes() async throws {
         try await TestUtilities.withApp { app, database in
             try await configureApp(app)
 
-            // Create the admin user in the test database
-            // No need to create database users - mock middleware handles authentication
-
-            // Create a session
-            let sessionId = "test-session-context"
-            let testToken = "admin@neonlaw.com:valid-token"
-            app.storage[SessionStorageKey.self] = [sessionId: testToken]
-
-            let headers = HTTPHeaders([("Cookie", "luxe-session=\(sessionId)")])
+            // Use ALB headers for authentication
+            let mockHeaders = MockALBHeaders.adminUser()
+            let headers = mockHeaders.httpHeaders
 
             // Even public routes should show user context when authenticated
             try await app.test(.GET, "/", headers: headers) { response in
@@ -464,26 +461,20 @@ struct AuthenticationRoutingTests {
         try await TestUtilities.withApp { app, database in
             try await configureApp(app)
 
-            // Create the admin user in the test database
-            // No need to create database users - mock middleware handles authentication
+            // ALB headers for web routes
+            let mockHeaders = MockALBHeaders.adminUser()
+            let albHeaders = mockHeaders.httpHeaders
 
-            // Session auth for web routes
-            let sessionId = "test-session-mixed"
-            let testToken = "admin@neonlaw.com:valid-token"
-            app.storage[SessionStorageKey.self] = [sessionId: testToken]
-
-            let sessionHeaders = HTTPHeaders([("Cookie", "luxe-session=\(sessionId)")])
-
-            try await app.test(.GET, "/app/me", headers: sessionHeaders) { response in
+            try await app.test(.GET, "/app/me", headers: albHeaders) { response in
                 #expect(response.status == .ok)
             }
 
-            // ALB headers should also work
-            let albHeaders = HTTPHeaders([
+            // Legacy ALB headers should also work
+            let legacyALBHeaders = HTTPHeaders([
                 ("X-Amzn-Oidc-Identity", "admin@neonlaw.com")
             ])
 
-            try await app.test(.GET, "/app/me", headers: albHeaders) { response in
+            try await app.test(.GET, "/app/me", headers: legacyALBHeaders) { response in
                 #expect(response.status == .ok)
             }
 

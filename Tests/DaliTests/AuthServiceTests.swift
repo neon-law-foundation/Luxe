@@ -52,22 +52,6 @@ struct AuthServiceTests {
         #expect(logoutURL.contains("post_logout_redirect_uri=http://localhost:8080/"))
     }
 
-    @Test("AuthService can clear session from storage")
-    func authServiceCanClearSessionFromStorage() async throws {
-        var storage: [String: String] = [
-            "session1": "user1:token1",
-            "session2": "user2:token2",
-            "session3": "user3:token3",
-        ]
-
-        AuthService.clearSession(sessionId: "session2", from: &storage)
-
-        #expect(storage.count == 2)
-        #expect(storage["session1"] == "user1:token1")
-        #expect(storage["session3"] == "user3:token3")
-        #expect(storage["session2"] == nil)
-    }
-
     @Test("AuthService can create logout cookie")
     func authServiceCanCreateLogoutCookie() async throws {
         let logoutCookie = AuthService.createLogoutCookie()
@@ -230,37 +214,6 @@ struct AuthServiceTests {
         } catch let error as ValidationError {
             #expect(error.message.contains("Failed to decode JWT payload"))
         }
-    }
-
-    @Test("AuthService can create session cookie")
-    func authServiceCanCreateSessionCookie() async throws {
-        let sessionId = "test-session-\(UniqueCodeGenerator.generateISOCode(prefix: "SESSION"))"
-
-        let cookie = AuthService.createSessionCookie(sessionId: sessionId)
-
-        #expect(cookie.string == sessionId)
-        #expect(cookie.path == "/")
-        #expect(cookie.isHTTPOnly == true)
-        #expect(cookie.sameSite == .lax)
-    }
-
-    @Test("AuthService can store session")
-    func authServiceCanStoreSession() async throws {
-        var storage: [String: String] = [:]
-
-        let sessionId = "test-session-\(UniqueCodeGenerator.generateISOCode(prefix: "STORE"))"
-        let username = "test-user-\(UniqueCodeGenerator.generateISOCode(prefix: "USER"))"
-        let accessToken = "test-token-\(UniqueCodeGenerator.generateISOCode(prefix: "TOKEN"))"
-
-        AuthService.storeSession(
-            sessionId: sessionId,
-            username: username,
-            accessToken: accessToken,
-            in: &storage
-        )
-
-        #expect(storage[sessionId] == "\(username):\(accessToken)")
-        #expect(storage.count == 1)
     }
 
     @Test("AuthService can extract callback parameters from request")

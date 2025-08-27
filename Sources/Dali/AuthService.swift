@@ -58,16 +58,8 @@ public struct AuthService: Sendable {
         return components.string ?? "/"
     }
 
-    /// Clears a user session from server storage
-    /// - Parameters:
-    ///   - sessionId: The session ID to clear
-    ///   - storage: The application storage containing sessions
-    public static func clearSession(sessionId: String, from storage: inout [String: String]) {
-        storage[sessionId] = nil
-    }
-
-    /// Creates a session cookie for logout (expired)
-    /// - Returns: An expired HTTP cookie for clearing the session
+    /// Creates a logout cookie (expired) for clearing any existing session cookies
+    /// - Returns: An expired HTTP cookie for clearing legacy session cookies
     public static func createLogoutCookie() -> HTTPCookies.Value {
         HTTPCookies.Value(
             string: "",
@@ -235,33 +227,6 @@ public struct AuthService: Sendable {
         }
     }
 
-    /// Creates a session cookie with the specified session ID
-    /// - Parameter sessionId: The session ID to store in the cookie
-    /// - Returns: HTTP cookie value for session management
-    public static func createSessionCookie(sessionId: String) -> HTTPCookies.Value {
-        HTTPCookies.Value(
-            string: sessionId,
-            path: "/",
-            isHTTPOnly: true,
-            sameSite: .lax
-        )
-    }
-
-    /// Stores a session in application storage
-    /// - Parameters:
-    ///   - sessionId: The session ID
-    ///   - username: The authenticated username
-    ///   - accessToken: The access token from OAuth
-    ///   - storage: The application storage to store the session in
-    public static func storeSession(
-        sessionId: String,
-        username: String,
-        accessToken: String,
-        in storage: inout [String: String]
-    ) {
-        let sessionValue = "\(username):\(accessToken)"
-        storage[sessionId] = sessionValue
-    }
 }
 
 // MARK: - Data Models

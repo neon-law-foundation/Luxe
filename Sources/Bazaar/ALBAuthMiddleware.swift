@@ -62,61 +62,7 @@ public struct ALBAuthMiddleware: AsyncMiddleware {
             return try await oidcMiddleware.respond(to: request, chainingTo: next)
         }
 
-        // Check for session cookie
-        if let sessionId = request.cookies["luxe-session"]?.string {
-            request.logger.info("🍪 Found session cookie with ID: \(sessionId)")
-
-            if let sessionToken = request.application.storage[SessionStorageKey.self]?[sessionId] {
-                request.logger.info("✅ Session found in storage")
-
-                // Session token format is "username:jwt-token" from OAuth callback
-                let parts = sessionToken.split(separator: ":", maxSplits: 1)
-                if parts.count == 2 {
-                    let username = String(parts[0])
-                    let jwtToken = String(parts[1])
-                    request.logger.info("📧 Session username: \(username)")
-
-                    // For JWT tokens, pass to OIDC middleware
-                    if jwtToken.contains(".") {
-                        request.logger.info("🎫 Session contains JWT token, passing to OIDC middleware")
-                        request.headers.bearerAuthorization = BearerAuthorization(token: jwtToken)
-                        return try await oidcMiddleware.respond(to: request, chainingTo: next)
-                    } else {
-                        // For mock tokens, use the username directly
-                        request.logger.info("🔍 Looking up user in database: \(username)")
-                        guard let user = try await findUser(username: username, on: request.db) else {
-                            request.logger.error("❌ User not found in database: \(username)")
-                            throw Abort(.unauthorized, reason: "User not found in system")
-                        }
-                        request.logger.info("✅ User found in database - ID: \(user.id ?? UUID()), role: \(user.role)")
-
-                        return try await CurrentUserContext.$user.withValue(user) {
-                            // Create a mock JWT payload for consistency
-                            let mockPayload = CustomJWTPayload(
-                                iss: IssuerClaim(value: configuration.issuer),
-                                aud: AudienceClaim(value: [configuration.clientId]),
-                                exp: ExpirationClaim(value: Date().addingTimeInterval(3600)),
-                                sub: SubjectClaim(value: username),
-                                email: user.person?.email,
-                                name: user.person?.name
-                            )
-                            request.auth.login(mockPayload)
-
-                            return try await next.respond(to: request)
-                        }
-                    }
-                } else {
-                    // Fallback: treat as direct JWT token
-                    request.logger.info("🎫 Session contains single token, treating as JWT")
-                    request.headers.bearerAuthorization = BearerAuthorization(token: sessionToken)
-                    return try await oidcMiddleware.respond(to: request, chainingTo: next)
-                }
-            } else {
-                request.logger.warning("⚠️ Session ID not found in storage: \(sessionId)")
-            }
-        } else {
-            request.logger.info("🍪 No session cookie found")
-        }
+        // No session cookie support with header-based auth
 
         // Otherwise, check for ALB headers
         guard let albIdentity = request.headers.first(name: "X-Amzn-Oidc-Identity") else {

@@ -33,13 +33,9 @@ struct AuthenticationFlowTests {
 
             try configureAuthFlowApp(app)
 
-            // Create a session to simulate logged in user
-            let sessionId = "test-session-id"
-            let testToken = "admin@neonlaw.com:valid-token"
-            app.storage[SessionStorageKey.self] = [sessionId: testToken]
-
-            // Make request with session cookie
-            let headers = HTTPHeaders([("Cookie", "luxe-session=\(sessionId)")])
+            // Use header-based auth for testing
+            let mockHeaders = MockALBHeaders.adminUser()
+            let headers = mockHeaders.httpHeaders
 
             try await app.test(.GET, "/", headers: headers) { response in
                 #expect(response.status == .ok)
@@ -67,18 +63,14 @@ struct AuthenticationFlowTests {
         }
     }
 
-    @Test("Logout route clears session and redirects to Keycloak logout")
-    func logoutRouteClearsSessionAndRedirectsToKeycloak() async throws {
+    @Test("Logout route redirects to Keycloak logout")
+    func logoutRouteRedirectsToKeycloak() async throws {
         try await TestUtilities.withApp { app, database in
             try configureAuthFlowApp(app)
 
-            // Create a session first
-            let sessionId = "test-session-id"
-            let testToken = "admin@neonlaw.com:valid-token"
-            app.storage[SessionStorageKey.self] = [sessionId: testToken]
-
-            // Make logout request with session cookie
-            let headers = HTTPHeaders([("Cookie", "luxe-session=\(sessionId)")])
+            // Use ALB headers for authentication
+            let mockHeaders = MockALBHeaders.adminUser()
+            let headers = mockHeaders.httpHeaders
 
             try await app.test(.GET, "/auth/logout", headers: headers) { response in
                 #expect(response.status == .seeOther)
@@ -89,57 +81,38 @@ struct AuthenticationFlowTests {
                 #expect(location?.contains("protocol/openid-connect/logout") == true)
                 #expect(location?.contains("post_logout_redirect_uri=http://localhost:8080/") == true)
                 #expect(location?.contains("client_id=luxe-client") == true)
-
-                // Should clear the session cookie
-                let setCookie = response.headers.first(name: "set-cookie")
-                #expect(setCookie != nil)
-                #expect(setCookie?.contains("luxe-session=") == true)
-                #expect(setCookie?.contains("Expires=") == true)
             }
         }
     }
 
-    @Test("Logout clears server-side session storage")
-    func logoutClearsServerSideSession() async throws {
+    @Test("Logout redirects authenticated users to Keycloak")
+    func logoutRedirectsAuthenticatedUsersToKeycloak() async throws {
         try await TestUtilities.withApp { app, database in
             try configureAuthFlowApp(app)
 
-            // Create a session
-            let sessionId = "test-session-id-123"
-            let testToken = "admin@neonlaw.com:valid-token"
-            app.storage[SessionStorageKey.self] = [sessionId: testToken]
-
-            // Verify session exists
-            #expect(app.storage[SessionStorageKey.self]?[sessionId] == testToken)
-
-            // Make logout request with session cookie
-            let headers = HTTPHeaders([("Cookie", "luxe-session=\(sessionId)")])
+            // Use ALB headers for authentication
+            let mockHeaders = MockALBHeaders.adminUser()
+            let headers = mockHeaders.httpHeaders
 
             try await app.test(.GET, "/auth/logout", headers: headers) { response in
                 #expect(response.status == .seeOther)
 
-                // Should redirect to Keycloak logout (not directly home anymore)
+                // Should redirect to Keycloak logout
                 let location = response.headers.first(name: "location")
                 #expect(location != nil)
                 #expect(location?.contains("protocol/openid-connect/logout") == true)
             }
-
-            // Verify session is cleared from server storage
-            #expect(app.storage[SessionStorageKey.self]?[sessionId] == nil)
         }
     }
 
-    @Test("Session persists across requests")
-    func sessionPersistsAcrossRequests() async throws {
+    @Test("ALB headers work across requests")
+    func albHeadersWorkAcrossRequests() async throws {
         try await TestUtilities.withApp { app, database in
             try configureAuthFlowApp(app)
 
-            // Create a session
-            let sessionId = "test-session-id"
-            let testToken = "admin@neonlaw.com:valid-token"
-            app.storage[SessionStorageKey.self] = [sessionId: testToken]
-
-            let headers = HTTPHeaders([("Cookie", "luxe-session=\(sessionId)")])
+            // Use ALB headers for authentication
+            let mockHeaders = MockALBHeaders.adminUser()
+            let headers = mockHeaders.httpHeaders
 
             // First request should work
             try await app.test(.GET, "/", headers: headers) { response in
@@ -148,7 +121,7 @@ struct AuthenticationFlowTests {
                 #expect(html.contains("Welcome, admin@neonlaw.com"))
             }
 
-            // Second request should still work
+            // Second request should also work with same headers
             try await app.test(.GET, "/pricing", headers: headers) { response in
                 #expect(response.status == .ok)
                 let html = response.body.string
@@ -157,15 +130,15 @@ struct AuthenticationFlowTests {
         }
     }
 
-    @Test("Invalid session is treated as not authenticated")
-    func invalidSessionIsTreatedAsNotAuthenticated() async throws {
+    @Test("Invalid ALB headers are treated as not authenticated")
+    func invalidALBHeadersAreTreatedAsNotAuthenticated() async throws {
         try await TestUtilities.withApp { app, database in
             try configureAuthFlowApp(app)
 
-            // Make request with invalid session cookie
-            let headers = HTTPHeaders([("Cookie", "luxe-session=invalid-session-id")])
+            // Make request with malformed ALB headers
+            let malformedHeaders = TestUtilities.createMalformedALBHeaders()
 
-            try await app.test(.GET, "/app/me", headers: headers) { response in
+            try await app.test(.GET, "/app/me", headers: malformedHeaders) { response in
                 #expect(response.status == .seeOther || response.status == .unauthorized)
             }
         }
@@ -188,18 +161,13 @@ func configureAuthFlowApp(_ app: Application) throws {
     // Configure DALI models and database (must be done before any database usage)
     try configureDali(app)
 
-    // Initialize session storage
-    app.storage[SessionStorageKey.self] = [:]
-
-    // Add session middleware
-    app.middleware.use(SessionMiddleware())
     app.middleware.use(PostgresRoleMiddleware())
 
-    // Create custom session-aware test auth middleware
-    let sessionTestMiddleware = SessionTestAuthMiddleware()
+    // Create custom ALB-aware test auth middleware
+    let albTestMiddleware = ALBTestAuthMiddleware()
 
     // Home route - shows login/logout based on authentication status
-    let homeRoute = app.grouped(sessionTestMiddleware)
+    let homeRoute = app.grouped(albTestMiddleware)
     homeRoute.get { req in
         HTMLResponse {
             HomePage(currentUser: CurrentUserContext.user)
@@ -207,7 +175,7 @@ func configureAuthFlowApp(_ app: Application) throws {
     }
 
     // Pricing route - shows user info when authenticated
-    let pricingRoute = app.grouped(sessionTestMiddleware)
+    let pricingRoute = app.grouped(albTestMiddleware)
     pricingRoute.get("pricing") { req in
         HTMLResponse {
             PricingPage(currentUser: CurrentUserContext.user)
@@ -216,7 +184,7 @@ func configureAuthFlowApp(_ app: Application) throws {
 
     // Protected /app/me route - requires authentication
     let appRoutes = app.grouped("app")
-    let protectedAppRoutes = appRoutes.grouped(sessionTestMiddleware)
+    let protectedAppRoutes = appRoutes.grouped(albTestMiddleware)
     protectedAppRoutes.get("me") { req async throws in
         guard let user = CurrentUserContext.user else {
             // No user means not authenticated - redirect to login
@@ -239,34 +207,24 @@ func configureAuthFlowApp(_ app: Application) throws {
         return try await response.encodeResponse(for: req)
     }
 
-    // Logout route - clears session and redirects
+    // Logout route - redirects to Keycloak logout
     app.get("auth", "logout") { req -> Response in
-        // Clear the session from server storage
-        if let sessionId = req.cookies["luxe-session"]?.string {
-            if var sessions = req.application.storage[SessionStorageKey.self] {
-                AuthService.clearSession(sessionId: sessionId, from: &sessions)
-                req.application.storage[SessionStorageKey.self] = sessions
-            }
-        }
-
         // Get OIDC configuration and build logout URL
         let oidcConfig = OIDCConfiguration.create(from: req.application.environment)
         let logoutURL = AuthService.buildLogoutURL(oidcConfig: oidcConfig)
 
-        // Clear the session cookie and redirect
-        let response = req.redirect(to: logoutURL)
-        response.cookies["luxe-session"] = AuthService.createLogoutCookie()
-        return response
+        // Redirect to Keycloak logout (no session handling needed)
+        return req.redirect(to: logoutURL)
     }
 }
 
-/// Test authentication middleware that handles both session cookies and Bearer tokens.
+/// Test authentication middleware that handles ALB headers and Bearer tokens.
 ///
 /// This middleware is designed specifically for AuthenticationFlow tests that need to test
-/// session-based authentication behavior in a transaction-safe environment.
-struct SessionTestAuthMiddleware: AsyncMiddleware {
+/// ALB header-based authentication behavior in a transaction-safe environment.
+struct ALBTestAuthMiddleware: AsyncMiddleware {
     func respond(to request: Request, chainingTo next: AsyncResponder) async throws -> Response {
-        // First check for Bearer token (like TestAuthMiddleware)
+        // First check for Bearer token
         if let authorization = request.headers.bearerAuthorization {
             let mockUser = try createMockUserFromToken(authorization.token, logger: request.logger)
             return try await CurrentUserContext.$user.withValue(mockUser) {
@@ -274,13 +232,15 @@ struct SessionTestAuthMiddleware: AsyncMiddleware {
             }
         }
 
-        // Then check for session cookie
-        if let sessionId = request.cookies["luxe-session"]?.string {
-            if let sessionToken = request.application.storage[SessionStorageKey.self]?[sessionId] {
-                let mockUser = try createMockUserFromToken(sessionToken, logger: request.logger)
-                return try await CurrentUserContext.$user.withValue(mockUser) {
-                    try await next.respond(to: request)
-                }
+        // Check for ALB OIDC headers
+        if let oidcData = request.headers.first(name: "x-amzn-oidc-data") {
+            let mockUser = try createMockUserFromALBHeaders(
+                oidcData: oidcData,
+                request: request,
+                logger: request.logger
+            )
+            return try await CurrentUserContext.$user.withValue(mockUser) {
+                try await next.respond(to: request)
             }
         }
 
@@ -310,7 +270,35 @@ struct SessionTestAuthMiddleware: AsyncMiddleware {
         mockUser.sub = username
         mockUser.role = role
 
-        logger.info("✅ SessionTestAuth created mock user - username: \(username), role: \(role)")
+        logger.info("✅ ALBTestAuth created mock user from token - username: \(username), role: \(role)")
+        return mockUser
+    }
+
+    private func createMockUserFromALBHeaders(oidcData: String, request: Request, logger: Logger) throws -> User {
+        // Check for obviously malformed headers
+        if oidcData == "invalid-base64-data" {
+            throw Abort(.unauthorized, reason: "Malformed OIDC data")
+        }
+
+        // Extract email from ALB headers or use identity header
+        let username = request.headers.first(name: "x-amzn-oidc-identity") ?? "test@example.com"
+
+        // Check for malformed identity
+        if username == "malformed-identity" {
+            throw Abort(.unauthorized, reason: "Malformed identity header")
+        }
+
+        // Determine role based on email/groups
+        let role: UserRole = username.contains("admin@neonlaw.com") ? .admin : .customer
+
+        // Create mock User object
+        let mockUser = User()
+        mockUser.id = UUID()
+        mockUser.username = username
+        mockUser.sub = username
+        mockUser.role = role
+
+        logger.info("✅ ALBTestAuth created mock user from ALB headers - username: \(username), role: \(role)")
         return mockUser
     }
 }

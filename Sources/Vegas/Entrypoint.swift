@@ -11,7 +11,7 @@ struct Vegas: AsyncParsableCommand {
         abstract: "AWS infrastructure management tool",
         subcommands: [
             Infrastructure.self, Deploy.self, Versions.self, Elephants.self, Refresh.self, CheckUser.self,
-            CheckUserSimple.self, SESSetup.self, UpdateServices.self,
+            CheckUserSimple.self, SESSetup.self, UpdateServices.self, SessionToHeaderMigration.self,
         ]
     )
 }

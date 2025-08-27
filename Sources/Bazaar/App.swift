@@ -56,13 +56,6 @@ public struct PersonInfo: Content {
     public let email: String
 }
 
-// MARK: - Session Storage
-
-/// Storage key for session management
-struct SessionStorageKey: StorageKey {
-    typealias Value = [String: String]
-}
-
 /// Configures the unified Bazaar+SagebrushWeb Vapor application.
 ///
 /// This function sets up:
@@ -111,9 +104,6 @@ public func configureApp(_ app: Application) async throws {
     // Use SmartAuthMiddleware for all routes (replaces SessionMiddleware)
     // In testing environment, mock headers will be injected by test utilities
     app.middleware.use(smartAuth)
-
-    // Keep session storage for OAuth callback compatibility (temporary)
-    app.storage[SessionStorageKey.self] = [:]
 
     // MARK: - SagebrushWeb Routes
 
@@ -411,19 +401,13 @@ public func configureApp(_ app: Application) async throws {
 
     // Logout route
     app.get("auth", "logout") { req -> Response in
-        // Clear the session from server storage
-        if let sessionId = req.cookies["luxe-session"]?.string {
-            if var sessions = req.application.storage[SessionStorageKey.self] {
-                AuthService.clearSession(sessionId: sessionId, from: &sessions)
-                req.application.storage[SessionStorageKey.self] = sessions
-            }
-        }
+        // No server-side session to clear with header-based auth
 
         // Get OIDC configuration and build logout URL
         let oidcConfig = OIDCConfiguration.create(from: req.application.environment)
         let logoutURL = AuthService.buildLogoutURL(oidcConfig: oidcConfig)
 
-        // Clear the session cookie and redirect
+        // Clear any legacy session cookies and redirect
         let response = req.redirect(to: logoutURL)
         response.cookies["luxe-session"] = AuthService.createLogoutCookie()
         return response
