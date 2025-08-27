@@ -26,35 +26,14 @@ struct OIDCAPIAuthenticationTests {
         }
     }
 
-    @Test("API routes should reject session cookies")
-    func apiRoutesRejectSessionCookies() async throws {
+    @Test("API routes should reject non-Bearer authentication")
+    func apiRoutesRejectNonBearerAuthentication() async throws {
         try await TestUtilities.withApp { app, database in
             try configureOIDCAPIApp(app)
 
-            // Create a valid session
-            let sessionId = "test-session-api-reject"
-            let testToken = "admin@neonlaw.com:valid-token"
-            app.storage[SessionStorageKey.self] = [sessionId: testToken]
-
-            let headers = HTTPHeaders([("Cookie", "luxe-session=\(sessionId)")])
-
-            // API routes should not accept session authentication
-            try await app.test(.GET, "/api/me", headers: headers) { response in
-                #expect(response.status == .unauthorized)
-            }
-        }
-    }
-
-    @Test("API routes should reject ALB authentication headers")
-    func apiRoutesRejectALBAuthHeaders() async throws {
-        try await TestUtilities.withApp { app, database in
-            try configureOIDCAPIApp(app)
-
-            // Create ALB authentication headers (should not work for API routes)
-            let headers = HTTPHeaders([
-                ("X-Amzn-Oidc-Identity", "admin@neonlaw.com"),
-                ("X-Amzn-Oidc-Accesstoken", "mock-access-token"),
-            ])
+            // Create ALB headers (should not work for API routes)
+            let mockHeaders = MockALBHeaders.adminUser()
+            let headers = mockHeaders.httpHeaders
 
             // API routes should not accept ALB authentication headers
             try await app.test(.GET, "/api/me", headers: headers) { response in

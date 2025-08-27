@@ -94,8 +94,7 @@ func configureApp(_ app: Application) async throws {
     // Create TestAuthMiddleware that bypasses database lookups
     let testAuthMiddleware = TestAuthMiddleware()
 
-    // Add session middleware and role middleware
-    app.middleware.use(SessionMiddleware())
+    // Add role middleware
     app.middleware.use(PostgresRoleMiddleware())
 
     // Configure the /app/me route using TestAuthMiddleware

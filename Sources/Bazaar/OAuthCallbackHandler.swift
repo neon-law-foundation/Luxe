@@ -61,28 +61,15 @@ public func handleOAuthCallback(_ req: Request) async throws -> Response {
     let username = try AuthService.decodeUsernameFromToken(tokenResponse.idToken)
     req.logger.info("👤 Extracted username from token: \(username)")
 
-    // Create a session using AuthService
-    let sessionId = UUID().uuidString
-    req.logger.info("🍪 Creating session with ID: \(sessionId)")
-    let cookie = AuthService.createSessionCookie(sessionId: sessionId)
+    // With ALB/Cognito header-based auth, no session creation needed
+    // In development, LocalMockAuthenticator handles header injection
+    req.logger.info("ℹ️ In production, ALB/Cognito handles authentication via headers")
+    req.logger.info("ℹ️ In development, LocalMockAuthenticator provides mock headers")
 
-    // Store the session using AuthService
-    if var sessions = req.application.storage[SessionStorageKey.self] {
-        AuthService.storeSession(
-            sessionId: sessionId,
-            username: username,
-            accessToken: tokenResponse.accessToken,
-            in: &sessions
-        )
-        req.application.storage[SessionStorageKey.self] = sessions
-    }
-    req.logger.info("💾 Session stored in memory for username: \(username)")
-
-    // Set the cookie and redirect to the original destination
+    // Redirect to the original destination
     let redirectPath = AuthService.determineRedirectPath(from: originalPath)
     req.logger.info("🔀 Redirecting to: \(redirectPath)")
     let response = req.redirect(to: redirectPath)
-    response.cookies["luxe-session"] = cookie
 
     return response
 }

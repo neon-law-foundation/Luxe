@@ -773,6 +773,43 @@ private struct MockALBJWTPayload: Codable {
     }
 }
 
+// MARK: - MockALBHeaders Wrapper
+
+/// Wrapper for ALB header testing that provides the expected API from BREAKING_CHANGES.md
+public struct MockALBHeaders {
+    public let httpHeaders: HTTPHeaders
+
+    /// Creates admin user headers
+    public static func adminUser(
+        sub: String = "admin-user-sub",
+        email: String = "admin@neonlaw.com",
+        name: String = "Admin User"
+    ) -> MockALBHeaders {
+        let headers = TestUtilities.createMockALBAdminHeaders(sub: sub, email: email, name: name)
+        return MockALBHeaders(httpHeaders: headers)
+    }
+
+    /// Creates customer user headers
+    public static func customerUser(
+        sub: String = "customer-user-sub",
+        email: String = "customer@example.com",
+        name: String = "Customer User"
+    ) -> MockALBHeaders {
+        let headers = TestUtilities.createMockALBCustomerHeaders(sub: sub, email: email, name: name)
+        return MockALBHeaders(httpHeaders: headers)
+    }
+
+    /// Creates staff user headers
+    public static func staffUser(
+        sub: String = "staff-user-sub",
+        email: String = "staff@neonlaw.com",
+        name: String = "Staff User"
+    ) -> MockALBHeaders {
+        let headers = TestUtilities.createMockALBStaffHeaders(sub: sub, email: email, name: name)
+        return MockALBHeaders(httpHeaders: headers)
+    }
+}
+
 // MARK: - HTTPHeaders Extensions for ALB Testing
 
 /// Extension to HTTPHeaders for convenient ALB authentication testing

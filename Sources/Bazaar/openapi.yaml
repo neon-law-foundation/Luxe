@@ -27,7 +27,7 @@ paths:
       description: Returns the authenticated user's information along with their person record
       operationId: getMe
       security:
-        - bearerAuth: []
+        - albHeaderAuth: []
       responses:
         '200':
           description: Successful response
@@ -48,7 +48,7 @@ paths:
       description: Returns the authenticated user's account settings including newsletter preferences
       operationId: getUserSettings
       security:
-        - bearerAuth: []
+        - albHeaderAuth: []
       responses:
         '200':
           description: Successful response
@@ -69,7 +69,7 @@ paths:
       description: Updates the authenticated user's newsletter subscription preferences
       operationId: updateNewsletterPreferences
       security:
-        - bearerAuth: []
+        - albHeaderAuth: []
       requestBody:
         required: true
         content:
@@ -1196,15 +1196,56 @@ components:
           example: "2025-01-15T10:00:00Z"
 
   securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      description: JWT Bearer token authentication
+    albHeaderAuth:
+      type: apiKey
+      in: header
+      name: x-amzn-oidc-data
+      description: |
+        AWS Application Load Balancer with Cognito authentication.
+        
+        **Production Environment:**
+        - Headers automatically injected by AWS ALB after successful Cognito authentication
+        - JWT token contains user identity and claims
+        - No manual header setup required - handled by infrastructure
+        
+        **Development Environment:**
+        - Headers automatically injected by LocalMockAuthenticator
+        - Set LUXE_ENV=development to enable automatic header injection
+        - No manual configuration required for local testing
+        
+        **Required Headers (automatically provided):**
+        - `x-amzn-oidc-data`: JWT with user information
+        - `x-amzn-oidc-accesstoken`: Access token
+        - `x-amzn-oidc-identity`: User identity
+        
+        **Testing with curl/Postman:**
+        Use the development headers provided by the migration tool:
+        ```bash
+        swift run Vegas migrate-sessions --mode generate-headers
+        ```
+        
+        **Migration from Session-Based Auth:**
+        - No more session cookies or server-side sessions
+        - Authentication is stateless and handled by ALB/Cognito
+        - See BREAKING_CHANGES.md for migration details
     adminAuth:
-      type: oauth2
-      flows:
-        clientCredentials:
-          tokenUrl: /oauth/token
-          scopes:
-            admin: Admin access to user management
+      type: apiKey
+      in: header
+      name: x-amzn-oidc-data
+      description: |
+        Admin-level authentication via AWS ALB/Cognito headers.
+        
+        Same as `albHeaderAuth` but requires admin role in Cognito groups.
+        
+        **Admin Access Requirements:**
+        - User must be member of 'admin' Cognito group
+        - ALB injects user groups in JWT claims
+        - SmartAuthMiddleware validates admin permissions
+        
+        **Available Admin Roles:**
+        - `admin`: Full system access
+        - `staff`: Limited admin functionality
+        
+        **Role Mapping:**
+        - Cognito groups automatically mapped to user roles
+        - No database changes required for role management

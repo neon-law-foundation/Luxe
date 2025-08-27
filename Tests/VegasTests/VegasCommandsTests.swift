@@ -373,7 +373,7 @@ struct VegasCommandsTests {
             // Then it should have correct properties
             #expect(config.commandName == "Vegas")
             #expect(config.abstract == "AWS infrastructure management tool")
-            #expect(config.subcommands.count == 9)
+            #expect(config.subcommands.count == 10)
             #expect(config.subcommands.contains { $0 == Infrastructure.self })
             #expect(config.subcommands.contains { $0 == Deploy.self })
             #expect(config.subcommands.contains { $0 == Versions.self })
