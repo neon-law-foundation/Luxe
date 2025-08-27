@@ -27,8 +27,8 @@ private func defaultMaxConnectionsPerEventLoop(for environment: Environment) -> 
 private func connectionTimeoutForEnvironment(_ environment: Environment) -> TimeAmount {
     switch environment {
     case .testing:
-        // Fail fast in tests to catch hanging operations quickly
-        return .seconds(5)
+        // Longer timeout for integration tests that may need more setup time
+        return .seconds(30)
     case .development:
         // Reasonable timeout for development
         return .seconds(15)

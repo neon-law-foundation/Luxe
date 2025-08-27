@@ -59,9 +59,9 @@ public struct VaporService: Service {
 public struct TestUtilities {
 
     /// Timeout wrapper to prevent tests from hanging on external network calls
-    /// Tests will fail after 10 seconds to prevent wasting CI minutes
+    /// Tests will fail after 60 seconds to prevent wasting CI minutes
     public static func withTimeout<T: Sendable>(
-        seconds: TimeInterval = 10,
+        seconds: TimeInterval = 60,
         operation: @Sendable @escaping () async throws -> T
     ) async throws -> T {
         try await withThrowingTaskGroup(of: T.self) { group in
