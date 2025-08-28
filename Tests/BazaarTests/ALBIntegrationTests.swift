@@ -278,7 +278,13 @@ struct ALBIntegrationTests {
         }
     }
 
-    @Test("ALB authentication should set correct user context")
+    @Test(
+        "ALB authentication should set correct user context",
+        .disabled(
+            if: ProcessInfo.processInfo.environment["CI"] != nil,
+            "Disabled for CI due to database connection timeout issues"
+        )
+    )
     func albAuthenticationSetsUserContext() async throws {
         try await TestUtilities.withApp { app, database in
             _ = try await configureALBApp(app)

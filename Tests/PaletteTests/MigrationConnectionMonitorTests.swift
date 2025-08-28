@@ -11,7 +11,13 @@ import Testing
 @Suite("Migration Connection Monitor Tests", .serialized)
 struct MigrationConnectionMonitorTests {
 
-    @Test("MigrationConnectionMonitor can take snapshots of connection usage")
+    @Test(
+        "MigrationConnectionMonitor can take snapshots of connection usage",
+        .disabled(
+            if: ProcessInfo.processInfo.environment["CI"] != nil,
+            "Disabled for CI due to database connection timeout issues"
+        )
+    )
     func migrationConnectionMonitorCanTakeSnapshotsOfConnectionUsage() async throws {
         try await TestUtilities.withApp { app, database in
             let logger = Logger(label: "monitor-snapshot-test")
@@ -55,7 +61,13 @@ struct MigrationConnectionMonitorTests {
         }
     }
 
-    @Test("MigrationConnectionMonitor generates analysis reports with connection patterns")
+    @Test(
+        "MigrationConnectionMonitor generates analysis reports with connection patterns",
+        .disabled(
+            if: ProcessInfo.processInfo.environment["CI"] != nil,
+            "Disabled for CI due to database connection timeout issues"
+        )
+    )
     func migrationConnectionMonitorGeneratesAnalysisReportsWithConnectionPatterns() async throws {
         try await TestUtilities.withApp { app, database in
             let logger = Logger(label: "monitor-analysis-test")
