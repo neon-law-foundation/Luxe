@@ -1,6 +1,6 @@
 ---
 name: pull-request-manager
-description: |
+description: >
     Pull request specialist who creates comprehensive PRs linked to roadmaps with proper
     testing verification and quality gates.
 tools: Bash, Read, Write, Edit, Grep, Glob, LS, TodoWrite

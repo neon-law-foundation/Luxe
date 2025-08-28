@@ -1,4 +1,10 @@
-# Virtual Mailbox
+---
+title: "Virtual Mailbox Service"
+slug: "virtual-mailbox"
+description: >
+  Complete guide to our virtual mailbox service, including signup process, notarization requirements,
+  and guaranteed one business day delivery.
+---
 
 ## How to Sign Up
 

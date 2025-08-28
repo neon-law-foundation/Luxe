@@ -23,7 +23,7 @@ alignment:
   signature__for_neon_representative:
     yes: END
     _: staff_review
-description: |
+description: >
   Legal representation commences only upon execution of this retainer agreement by both an authorized representative of
   the organization and a licensed attorney of Neon Law.
 ---

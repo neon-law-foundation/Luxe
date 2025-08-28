@@ -1,8 +1,9 @@
 ---
 title: "Why Digital Nomads Need Virtual Mailbox Services"
 slug: "digital-nomad-virtual-mailbox"
-description: "Discover how virtual mailbox services enable true location independence for entrepreneurs working from
-Bali, Vietnam, and beyond..."
+description: >
+  Discover how virtual mailbox services enable true location independence for entrepreneurs working from
+  Bali, Vietnam, and beyond...
 ---
 
 The digital nomad lifestyle has revolutionized how we think about work and location independence. However, one

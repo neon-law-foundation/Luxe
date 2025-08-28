@@ -27,7 +27,7 @@ alignment:
   certified_mail:
     yes: END
     _: staff_review
-description: |
+description: >
   An election under Section 83(b) of the Internal Revenue Code and an accompanying IRS cover letter. Please fill in your
   social security number and sign the election and cover letter, then proceed as follows:
 

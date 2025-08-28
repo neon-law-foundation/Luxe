@@ -1,6 +1,6 @@
 ---
 name: git-branch-manager
-description: |
+description: >
     Branch and merge specialist who manages git branches, handles conflicts, and coordinates
     branch operations.
 tools: Bash, Read, Write, Edit, Grep, Glob, LS, TodoWrite
@@ -47,7 +47,7 @@ git push -u origin feature/{descriptive-name}
 ### Branch Naming Conventions
 
 - `feature/{description}` - New features
-- `fix/{description}` - Bug fixes  
+- `fix/{description}` - Bug fixes
 - `docs/{description}` - Documentation updates
 - `refactor/{description}` - Code refactoring
 - `test/{description}` - Test additions

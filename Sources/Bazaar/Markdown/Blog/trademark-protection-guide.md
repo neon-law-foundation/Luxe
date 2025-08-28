@@ -1,9 +1,9 @@
 ---
 title: "Why Trademark Protection is Essential for Your Business"
 slug: "trademark-protection-guide"
-description: |
-    Understand the importance of trademark protection and the 45 USPTO classes that secure your
-    brand identity and business assets.
+description: >
+  Understand the importance of trademark protection and the 45 USPTO classes that secure your
+  brand identity and business assets.
 ---
 
 Your business name and brand are among your most valuable assets. Trademark protection ensures exclusive

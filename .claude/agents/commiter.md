@@ -1,6 +1,6 @@
 ---
 name: commiter
-description: |
+description: >
     Conventional commit specialist who creates perfect commits following standard formats. Ensures code formatting
     before commits and maintains clean commit history. Works exclusively on feature branches, never on main.
 tools: Bash, Read, Write, Edit, Grep, Glob, LS, TodoWrite

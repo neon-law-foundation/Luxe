@@ -1,6 +1,6 @@
 ---
 name: documenter
-description: |
+description: >
    Markdown documentation specialist who writes comprehensive, well-structured markdown files for the repository.
    Creates READMEs, guides, roadmaps, architectural docs, and all project documentation. MUST BE USED for creating or
    updating any markdown documentation.

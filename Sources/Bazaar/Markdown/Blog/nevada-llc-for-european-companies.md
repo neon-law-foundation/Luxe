@@ -1,7 +1,9 @@
 ---
 title: "Your Gateway to America: Why European Companies Choose Nevada LLCs with Sagebrush Services"
 slug: "nevada-llc-for-european-companies"
-description: "Discover why savvy European companies are establishing Nevada LLCs with Sagebrush Services to seamlessly enter the American market while meeting HIPAA and FedRAMP compliance requirements."
+description: >
+  Discover why savvy European companies are establishing Nevada LLCs with Sagebrush Services to seamlessly enter the
+  American market while meeting HIPAA and FedRAMP compliance requirements.
 created_at: "2025-08-24T13:35:00Z"
 ---
 

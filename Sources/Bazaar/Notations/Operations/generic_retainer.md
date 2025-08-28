@@ -29,7 +29,7 @@ alignment:
   signature__for__neon_representative:
     yes: END
     _: staff_review
-description: |
+description: >
   Legal services engagement agreement between Neon Law and {{client_information.company_name}},
   effective {{effective_date}}.
 ---
