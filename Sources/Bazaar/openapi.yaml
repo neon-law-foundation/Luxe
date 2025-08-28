@@ -580,6 +580,121 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /slack/webhook:
+    post:
+      summary: Handle Slack webhook events
+      description: Processes incoming Slack webhook events including URL verification and event callbacks for the PitBoss bot
+      operationId: handleSlackWebhook
+      security:
+        - serviceAccountAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SlackWebhookPayload'
+      responses:
+        '200':
+          description: Webhook processed successfully
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "challenge_token_response"
+        '401':
+          description: Unauthorized - invalid service account token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '400':
+          description: Bad request - invalid webhook payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /slack/metrics/users:
+    get:
+      summary: Get user metrics for Slack bot
+      description: Returns user metrics including total users, active users, and role distribution for Slack bot consumption
+      operationId: getSlackUserMetrics
+      security:
+        - serviceAccountAuth: []
+      responses:
+        '200':
+          description: User metrics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserMetrics'
+        '401':
+          description: Unauthorized - invalid service account token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden - service account lacks metrics access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /slack/metrics/entities:
+    get:
+      summary: Get entity metrics for Slack bot
+      description: Returns entity metrics including total entities, entity types, and growth data for Slack bot consumption
+      operationId: getSlackEntityMetrics
+      security:
+        - serviceAccountAuth: []
+      responses:
+        '200':
+          description: Entity metrics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityMetrics'
+        '401':
+          description: Unauthorized - invalid service account token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden - service account lacks metrics access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /slack/health:
+    get:
+      summary: Get system health metrics for Slack bot
+      description: Returns system health information including database status and uptime for Slack bot monitoring
+      operationId: getSlackSystemHealth
+      security:
+        - serviceAccountAuth: []
+      responses:
+        '200':
+          description: System health retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemHealthMetrics'
+        '401':
+          description: Unauthorized - invalid service account token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden - service account lacks health monitoring access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
 components:
   schemas:
     Version:
@@ -1193,6 +1308,149 @@ components:
           description: Timestamp when the newsletter was sent
           example: "2025-01-15T10:00:00Z"
 
+    SlackWebhookPayload:
+      type: object
+      required:
+        - type
+      properties:
+        token:
+          type: string
+          description: Slack verification token
+          example: "abc123"
+        teamId:
+          type: string
+          description: Slack team/workspace ID
+          example: "T1234567890"
+        type:
+          type: string
+          description: Type of Slack webhook event
+          enum: [url_verification, event_callback]
+          example: "url_verification"
+        challenge:
+          type: string
+          description: Challenge token for URL verification
+          example: "challenge_token_abc123"
+        event:
+          type: object
+          description: Event data for event_callback type
+          properties:
+            type:
+              type: string
+              description: Type of Slack event
+              example: "app_mention"
+            user:
+              type: string
+              description: User ID who triggered the event
+              example: "U1234567890"
+            text:
+              type: string
+              description: Message text
+              example: "Hello PitBoss!"
+            channel:
+              type: string
+              description: Channel ID where event occurred
+              example: "C1234567890"
+
+    UserMetrics:
+      type: object
+      required:
+        - totalUsers
+        - activeUsers
+        - usersByRole
+        - newUsersThisWeek
+        - newUsersThisMonth
+      properties:
+        totalUsers:
+          type: integer
+          description: Total number of registered users
+          minimum: 0
+          example: 1250
+        activeUsers:
+          type: integer
+          description: Number of users active in the last 30 days
+          minimum: 0
+          example: 890
+        usersByRole:
+          type: object
+          description: Breakdown of users by role
+          additionalProperties:
+            type: integer
+            minimum: 0
+          example:
+            admin: 5
+            staff: 45
+            customer: 1200
+        newUsersThisWeek:
+          type: integer
+          description: Number of new users registered this week
+          minimum: 0
+          example: 25
+        newUsersThisMonth:
+          type: integer
+          description: Number of new users registered this month
+          minimum: 0
+          example: 120
+
+    EntityMetrics:
+      type: object
+      required:
+        - totalEntities
+        - entitiesByType
+        - newEntitiesThisWeek
+        - newEntitiesThisMonth
+      properties:
+        totalEntities:
+          type: integer
+          description: Total number of legal entities in the system
+          minimum: 0
+          example: 850
+        entitiesByType:
+          type: object
+          description: Breakdown of entities by legal entity type
+          additionalProperties:
+            type: integer
+            minimum: 0
+          example:
+            "Limited Liability Company": 600
+            "Corporation": 180
+            "Partnership": 70
+        newEntitiesThisWeek:
+          type: integer
+          description: Number of new entities created this week
+          minimum: 0
+          example: 15
+        newEntitiesThisMonth:
+          type: integer
+          description: Number of new entities created this month
+          minimum: 0
+          example: 65
+
+    SystemHealthMetrics:
+      type: object
+      required:
+        - databaseConnections
+        - memoryUsage
+        - uptime
+      properties:
+        databaseConnections:
+          type: integer
+          description: Number of active database connections
+          minimum: 0
+          example: 25
+        memoryUsage:
+          type: number
+          format: double
+          description: Memory usage percentage (0.0 - 100.0)
+          minimum: 0.0
+          maximum: 100.0
+          example: 45.2
+        uptime:
+          type: number
+          format: double
+          description: System uptime in seconds
+          minimum: 0.0
+          example: 86400.0
+
   securitySchemes:
     albHeaderAuth:
       type: apiKey
@@ -1247,3 +1505,28 @@ components:
         **Role Mapping:**
         - Cognito groups automatically mapped to user roles
         - No database changes required for role management
+    serviceAccountAuth:
+      type: http
+      scheme: bearer
+      description: >
+        Service account token authentication for bots and automated services.
+
+        **Service Account Authentication:**
+        - Bearer token generated for specific service types (slack_bot, ci_cd, monitoring)
+        - Tokens are validated against service_account_tokens table
+        - Each token has specific permissions and expiration settings
+        
+        **Usage:**
+        ```
+        Authorization: Bearer <service_account_token>
+        ```
+
+        **Service Types:**
+        - `slack_bot`: Slack bot integration access
+        - `ci_cd`: Continuous integration/deployment access  
+        - `monitoring`: System monitoring and health checks
+
+        **Token Management:**
+        - Tokens are SHA256 hashed for security
+        - Include expiration dates and usage tracking
+        - Can be revoked by setting is_active to false
