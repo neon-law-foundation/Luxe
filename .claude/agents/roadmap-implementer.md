@@ -1,6 +1,6 @@
 ---
 name: roadmap-implementer
-description: |
+description: >
     Roadmap implementation orchestrator. Oversees complete roadmap execution by delegating tasks to specialized agents.
     MUST BE USED for full roadmap implementation requests. Ensures every task is completed with passing tests.
 tools: Read, Write, Edit, Bash, Task, Grep, Glob, LS, TodoWrite

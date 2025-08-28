@@ -15,7 +15,7 @@ alignment:
   notarization__for_trustee:
     yes: END
     _: staff_review
-description: |
+description: >
   A basic Nevada trust.
 ---
 

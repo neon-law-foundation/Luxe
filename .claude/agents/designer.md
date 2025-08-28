@@ -1,6 +1,6 @@
 ---
 name: designer
-description: |
+description: >
   CSS and front-end styling specialist who transforms Swift Elementary websites with beautiful, minimalist designs.
   Expert in Bulma.io framework, gradient-heavy designs, and Apple's less-is-more philosophy. Creates semantic
   TouchMenu components and applies elegant styling to web applications. MUST BE USED for all CSS, styling, and
@@ -78,13 +78,13 @@ h3(.class("title is-4")) {
 
 ```css
 .hero-gradient {
-    background: linear-gradient(135deg, 
-        var(--primary-color) 0%, 
+    background: linear-gradient(135deg,
+        var(--primary-color) 0%,
         var(--primary-light) 100%);
 }
 
 .hero-mesh-gradient {
-    background: 
+    background:
         radial-gradient(at 40% 20%, hsla(220, 60%, 50%, 0.5) 0px, transparent 50%),
         radial-gradient(at 80% 0%, hsla(220, 70%, 60%, 0.3) 0px, transparent 50%),
         radial-gradient(at 0% 50%, hsla(220, 80%, 70%, 0.2) 0px, transparent 50%),
@@ -96,8 +96,8 @@ h3(.class("title is-4")) {
 
 ```css
 .card-gradient {
-    background: linear-gradient(180deg, 
-        rgba(255, 255, 255, 0.95) 0%, 
+    background: linear-gradient(180deg,
+        rgba(255, 255, 255, 0.95) 0%,
         rgba(248, 249, 250, 0.95) 100%);
     backdrop-filter: blur(10px);
 }
@@ -107,8 +107,8 @@ h3(.class("title is-4")) {
 
 ```css
 .gradient-text {
-    background: linear-gradient(90deg, 
-        var(--primary-color) 0%, 
+    background: linear-gradient(90deg,
+        var(--primary-color) 0%,
         var(--primary-light) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -120,8 +120,8 @@ h3(.class("title is-4")) {
 
 ```css
 .button-gradient {
-    background: linear-gradient(135deg, 
-        var(--primary-color) 0%, 
+    background: linear-gradient(135deg,
+        var(--primary-color) 0%,
         var(--primary-light) 100%);
     transition: all 0.3s ease;
     position: relative;
@@ -136,9 +136,9 @@ h3(.class("title is-4")) {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, 
-        transparent, 
-        rgba(255, 255, 255, 0.2), 
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
         transparent);
     transition: left 0.5s ease;
 }
@@ -201,7 +201,7 @@ public struct GradientHeroComponent: HTML {
     public let subtitle: String?
     public let ctaText: String?
     public let ctaLink: String?
-    
+
     public init(
         title: String,
         subtitle: String? = nil,
@@ -213,7 +213,7 @@ public struct GradientHeroComponent: HTML {
         self.ctaText = ctaText
         self.ctaLink = ctaLink
     }
-    
+
     public var content: some HTML {
         section(.class("hero is-fullheight gradient-hero")) {
             div(.class("hero-body")) {
@@ -221,13 +221,13 @@ public struct GradientHeroComponent: HTML {
                     h1(.class("title is-1 has-text-white mb-4")) {
                         title
                     }
-                    
+
                     if let subtitle = subtitle {
                         p(.class("subtitle is-3 has-text-white-ter mb-6")) {
                             subtitle
                         }
                     }
-                    
+
                     if let ctaText = ctaText, let ctaLink = ctaLink {
                         a(
                             .href(ctaLink),
@@ -264,13 +264,13 @@ public struct StyleComponent: HTML {
             """
             /* Extend Bulma with custom gradients */
             .gradient-hero {
-                background: linear-gradient(135deg, 
-                    var(--primary-color) 0%, 
+                background: linear-gradient(135deg,
+                    var(--primary-color) 0%,
                     var(--primary-light) 100%);
                 position: relative;
                 overflow: hidden;
             }
-            
+
             .gradient-hero::before {
                 content: '';
                 position: absolute;
@@ -279,13 +279,13 @@ public struct StyleComponent: HTML {
                 width: 200%;
                 height: 200%;
                 background: radial-gradient(
-                    circle, 
-                    rgba(255, 255, 255, 0.1) 0%, 
+                    circle,
+                    rgba(255, 255, 255, 0.1) 0%,
                     transparent 70%
                 );
                 animation: float 20s infinite ease-in-out;
             }
-            
+
             @keyframes float {
                 0%, 100% { transform: translate(0, 0) rotate(0deg); }
                 50% { transform: translate(-20px, -20px) rotate(180deg); }
@@ -330,14 +330,14 @@ public struct StyleComponent: HTML {
 ```css
 /* Extend Bulma with gradients */
 .hero.is-gradient {
-    background: linear-gradient(135deg, 
-        var(--primary-color) 0%, 
+    background: linear-gradient(135deg,
+        var(--primary-color) 0%,
         var(--primary-light) 100%);
 }
 
 .button.is-gradient {
-    background: linear-gradient(135deg, 
-        var(--primary-color) 0%, 
+    background: linear-gradient(135deg,
+        var(--primary-color) 0%,
         var(--primary-light) 100%);
     border: none;
     color: white;
@@ -346,8 +346,8 @@ public struct StyleComponent: HTML {
 .card.has-gradient-border {
     border: 2px solid transparent;
     background: linear-gradient(white, white) padding-box,
-                linear-gradient(135deg, 
-                    var(--primary-color), 
+                linear-gradient(135deg,
+                    var(--primary-color),
                     var(--primary-light)) border-box;
 }
 ```
@@ -508,8 +508,8 @@ new Chart(ctx, {
 
 /* Optimize gradients */
 .optimized-gradient {
-    background: linear-gradient(135deg, 
-        var(--primary-color) 0%, 
+    background: linear-gradient(135deg,
+        var(--primary-color) 0%,
         var(--primary-light) 100%);
     background-attachment: fixed; /* Prevent repaint on scroll */
 }

@@ -1,6 +1,6 @@
 ---
 name: swift-formatter
-description: |
+description: >
     Swift format compliance enforcer. Ensures all Swift files pass formatting checks.
     MUST BE USED proactively before commits and PR creation to guarantee CI pipeline success.
 tools: Bash, Read, Write, Edit, MultiEdit, Grep, Glob, LS, TodoWrite

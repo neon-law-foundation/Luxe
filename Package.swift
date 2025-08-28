@@ -103,6 +103,7 @@ let package = Package(
                 .product(name: "Queues", package: "queues"),
                 .product(name: "QueuesRedisDriver", package: "queues-redis-driver"),
                 .product(name: "SotoSES", package: "soto"),
+                .product(name: "Yams", package: "Yams"),
                 "TouchMenu",
                 "Dali",
                 "Bouncer",

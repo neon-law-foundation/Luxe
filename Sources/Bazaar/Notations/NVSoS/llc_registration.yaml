@@ -19,7 +19,7 @@ document_mappings:
     lower_right:
       - 400
       - 400
-description: |
+description: >
   This questionnaire asks the questions required for creating an LLC in Nevada. Answers to questions will be used in the
   document mappings to create SVGs used to fill out in the given PDF itself.
 flow:

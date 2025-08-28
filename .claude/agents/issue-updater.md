@@ -1,6 +1,6 @@
 ---
 name: issue-updater
-description: |
+description: >
     Roadmap tracking specialist who updates GitHub issues created by issue-creator with commit SHAs, PR numbers, and
     completion status. Keeps roadmaps current and accurate.
 tools: Bash, Read, Write, Edit, Grep, Glob, LS, TodoWrite
