@@ -1,4 +1,5 @@
 import Foundation
+import Yams
 
 struct BlogPost: Equatable, Identifiable {
     var id: String { slug }
@@ -15,7 +16,7 @@ struct BlogPost: Equatable, Identifiable {
         lhs.slug == rhs.slug
     }
 
-    /// Parse frontmatter from markdown content
+    /// Parse frontmatter from markdown content using YAML parsing
     static func parseFrontmatter(from content: String, filename: String) -> BlogPost? {
         let lines = content.components(separatedBy: .newlines)
 
@@ -35,41 +36,22 @@ struct BlogPost: Equatable, Identifiable {
 
         guard endIndex != nil else { return nil }
 
-        var title: String?
-        var slug: String?
-        var description: String?
+        // Join frontmatter lines and parse as YAML
+        let frontmatterString = frontmatterLines.joined(separator: "\n")
 
-        for line in frontmatterLines {
-            let components = line.components(separatedBy: ": ")
-            guard components.count >= 2 else { continue }
+        do {
+            let yaml = try Yams.load(yaml: frontmatterString) as? [String: Any]
+            guard let yaml = yaml,
+                let title = yaml["title"] as? String,
+                let slug = yaml["slug"] as? String,
+                let description = yaml["description"] as? String
+            else { return nil }
 
-            let key = components[0].trimmingCharacters(in: .whitespaces)
-            let value = components[1...].joined(separator: ": ")
-                .trimmingCharacters(in: CharacterSet.whitespaces.union(CharacterSet(charactersIn: "\"")))
-
-            switch key {
-            case "title":
-                title = value
-            case "slug":
-                slug = value
-            case "description":
-                description = value
-            case "created_at":
-                // Skip date fields - we no longer use them
-                break
-            default:
-                break
-            }
-        }
-
-        guard let title = title,
-            let slug = slug,
-            let description = description
-        else {
+            return BlogPost(title: title, slug: slug, description: description, filename: filename)
+        } catch {
+            print("YAML parsing error for \(filename): \(error)")
             return nil
         }
-
-        return BlogPost(title: title, slug: slug, description: description, filename: filename)
     }
 
     /// Get all blog posts from the Markdown directory
@@ -95,4 +77,5 @@ struct BlogPost: Equatable, Identifiable {
 
         return posts
     }
+
 }

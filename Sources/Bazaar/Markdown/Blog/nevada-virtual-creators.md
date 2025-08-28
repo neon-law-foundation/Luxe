@@ -2,8 +2,8 @@
 title: "Why Nevada is Perfect for Virtual Creators"
 slug: "nevada-virtual-creators"
 description: >
-    Discover why Nevada is the ideal state for virtual creators, influencers, and content creators earning
-    from Instagram, TikTok, OnlyFans, and other platforms.
+  Discover why Nevada is the ideal state for virtual creators, influencers, and content creators earning
+  from Instagram, TikTok, OnlyFans, and other platforms.
 ---
 
 ## Why Nevada is Perfect for Virtual Creators

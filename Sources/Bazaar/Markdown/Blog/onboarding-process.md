@@ -1,4 +1,10 @@
-# Virtual Mailbox Onboarding Process
+---
+title: "Virtual Mailbox Onboarding Process"
+slug: "onboarding-process"
+description: >
+  Complete guide to setting up your virtual mailbox service, including USPS requirements, notarization options,
+  and step-by-step onboarding process.
+---
 
 ## Overview
 

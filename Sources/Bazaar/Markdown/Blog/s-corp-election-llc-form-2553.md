@@ -1,7 +1,9 @@
 ---
 title: "S Corp Election for LLCs: A Complete Guide to Form 2553"
 slug: "s-corp-election-llc-form-2553"
-description: "Learn how LLCs can elect S Corp tax treatment using Form 2553, including filing deadlines, requirements, and potential self-employment tax savings"
+description: >
+  Learn how LLCs can elect S Corp tax treatment using Form 2553, including filing deadlines, requirements,
+  and potential self-employment tax savings
 ---
 
 When your LLC becomes profitable, you might discover an opportunity to reduce your

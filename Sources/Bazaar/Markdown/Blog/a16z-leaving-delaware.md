@@ -2,8 +2,8 @@
 title: "Why a16z is Leaving Delaware for Nevada - And You Should Too"
 slug: "a16z-leaving-delaware"
 description: >
-    Andreessen Horowitz, the most reputable VC firm, is abandoning Delaware. Learn why Nevada's superior
-    corporate framework makes it the clear choice for modern companies...
+  Andreessen Horowitz, the most reputable VC firm, is abandoning Delaware. Learn why Nevada's superior
+  corporate framework makes it the clear choice for modern companies...
 ---
 
 ## Why a16z is Leaving Delaware for Nevada - And You Should Too
