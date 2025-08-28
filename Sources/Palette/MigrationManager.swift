@@ -153,9 +153,8 @@ struct PooledConnection: DatabaseQueryable, @unchecked Sendable {
             // Add connection statistics
             info += "  Connection States:\n"
             for row in connectionStats {
-                if let state = try? row.decode(column: "state", as: String?.self),
-                    let count = try? row.decode(column: "count", as: Int.self)
-                {
+                if let count = try? row.decode(column: "count", as: Int.self) {
+                    let state = try? row.decode(column: "state", as: String?.self)
                     let stateStr = state ?? "null"
                     info += "    \(stateStr): \(count) connections\n"
                 }

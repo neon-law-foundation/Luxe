@@ -189,10 +189,9 @@ public actor MigrationConnectionMonitor {
             var idleConnections = 0
 
             for row in connectionStats {
-                if let state = try? row.decode(column: "state", as: String?.self),
-                    let appName = try? row.decode(column: "application_name", as: String?.self),
-                    let count = try? row.decode(column: "count", as: Int.self)
-                {
+                if let count = try? row.decode(column: "count", as: Int.self) {
+                    let state = try? row.decode(column: "state", as: String?.self)
+                    let appName = try? row.decode(column: "application_name", as: String?.self)
 
                     let stateStr = state ?? "null"
                     let appStr = appName ?? "unknown"

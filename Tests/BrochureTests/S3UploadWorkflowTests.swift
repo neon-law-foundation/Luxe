@@ -255,7 +255,7 @@ struct S3UploadWorkflow {
     func validateAWSCLI() -> Bool {
         // In real implementation, this would check if AWS CLI is available
         let task = Process()
-        task.launchPath = "/usr/bin/which"
+        task.executableURL = URL(fileURLWithPath: "/usr/bin/which")
         task.arguments = ["aws"]
 
         do {

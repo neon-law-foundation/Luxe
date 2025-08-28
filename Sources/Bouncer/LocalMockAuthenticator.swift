@@ -72,7 +72,7 @@ public struct LocalMockAuthenticator: AsyncRequestAuthenticator {
         logger.info("🧪 LocalMockAuthenticator processing request: \(request.url.path)")
 
         // Check if mock headers are already present
-        if let existingHeader = request.headers.first(name: "x-amzn-oidc-data") {
+        if request.headers.first(name: "x-amzn-oidc-data") != nil {
             logger.info("🎫 Found existing mock ALB header, skipping mock injection")
             return
         }

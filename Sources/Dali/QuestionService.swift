@@ -70,7 +70,7 @@ public struct QuestionService: Sendable {
         }
 
         // Check if code is unique
-        if let existingQuestion = try await getQuestionByCode(code: trimmedCode) {
+        if try await getQuestionByCode(code: trimmedCode) != nil {
             throw ValidationError("Question code '\(trimmedCode)' already exists")
         }
 
@@ -122,7 +122,7 @@ public struct QuestionService: Sendable {
 
         // Check if code is unique (unless it's the same as current)
         if trimmedCode != question.code {
-            if let existingQuestion = try await getQuestionByCode(code: trimmedCode) {
+            if try await getQuestionByCode(code: trimmedCode) != nil {
                 throw ValidationError("Question code '\(trimmedCode)' already exists")
             }
         }

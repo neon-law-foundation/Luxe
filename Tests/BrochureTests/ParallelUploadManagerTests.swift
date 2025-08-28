@@ -146,7 +146,6 @@ struct ParallelUploadManagerTests {
         let sites = ["1337lawyers", "HoshiHoshi", "TarotSwift"]
 
         // Monitor active uploads during execution
-        var maxConcurrentObserved = 0
         var observationCount = 0
 
         let results = try await manager.uploadSites(
@@ -284,7 +283,7 @@ struct ParallelUploadManagerTests {
 
         // Start multiple upload operations concurrently
         await withTaskGroup(of: Void.self) { group in
-            for i in 0..<3 {
+            for _ in 0..<3 {
                 group.addTask {
                     do {
                         let sites = ["1337lawyers"]  // Same site for all tasks
