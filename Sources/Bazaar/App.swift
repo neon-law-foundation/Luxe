@@ -76,6 +76,14 @@ public func configureApp(_ app: Application) async throws {
     // Configure middleware
     app.middleware.use(ErrorMiddleware.default(environment: app.environment))
 
+    // Configure CORS for Slack webhook calls
+    let corsConfiguration = CORSMiddleware.Configuration(
+        allowedOrigin: .custom("https://hooks.slack.com"),
+        allowedMethods: [.POST, .GET, .OPTIONS],
+        allowedHeaders: [.accept, .authorization, .contentType, .origin, .xRequestedWith]
+    )
+    app.middleware.use(CORSMiddleware(configuration: corsConfiguration))
+
     // Configure static file serving from Bazaar's Public directory
     let publicDirectory = app.directory.workingDirectory + "Sources/Bazaar/Public/"
     app.middleware.use(FileMiddleware(publicDirectory: publicDirectory))
@@ -858,6 +866,10 @@ public func configureApp(_ app: Application) async throws {
         }
     }
 
+    // Register Slack webhook controller for PitBoss bot integration
+    try apiRoutes.register(collection: SlackWebhookController())
+    print("Slack webhook controller registered successfully")
+
     // Keep OpenAPI registration for now but use manual routes above
     let transport = VaporTransport(routesBuilder: apiRoutes)
     let server = BazaarAPIServer(database: app.db, oidcMiddleware: oidcMiddleware)
@@ -1573,6 +1585,40 @@ struct BazaarAPIServer: APIProtocol {
         } catch {
             return .undocumented(statusCode: 500, .init(headerFields: [:], body: nil))
         }
+    }
+
+    // MARK: - Slack Bot API Endpoints
+
+    /// Handle Slack webhook events
+    func handleSlackWebhook(
+        _ input: Operations.handleSlackWebhook.Input
+    ) async throws -> Operations.handleSlackWebhook.Output {
+        // This is implemented as a direct controller, but we need this stub for OpenAPI conformance
+        .undocumented(statusCode: 200, .init(headerFields: [:], body: nil))
+    }
+
+    /// Get user metrics for Slack bot
+    func getSlackUserMetrics(
+        _ input: Operations.getSlackUserMetrics.Input
+    ) async throws -> Operations.getSlackUserMetrics.Output {
+        // This is implemented as a direct controller, but we need this stub for OpenAPI conformance
+        .undocumented(statusCode: 200, .init(headerFields: [:], body: nil))
+    }
+
+    /// Get entity metrics for Slack bot
+    func getSlackEntityMetrics(
+        _ input: Operations.getSlackEntityMetrics.Input
+    ) async throws -> Operations.getSlackEntityMetrics.Output {
+        // This is implemented as a direct controller, but we need this stub for OpenAPI conformance
+        .undocumented(statusCode: 200, .init(headerFields: [:], body: nil))
+    }
+
+    /// Get system health metrics for Slack bot
+    func getSlackSystemHealth(
+        _ input: Operations.getSlackSystemHealth.Input
+    ) async throws -> Operations.getSlackSystemHealth.Output {
+        // This is implemented as a direct controller, but we need this stub for OpenAPI conformance
+        .undocumented(statusCode: 200, .init(headerFields: [:], body: nil))
     }
 }
 
