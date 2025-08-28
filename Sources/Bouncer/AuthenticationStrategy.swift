@@ -48,6 +48,13 @@ public enum AuthenticationStrategy: Sendable {
     /// and HTML pages.
     case hybrid
 
+    /// Service account authentication (for bots and automated services)
+    ///
+    /// This strategy validates service account tokens using hash-based validation.
+    /// Suitable for API endpoints that need to authenticate bots or automated services
+    /// without OAuth flows.
+    case serviceAccount
+
     /// Create authentication middleware for this strategy
     ///
     /// - Parameters:
@@ -74,6 +81,8 @@ public enum AuthenticationStrategy: Sendable {
             return "OAuth session authentication for HTML pages"
         case .hybrid:
             return "Hybrid authentication supporting both JWT and OAuth"
+        case .serviceAccount:
+            return "Service account token authentication for bots and automated services"
         }
     }
 
@@ -82,7 +91,7 @@ public enum AuthenticationStrategy: Sendable {
         switch self {
         case .jwt, .hybrid:
             return true
-        case .oauth:
+        case .oauth, .serviceAccount:
             return false
         }
     }
@@ -92,7 +101,17 @@ public enum AuthenticationStrategy: Sendable {
         switch self {
         case .oauth, .hybrid:
             return true
-        case .jwt:
+        case .jwt, .serviceAccount:
+            return false
+        }
+    }
+
+    /// Check if strategy supports service account authentication
+    public var supportsServiceAccount: Bool {
+        switch self {
+        case .serviceAccount:
+            return true
+        case .jwt, .oauth, .hybrid:
             return false
         }
     }
@@ -141,6 +160,16 @@ public struct AuthenticationFactory {
     /// Suitable for endpoints that need to serve both APIs and HTML pages.
     public var hybrid: AuthenticationMiddleware {
         AuthenticationStrategy.hybrid.middleware(
+            oidcConfig: oidcConfig,
+            oauthConfig: oauthConfig
+        )
+    }
+
+    /// Create service account authentication middleware
+    ///
+    /// Suitable for API endpoints that authenticate bots and automated services.
+    public var serviceAccount: AuthenticationMiddleware {
+        AuthenticationStrategy.serviceAccount.middleware(
             oidcConfig: oidcConfig,
             oauthConfig: oauthConfig
         )
@@ -196,5 +225,13 @@ extension RoutesBuilder {
     /// - Returns: Route group with hybrid authentication
     public func hybridAuthenticated(using factory: AuthenticationFactory) -> RoutesBuilder {
         self.grouped(factory.hybrid)
+    }
+
+    /// Apply service account authentication to route group
+    ///
+    /// - Parameter factory: Authentication factory to use
+    /// - Returns: Route group with service account authentication
+    public func serviceAccountAuthenticated(using factory: AuthenticationFactory) -> RoutesBuilder {
+        self.grouped(factory.serviceAccount)
     }
 }
