@@ -5,6 +5,7 @@ import Dali
 import Logging
 import Vapor
 
+@available(macOS 10.15, macCatalyst 13, iOS 13, tvOS 13, watchOS 6, *)
 struct PitBoss: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "pitboss",
@@ -125,4 +126,8 @@ struct ValidationError: Error, CustomStringConvertible {
 }
 
 // Entry point
-PitBoss.main()
+if #available(macOS 10.15, macCatalyst 13, iOS 13, tvOS 13, watchOS 6, *) {
+    PitBoss.main()
+} else {
+    fatalError("PitBoss requires macOS 10.15 or later")
+}

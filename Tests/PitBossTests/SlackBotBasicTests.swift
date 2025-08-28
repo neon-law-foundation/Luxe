@@ -14,14 +14,14 @@ struct SlackBotBasicTests {
     func testInitialization() throws {
         // Arrange & Act
         let logger = Logger(label: "test")
-        let slackBot = SlackBot(
+        let _ = SlackBot(
             signingSecret: "test-secret",
             serviceToken: "test-token",
             logger: logger
         )
 
         // Assert - If initialization succeeds, test passes
-        #expect(true)
+        #expect(Bool(true))
     }
 
     @Test("Should create Slack signature correctly")

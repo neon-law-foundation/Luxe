@@ -20,7 +20,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Version'
-
   /me:
     get:
       summary: Get current user information
@@ -41,7 +40,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /me/settings:
     get:
       summary: Get user settings and preferences
