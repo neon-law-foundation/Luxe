@@ -1,6 +1,6 @@
 ---
 name: swift-documenter
-description: |
+description: >
     DocC documentation specialist for Swift code. Writes comprehensive, semantic documentation comments for all
     public Swift methods, types, and properties. MUST BE USED when adding or updating Swift code to ensure
     complete API documentation.

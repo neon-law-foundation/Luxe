@@ -16,7 +16,7 @@ flow:
 alignment:
   BEGIN:
     _: END
-description: |
+description: >
   This operating agreement is for a limited liability company (LLC) in the State of Nevada.
 ---
 

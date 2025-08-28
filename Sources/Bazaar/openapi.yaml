@@ -1200,30 +1200,30 @@ components:
       type: apiKey
       in: header
       name: x-amzn-oidc-data
-      description: |
+      description: >
         AWS Application Load Balancer with Cognito authentication.
-        
+
         **Production Environment:**
         - Headers automatically injected by AWS ALB after successful Cognito authentication
         - JWT token contains user identity and claims
         - No manual header setup required - handled by infrastructure
-        
+
         **Development Environment:**
         - Headers automatically injected by LocalMockAuthenticator
         - Set LUXE_ENV=development to enable automatic header injection
         - No manual configuration required for local testing
-        
+
         **Required Headers (automatically provided):**
         - `x-amzn-oidc-data`: JWT with user information
         - `x-amzn-oidc-accesstoken`: Access token
         - `x-amzn-oidc-identity`: User identity
-        
+
         **Testing with curl/Postman:**
         Use the development headers provided by the migration tool:
         ```bash
         swift run Vegas migrate-sessions --mode generate-headers
         ```
-        
+
         **Migration from Session-Based Auth:**
         - No more session cookies or server-side sessions
         - Authentication is stateless and handled by ALB/Cognito
@@ -1232,20 +1232,20 @@ components:
       type: apiKey
       in: header
       name: x-amzn-oidc-data
-      description: |
+      description: >
         Admin-level authentication via AWS ALB/Cognito headers.
-        
+
         Same as `albHeaderAuth` but requires admin role in Cognito groups.
-        
+
         **Admin Access Requirements:**
         - User must be member of 'admin' Cognito group
         - ALB injects user groups in JWT claims
         - SmartAuthMiddleware validates admin permissions
-        
+
         **Available Admin Roles:**
         - `admin`: Full system access
         - `staff`: Limited admin functionality
-        
+
         **Role Mapping:**
         - Cognito groups automatically mapped to user roles
         - No database changes required for role management

@@ -966,6 +966,88 @@ COMMENT ON COLUMN auth.person_entity_roles.updated_at IS 'Timestamp when the rol
 
 
 --
+-- Name: service_account_tokens; Type: TABLE; Schema: auth; Owner: postgres
+--
+
+CREATE TABLE auth.service_account_tokens (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    name text NOT NULL,
+    token_hash text NOT NULL,
+    service_type text NOT NULL,
+    expires_at timestamp with time zone,
+    is_active boolean DEFAULT true NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    last_used_at timestamp with time zone,
+    CONSTRAINT service_account_tokens_service_type_check CHECK ((service_type = ANY (ARRAY['slack_bot'::text, 'ci_cd'::text, 'monitoring'::text])))
+);
+
+
+ALTER TABLE auth.service_account_tokens OWNER TO postgres;
+
+--
+-- Name: TABLE service_account_tokens; Type: COMMENT; Schema: auth; Owner: postgres
+--
+
+COMMENT ON TABLE auth.service_account_tokens IS 'Authentication tokens for service accounts and bots';
+
+
+--
+-- Name: COLUMN service_account_tokens.id; Type: COMMENT; Schema: auth; Owner: postgres
+--
+
+COMMENT ON COLUMN auth.service_account_tokens.id IS 'Unique identifier for the service account token';
+
+
+--
+-- Name: COLUMN service_account_tokens.name; Type: COMMENT; Schema: auth; Owner: postgres
+--
+
+COMMENT ON COLUMN auth.service_account_tokens.name IS 'Human-readable name for the service account';
+
+
+--
+-- Name: COLUMN service_account_tokens.token_hash; Type: COMMENT; Schema: auth; Owner: postgres
+--
+
+COMMENT ON COLUMN auth.service_account_tokens.token_hash IS 'SHA256 hash of the service account token';
+
+
+--
+-- Name: COLUMN service_account_tokens.service_type; Type: COMMENT; Schema: auth; Owner: postgres
+--
+
+COMMENT ON COLUMN auth.service_account_tokens.service_type IS 'Type of service using this token';
+
+
+--
+-- Name: COLUMN service_account_tokens.expires_at; Type: COMMENT; Schema: auth; Owner: postgres
+--
+
+COMMENT ON COLUMN auth.service_account_tokens.expires_at IS 'Optional expiration timestamp for the token';
+
+
+--
+-- Name: COLUMN service_account_tokens.is_active; Type: COMMENT; Schema: auth; Owner: postgres
+--
+
+COMMENT ON COLUMN auth.service_account_tokens.is_active IS 'Whether the token is currently active';
+
+
+--
+-- Name: COLUMN service_account_tokens.created_at; Type: COMMENT; Schema: auth; Owner: postgres
+--
+
+COMMENT ON COLUMN auth.service_account_tokens.created_at IS 'Timestamp when token was created';
+
+
+--
+-- Name: COLUMN service_account_tokens.last_used_at; Type: COMMENT; Schema: auth; Owner: postgres
+--
+
+COMMENT ON COLUMN auth.service_account_tokens.last_used_at IS 'Timestamp when token was last used for authentication';
+
+
+--
 -- Name: users; Type: TABLE; Schema: auth; Owner: postgres
 --
 
@@ -4121,6 +4203,22 @@ ALTER TABLE ONLY auth.person_entity_roles
 
 
 --
+-- Name: service_account_tokens service_account_tokens_pkey; Type: CONSTRAINT; Schema: auth; Owner: postgres
+--
+
+ALTER TABLE ONLY auth.service_account_tokens
+    ADD CONSTRAINT service_account_tokens_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: service_account_tokens service_account_tokens_token_hash_key; Type: CONSTRAINT; Schema: auth; Owner: postgres
+--
+
+ALTER TABLE ONLY auth.service_account_tokens
+    ADD CONSTRAINT service_account_tokens_token_hash_key UNIQUE (token_hash);
+
+
+--
 -- Name: person_entity_roles unique_person_entity_role; Type: CONSTRAINT; Schema: auth; Owner: postgres
 --
 
@@ -4652,6 +4750,34 @@ CREATE INDEX idx_person_entity_roles_person_id ON auth.person_entity_roles USING
 --
 
 CREATE INDEX idx_person_entity_roles_role ON auth.person_entity_roles USING btree (role);
+
+
+--
+-- Name: idx_service_account_tokens_active; Type: INDEX; Schema: auth; Owner: postgres
+--
+
+CREATE INDEX idx_service_account_tokens_active ON auth.service_account_tokens USING btree (is_active) WHERE (is_active = true);
+
+
+--
+-- Name: idx_service_account_tokens_expires_at; Type: INDEX; Schema: auth; Owner: postgres
+--
+
+CREATE INDEX idx_service_account_tokens_expires_at ON auth.service_account_tokens USING btree (expires_at) WHERE (expires_at IS NOT NULL);
+
+
+--
+-- Name: idx_service_account_tokens_service_type; Type: INDEX; Schema: auth; Owner: postgres
+--
+
+CREATE INDEX idx_service_account_tokens_service_type ON auth.service_account_tokens USING btree (service_type);
+
+
+--
+-- Name: idx_service_account_tokens_token_hash; Type: INDEX; Schema: auth; Owner: postgres
+--
+
+CREATE INDEX idx_service_account_tokens_token_hash ON auth.service_account_tokens USING btree (token_hash);
 
 
 --
@@ -5862,6 +5988,13 @@ ALTER TABLE ONLY ethereal.birth_data
 
 
 --
+-- Name: CONSTRAINT fk_birth_data_user ON birth_data; Type: COMMENT; Schema: ethereal; Owner: postgres
+--
+
+COMMENT ON CONSTRAINT fk_birth_data_user ON ethereal.birth_data IS 'Links birth data to user accounts with cascade delete for data privacy';
+
+
+--
 -- Name: credentials fk_credentials_jurisdiction; Type: FK CONSTRAINT; Schema: legal; Owner: postgres
 --
 
@@ -5931,30 +6064,6 @@ ALTER TABLE ONLY mail.mailboxes
 
 ALTER TABLE ONLY marketing.newsletter_analytics
     ADD CONSTRAINT newsletter_analytics_newsletter_id_fkey FOREIGN KEY (newsletter_id) REFERENCES marketing.newsletters(id) ON DELETE CASCADE;
-
-
---
--- Name: newsletter_analytics newsletter_analytics_user_id_fkey; Type: FK CONSTRAINT; Schema: marketing; Owner: postgres
---
-
-ALTER TABLE ONLY marketing.newsletter_analytics
-    ADD CONSTRAINT newsletter_analytics_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE SET NULL;
-
-
---
--- Name: newsletter_templates newsletter_templates_created_by_fkey; Type: FK CONSTRAINT; Schema: marketing; Owner: postgres
---
-
-ALTER TABLE ONLY marketing.newsletter_templates
-    ADD CONSTRAINT newsletter_templates_created_by_fkey FOREIGN KEY (created_by) REFERENCES auth.users(id);
-
-
---
--- Name: newsletters newsletters_created_by_fkey; Type: FK CONSTRAINT; Schema: marketing; Owner: postgres
---
-
-ALTER TABLE ONLY marketing.newsletters
-    ADD CONSTRAINT newsletters_created_by_fkey FOREIGN KEY (created_by) REFERENCES auth.users(id);
 
 
 --
@@ -6369,6 +6478,26 @@ CREATE POLICY postgres_can_authenticate_users ON auth.users FOR SELECT TO postgr
 --
 
 COMMENT ON POLICY postgres_can_authenticate_users ON auth.users IS 'Allows postgres user to query auth.users table for authentication purposes in SessionMiddleware';
+
+
+--
+-- Name: service_account_tokens; Type: ROW SECURITY; Schema: auth; Owner: postgres
+--
+
+ALTER TABLE auth.service_account_tokens ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: service_account_tokens service_account_tokens_admin_policy; Type: POLICY; Schema: auth; Owner: postgres
+--
+
+CREATE POLICY service_account_tokens_admin_policy ON auth.service_account_tokens TO admin USING (true) WITH CHECK (true);
+
+
+--
+-- Name: service_account_tokens service_account_tokens_staff_read_policy; Type: POLICY; Schema: auth; Owner: postgres
+--
+
+CREATE POLICY service_account_tokens_staff_read_policy ON auth.service_account_tokens FOR SELECT TO staff USING (true);
 
 
 --
@@ -7505,6 +7634,14 @@ GRANT ALL ON TABLE accounting.vendors TO admin;
 GRANT SELECT ON TABLE auth.person_entity_roles TO customer;
 GRANT SELECT ON TABLE auth.person_entity_roles TO staff;
 GRANT ALL ON TABLE auth.person_entity_roles TO admin;
+
+
+--
+-- Name: TABLE service_account_tokens; Type: ACL; Schema: auth; Owner: postgres
+--
+
+GRANT SELECT ON TABLE auth.service_account_tokens TO staff;
+GRANT ALL ON TABLE auth.service_account_tokens TO admin;
 
 
 --

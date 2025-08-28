@@ -1,7 +1,7 @@
 ---
 title: "Why Every Business Needs a Cap Table"
 slug: "why-every-business-needs-cap-table"
-description: |
+description: >
     Every business is unique, and transparent equity management is the foundation of successful
     partnerships. Learn why clear rules and responsibilities matter from day one...
 ---

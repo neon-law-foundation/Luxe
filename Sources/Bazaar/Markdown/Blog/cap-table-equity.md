@@ -1,7 +1,7 @@
 ---
 title: "Understanding Cap Tables and Equity Sharing in Nevada"
 slug: "cap-table-equity"
-description: |
+description: >
     Learn how cap tables work and why transparent equity sharing matters for Nevada LLCs and C-Corps. From
     vesting schedules to fair compensation...
 ---

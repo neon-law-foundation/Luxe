@@ -1,6 +1,6 @@
 ---
 name: issue-creator
-description: |
+description: >
     Creates detailed GitHub issues for tracking development tasks instead of roadmaps. Use proactively when roadmap or
     task planning is requested. MUST BE USED for any roadmap creation requests.
 tools: Bash, Read, Write, Grep, Glob, LS, WebFetch
