@@ -199,9 +199,9 @@ CREATE TABLE IF NOT EXISTS users (
 ### TDD Steps
 
 1. Write Swift Testing test
-2. Run: `swift test --filter TestName`
+2. Run: `swift test --no-parallel --filter TestName`
 3. Implement code
-4. Verify: `swift test`
+4. Verify: `swift test --no-parallel`
 5. Commit with conventional format
 
 ### Quick Start
@@ -211,7 +211,7 @@ CREATE TABLE IF NOT EXISTS users (
 ./scripts/setup-development-environment.sh
 
 # Run tests
-swift test
+swift test --no-parallel
 
 # Start server
 swift run BazaarServer
