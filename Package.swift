@@ -210,6 +210,20 @@ let package = Package(
                 "README.md"
             ]
         ),
+        .executableTarget(
+            name: "PitBoss",
+            dependencies: [
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                .product(name: "AsyncHTTPClient", package: "async-http-client"),
+                .product(name: "Vapor", package: "vapor"),
+                .product(name: "Logging", package: "swift-log"),
+                "Dali",
+                "Bouncer",
+            ],
+            exclude: [
+                "README.md"
+            ]
+        ),
         .testTarget(
             name: "RebelAITests",
             dependencies: [
@@ -404,6 +418,18 @@ let package = Package(
             name: "RouletteTests",
             dependencies: [
                 "Roulette"
+            ]
+        ),
+        .testTarget(
+            name: "PitBossTests",
+            dependencies: [
+                "PitBoss",
+                "Dali",
+                "Bouncer",
+                "TestUtilities",
+                .product(name: "VaporTesting", package: "vapor"),
+                .product(name: "Fluent", package: "fluent"),
+                .product(name: "FluentPostgresDriver", package: "fluent-postgres-driver"),
             ]
         ),
     ]
