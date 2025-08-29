@@ -37,6 +37,71 @@ After setup, test authentication by:
 2. Navigate to: <http://localhost:8080/app/me>
 3. Login with: `admin@neonlaw.com / Vegas702!` from the redirected Dex login page.
 
+### Local Development Authentication
+
+The DevelopmentAuthMiddleware provides an easy way to test different authentication scenarios during local development without external dependencies.
+
+#### Quick Auth Testing
+
+Add `?auth=admin|staff|customer|none` to any URL to switch authentication modes:
+
+```bash
+# Admin authentication
+curl http://localhost:8080/app/me?auth=admin
+
+# Staff authentication  
+curl http://localhost:8080/app/me?auth=staff
+
+# Customer authentication
+curl http://localhost:8080/app/me?auth=customer
+
+# No authentication
+curl http://localhost:8080/app/me?auth=none
+```
+
+#### Automatic Route Detection
+
+The middleware automatically selects appropriate authentication based on route patterns:
+
+- `/admin/*` → Admin role
+- `/staff/*`, `/reports/*` → Staff role  
+- `/app/*`, `/api/*` → Customer role
+- All other routes → Public (no auth)
+
+#### Mock Users
+
+The middleware automatically creates these development users:
+
+| Role     | Username                    | Groups                               |
+|----------|----------------------------|--------------------------------------|
+| Admin    | dev-admin@neonlaw.com      | admin, administrators, staff, users  |
+| Staff    | dev-staff@neonlaw.com      | staff, employees, users              |
+| Customer | dev-customer@example.com   | users, customers                     |
+
+#### Environment Variables
+
+Set default authentication via environment variables:
+
+```bash
+# Set default auth mode
+DEV_AUTH_MODE=admin swift run Bazaar
+
+# Use custom username
+DEV_AUTH_USER=custom@example.com swift run Bazaar
+```
+
+#### Debug Headers
+
+The middleware adds helpful debug headers to responses:
+
+- `x-dev-auth-processed`: Middleware processed the request
+- `x-dev-auth-mode`: Auth mode used
+- `x-dev-auth-user`: Authenticated username
+- `x-dev-auth-role`: User's role
+- `x-dev-auth-hint`: Usage hints
+
+**Note:** This middleware only runs in development and testing environments. Production uses real AWS ALB headers.
+
 ## Claude Code Development
 
 We encourage developing this repository using **Claude Code**. This project follows a strict
