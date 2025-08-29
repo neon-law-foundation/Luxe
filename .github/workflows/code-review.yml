@@ -4,6 +4,7 @@ permissions:
   pull-requests: write
   contents: read
   issues: write
+  id-token: write
 
 on:
   issue_comment:
@@ -35,7 +36,7 @@ jobs:
       - name: Run Claude Code Review
         uses: anthropics/claude-code-action@v1
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          anthropic_api_key: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           prompt: |
             You are reviewing a pull request for the Luxe project, a full-stack Swift monorepo.
             
