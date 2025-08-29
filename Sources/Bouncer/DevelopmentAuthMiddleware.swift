@@ -309,10 +309,12 @@ public struct DevelopmentAuthMiddleware: AsyncMiddleware {
         ).run()
 
         // Create user with proper role enum casting
+        // Use unique sub per user by including username to avoid constraint violations
+        let uniqueSub = "dev-sub-\(authMode.rawValue)-\(finalUsername)"
         try await postgres.sql().raw(
             """
             INSERT INTO auth.users (username, person_id, role, sub)
-            SELECT \(bind: finalUsername), p.id, \(bind: userRole.rawValue)::auth.user_role, \(bind: "dev-sub-\(authMode.rawValue)")
+            SELECT \(bind: finalUsername), p.id, \(bind: userRole.rawValue)::auth.user_role, \(bind: uniqueSub)
             FROM directory.people p
             WHERE p.email = \(bind: finalUsername)
             ON CONFLICT (username) DO UPDATE SET 
