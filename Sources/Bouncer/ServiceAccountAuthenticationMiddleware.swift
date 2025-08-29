@@ -12,7 +12,7 @@ struct ServiceAccountTokenKey: StorageKey {
 /// Extension to provide convenient access to service account token from request
 extension Request {
     /// The authenticated service account token (if any)
-    var serviceAccountToken: ServiceAccountToken? {
+    public var serviceAccountToken: ServiceAccountToken? {
         get { storage[ServiceAccountTokenKey.self] }
         set { storage[ServiceAccountTokenKey.self] = newValue }
     }
