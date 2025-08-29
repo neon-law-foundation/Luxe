@@ -476,11 +476,20 @@ func createTestMonitoringToken(on database: any Database) async throws {
 
 /// Create a test user for metrics testing
 func createTestUser(on database: any Database) async throws {
+    // First create a person record since User requires person_id
+    let person = Person(
+        name: "Test User",
+        email: "testuser@example.com"
+    )
+    try await person.save(on: database)
+    
+    // Now create the user with the person_id reference
     let user = User(
-        username: "testuser",
+        username: "testuser@example.com",
         sub: "test-cognito-sub",
         role: .customer
     )
+    user.$person.id = try person.requireID()
     try await user.save(on: database)
 }
 

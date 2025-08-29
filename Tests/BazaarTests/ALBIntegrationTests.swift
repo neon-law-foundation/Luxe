@@ -120,9 +120,9 @@ struct ALBIntegrationTests {
         try await TestUtilities.withApp { app, database in
             _ = try await configureALBApp(app)
 
-            // Create test user using transaction database for proper isolation
+            // Create test user using app.db for visibility to handlers
             try await TestUtilities.createTestUser(
-                database,  // Use transaction database to avoid connection pool issues
+                app.db,  // Use app.db so handlers can see the user
                 name: "Test User",
                 email: "test@example.com",
                 username: "test@example.com",
@@ -169,9 +169,9 @@ struct ALBIntegrationTests {
         try await TestUtilities.withApp { app, database in
             _ = try await configureALBApp(app)
 
-            // Create regular user with matching sub using transaction database
+            // Create regular user with matching sub using app.db
             try await TestUtilities.createTestUser(
-                database,  // Use transaction database to avoid connection pool issues
+                app.db,  // Use app.db so handlers can see the user
                 name: "Regular User",
                 email: "user@example.com",
                 username: "user@example.com",
@@ -179,9 +179,9 @@ struct ALBIntegrationTests {
                 sub: "user-cognito-sub"
             )
 
-            // Create admin user with matching sub using transaction database
+            // Create admin user with matching sub using app.db
             try await TestUtilities.createTestUser(
-                database,  // Use transaction database to avoid connection pool issues
+                app.db,  // Use app.db so handlers can see the user
                 name: "Admin User",
                 email: "admin@neonlaw.com",
                 username: "admin@neonlaw.com",

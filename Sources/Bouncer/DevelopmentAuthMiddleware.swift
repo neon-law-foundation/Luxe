@@ -150,10 +150,23 @@ public struct DevelopmentAuthMiddleware: AsyncMiddleware {
             logger.info("🌍 No development auth mode, allowing unauthenticated")
         }
 
-        // Process request
-        let response = try await next.respond(to: request)
+        // Process request, handling errors to ensure debug headers are added
+        let response: Response
+        do {
+            response = try await next.respond(to: request)
+        } catch let error as AbortError {
+            // Convert AbortError to Response so we can add headers
+            response = Response(status: error.status)
+            struct ErrorResponse: Content {
+                let error: Bool
+                let reason: String
+            }
+            let errorData = ErrorResponse(error: true, reason: error.reason)
+            try response.content.encode(errorData)
+            response.headers.contentType = .json
+        }
 
-        // Add debug headers if enabled
+        // Add debug headers if enabled (even on error responses)
         if config.enableDebugHeaders {
             addDebugHeaders(to: response, authMode: authMode, request: request)
         }
@@ -230,6 +243,12 @@ public struct DevelopmentAuthMiddleware: AsyncMiddleware {
     ///   - authMode: The authentication mode to inject
     ///   - request: The request to modify
     private func injectDevelopmentAuth(authMode: AuthMode, request: Request) async throws {
+        // Skip injection for "none" mode
+        if authMode == .none {
+            logger.info("🚫 Auth mode is 'none', skipping authentication injection")
+            return
+        }
+        
         // Get or create mock user
         let user = try await getOrCreateDevelopmentUser(authMode: authMode, request: request)
 
@@ -384,7 +403,8 @@ public struct DevelopmentAuthMiddleware: AsyncMiddleware {
         if let authMode = authMode {
             response.headers.add(name: "x-dev-auth-mode", value: authMode.rawValue)
 
-            if let user = request.auth.get(User.self) {
+            // Only add user headers if we actually have a user (not for .none mode)
+            if authMode != .none, let user = request.auth.get(User.self) {
                 response.headers.add(name: "x-dev-auth-user", value: user.username)
                 response.headers.add(name: "x-dev-auth-role", value: user.role.rawValue)
             }
