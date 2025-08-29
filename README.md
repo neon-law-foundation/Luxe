@@ -39,7 +39,8 @@ After setup, test authentication by:
 
 ### Local Development Authentication
 
-The DevelopmentAuthMiddleware provides an easy way to test different authentication scenarios during local development without external dependencies.
+The DevelopmentAuthMiddleware provides an easy way to test different authentication scenarios
+during local development without external dependencies.
 
 #### Quick Auth Testing
 
@@ -72,11 +73,11 @@ The middleware automatically selects appropriate authentication based on route p
 
 The middleware automatically creates these development users:
 
-| Role     | Username                    | Groups                               |
-|----------|----------------------------|--------------------------------------|
-| Admin    | dev-admin@neonlaw.com      | admin, administrators, staff, users  |
-| Staff    | dev-staff@neonlaw.com      | staff, employees, users              |
-| Customer | dev-customer@example.com   | users, customers                     |
+| Role     | Username                      | Groups                               |
+|----------|-------------------------------|--------------------------------------|
+| Admin    | `dev-admin@neonlaw.com`       | admin, administrators, staff, users  |
+| Staff    | `dev-staff@neonlaw.com`       | staff, employees, users              |
+| Customer | `dev-customer@example.com`    | users, customers                     |
 
 #### Environment Variables
 
