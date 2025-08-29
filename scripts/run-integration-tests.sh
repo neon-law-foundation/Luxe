@@ -61,7 +61,7 @@ fi
 
 # Run the integration tests
 echo "🧪 Running integration tests..."
-if swift test --filter SagebrushWebIntegrationTests; then
+if swift test --no-parallel --filter SagebrushWebIntegrationTests; then
     echo "✅ Integration tests passed!"
     TEST_RESULT=0
 else

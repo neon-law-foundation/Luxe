@@ -81,7 +81,7 @@ struct ProfilesCommandTests {
 
         for invalidProfile in invalidProfileNames {
             #expect(throws: Error.self) {
-                var command = try StoreProfileCommand.parse([
+                let command = try StoreProfileCommand.parse([
                     "--profile", invalidProfile,
                     "--access-key", "AKIAIOSFODNN7EXAMPLE",
                     "--secret-key", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
@@ -102,7 +102,7 @@ struct ProfilesCommandTests {
         ]
 
         for validProfile in validProfileNames {
-            var command = try StoreProfileCommand.parse([
+            let command = try StoreProfileCommand.parse([
                 "--profile", validProfile,
                 "--access-key", "AKIAIOSFODNN7EXAMPLE",
                 "--secret-key", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
@@ -128,7 +128,7 @@ struct ProfilesCommandTests {
 
         for invalidKey in invalidAccessKeys {
             #expect(throws: Error.self) {
-                var command = try StoreProfileCommand.parse([
+                let command = try StoreProfileCommand.parse([
                     "--profile", "test",
                     "--access-key", invalidKey,
                     "--secret-key", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
@@ -146,7 +146,7 @@ struct ProfilesCommandTests {
         ]
 
         for validKey in validAccessKeys {
-            var command = try StoreProfileCommand.parse([
+            let command = try StoreProfileCommand.parse([
                 "--profile", "test",
                 "--access-key", validKey,
                 "--secret-key", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
@@ -169,7 +169,7 @@ struct ProfilesCommandTests {
 
         for invalidSecret in invalidSecretKeys {
             #expect(throws: Error.self) {
-                var command = try StoreProfileCommand.parse([
+                let command = try StoreProfileCommand.parse([
                     "--profile", "test",
                     "--access-key", "AKIAIOSFODNN7EXAMPLE",
                     "--secret-key", invalidSecret,
@@ -180,7 +180,7 @@ struct ProfilesCommandTests {
 
         // Test valid secret key
         let validSecretKey = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
-        var command = try StoreProfileCommand.parse([
+        let command = try StoreProfileCommand.parse([
             "--profile", "test",
             "--access-key", "AKIAIOSFODNN7EXAMPLE",
             "--secret-key", validSecretKey,
@@ -194,7 +194,7 @@ struct ProfilesCommandTests {
     func testStoreSessionTokenValidation() throws {
         // Test session token too short
         #expect(throws: Error.self) {
-            var command = try StoreProfileCommand.parse([
+            let command = try StoreProfileCommand.parse([
                 "--profile", "test",
                 "--access-key", "ASIAIOSFODNN7EXAMPLE",
                 "--secret-key", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
@@ -205,7 +205,7 @@ struct ProfilesCommandTests {
 
         // Test valid session token
         let validSessionToken = String(repeating: "a", count: 150)  // 150 characters
-        var command = try StoreProfileCommand.parse([
+        let command = try StoreProfileCommand.parse([
             "--profile", "test",
             "--access-key", "ASIAIOSFODNN7EXAMPLE",
             "--secret-key", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
@@ -229,7 +229,7 @@ struct ProfilesCommandTests {
 
         for invalidRegion in invalidRegions {
             #expect(throws: Error.self) {
-                var command = try StoreProfileCommand.parse([
+                let command = try StoreProfileCommand.parse([
                     "--profile", "test",
                     "--access-key", "AKIAIOSFODNN7EXAMPLE",
                     "--secret-key", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
@@ -249,7 +249,7 @@ struct ProfilesCommandTests {
         ]
 
         for validRegion in validRegions {
-            var command = try StoreProfileCommand.parse([
+            let command = try StoreProfileCommand.parse([
                 "--profile", "test",
                 "--access-key", "AKIAIOSFODNN7EXAMPLE",
                 "--secret-key", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",

@@ -119,7 +119,7 @@ The Standards CLI is built with a modular architecture:
 The Standards CLI includes comprehensive test coverage:
 
 ```bash
-swift test --filter StandardsTests
+swift test --no-parallel --filter StandardsTests
 ```
 
 ### Building
