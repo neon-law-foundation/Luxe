@@ -480,22 +480,16 @@ func createTestUser(on database: any Database) async throws {
     let uniqueId = UUID().uuidString.prefix(8)
     let email = "testuser-\(uniqueId)@example.com"
     
-    // First create a person record since User requires person_id
-    let person = Person(
+    // Use TestUtilities to properly create user with person
+    // This handles all the foreign key constraints correctly
+    _ = try await TestUtilities.createTestUser(
+        database,
         name: "Test User \(uniqueId)",
-        email: email
-    )
-    try await person.save(on: database)
-    
-    // Now create the user with the person_id reference
-    // Username must match the person's email due to foreign key constraint
-    let user = User(
+        email: email,
         username: email,
-        sub: "test-cognito-sub-\(uniqueId)",
-        role: .customer
+        role: "customer",
+        sub: "test-cognito-sub-\(uniqueId)"
     )
-    user.$person.id = try person.requireID()
-    try await user.save(on: database)
 }
 
 /// Create a test entity for metrics testing

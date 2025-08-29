@@ -317,8 +317,7 @@ public struct DevelopmentAuthMiddleware: AsyncMiddleware {
             WHERE p.email = \(bind: finalUsername)
             ON CONFLICT (username) DO UPDATE SET 
                 role = EXCLUDED.role,
-                sub = EXCLUDED.sub,
-                person_id = EXCLUDED.person_id
+                sub = EXCLUDED.sub
             """
         ).run()
 
