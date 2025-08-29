@@ -186,7 +186,7 @@ struct FooterComponentTests {
             let component = FooterComponent.sagebrushFooter()
             let html = component.render()
 
-            #expect(html.contains("© 2025 Sagebrush. All rights reserved."))
+            #expect(html.contains("© 2025 Sagebrush Services™. All rights reserved."))
             #expect(html.contains("mailto:support@sagebrush.services"))
         }
 

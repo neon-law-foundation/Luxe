@@ -105,7 +105,7 @@ public struct FooterComponent: HTML {
 // Convenience initializers for different companies
 extension FooterComponent {
     public static func sagebrushFooter() -> FooterComponent {
-        FooterComponent(company: "Sagebrush", supportEmail: "support@sagebrush.services")
+        FooterComponent(company: "Sagebrush Services™", supportEmail: "support@sagebrush.services")
     }
 
     public static func neonLawFooter() -> FooterComponent {
