@@ -476,17 +476,22 @@ func createTestMonitoringToken(on database: any Database) async throws {
 
 /// Create a test user for metrics testing
 func createTestUser(on database: any Database) async throws {
+    // Generate unique identifiers to avoid conflicts
+    let uniqueId = UUID().uuidString.prefix(8)
+    let email = "testuser-\(uniqueId)@example.com"
+    
     // First create a person record since User requires person_id
     let person = Person(
-        name: "Test User",
-        email: "testuser@example.com"
+        name: "Test User \(uniqueId)",
+        email: email
     )
     try await person.save(on: database)
     
     // Now create the user with the person_id reference
+    // Username must match the person's email due to foreign key constraint
     let user = User(
-        username: "testuser@example.com",
-        sub: "test-cognito-sub",
+        username: email,
+        sub: "test-cognito-sub-\(uniqueId)",
         role: .customer
     )
     user.$person.id = try person.requireID()
@@ -495,23 +500,26 @@ func createTestUser(on database: any Database) async throws {
 
 /// Create a test entity for metrics testing
 func createTestEntity(on database: any Database) async throws {
+    // Generate unique identifier to avoid conflicts
+    let uniqueId = UUID().uuidString.prefix(8)
+    
     // Create a test jurisdiction first
     let jurisdiction = LegalJurisdiction(
-        name: "Delaware",
-        code: "DE"
+        name: "Delaware \(uniqueId)",
+        code: "DE\(uniqueId)"
     )
     try await jurisdiction.save(on: database)
 
     // Create an entity type
     let entityType = EntityType(
         legalJurisdictionID: try jurisdiction.requireID(),
-        name: "LLC"
+        name: "LLC \(uniqueId)"
     )
     try await entityType.save(on: database)
 
     // Create a test entity
     let entity = Entity(
-        name: "Test Entity LLC",
+        name: "Test Entity LLC \(uniqueId)",
         legalEntityTypeID: try entityType.requireID()
     )
     try await entity.save(on: database)
