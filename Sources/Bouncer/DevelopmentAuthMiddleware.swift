@@ -1,6 +1,8 @@
 import Dali
 import Fluent
+import FluentPostgresDriver
 import Foundation
+import PostgresKit
 import Vapor
 
 /// Development authentication middleware for easy auth mode switching
@@ -123,8 +125,8 @@ public struct DevelopmentAuthMiddleware: AsyncMiddleware {
     ///   - next: The next responder in the chain
     /// - Returns: The HTTP response with debug information
     public func respond(to request: Request, chainingTo next: AsyncResponder) async throws -> Response {
-        // Only run in development environment
-        guard request.application.environment.isDevelopment else {
+        // Only run in development or testing environment
+        guard request.application.environment.isDevelopment || request.application.environment == .testing else {
             return try await next.respond(to: request)
         }
 
@@ -148,10 +150,23 @@ public struct DevelopmentAuthMiddleware: AsyncMiddleware {
             logger.info("🌍 No development auth mode, allowing unauthenticated")
         }
 
-        // Process request
-        let response = try await next.respond(to: request)
+        // Process request, handling errors to ensure debug headers are added
+        let response: Response
+        do {
+            response = try await next.respond(to: request)
+        } catch let error as AbortError {
+            // Convert AbortError to Response so we can add headers
+            response = Response(status: error.status)
+            struct ErrorResponse: Content {
+                let error: Bool
+                let reason: String
+            }
+            let errorData = ErrorResponse(error: true, reason: error.reason)
+            try response.content.encode(errorData)
+            response.headers.contentType = .json
+        }
 
-        // Add debug headers if enabled
+        // Add debug headers if enabled (even on error responses)
         if config.enableDebugHeaders {
             addDebugHeaders(to: response, authMode: authMode, request: request)
         }
@@ -228,6 +243,12 @@ public struct DevelopmentAuthMiddleware: AsyncMiddleware {
     ///   - authMode: The authentication mode to inject
     ///   - request: The request to modify
     private func injectDevelopmentAuth(authMode: AuthMode, request: Request) async throws {
+        // Skip injection for "none" mode
+        if authMode == .none {
+            logger.info("🚫 Auth mode is 'none', skipping authentication injection")
+            return
+        }
+
         // Get or create mock user
         let user = try await getOrCreateDevelopmentUser(authMode: authMode, request: request)
 
@@ -272,26 +293,47 @@ public struct DevelopmentAuthMiddleware: AsyncMiddleware {
             return existingUser
         }
 
-        // Create temporary in-memory user (not persisted)
-        logger.debug("🎭 Creating temporary development user: \(finalUsername)")
+        // Create development user in database
+        logger.debug("🎭 Creating development user: \(finalUsername)")
 
-        let user = User(
-            id: UUID(),
-            username: finalUsername,
-            sub: "dev-sub-\(authMode.rawValue)",
-            role: userRole
-        )
+        // Use raw SQL to create the user properly with the enum type
+        let postgres = request.db as! PostgresDatabase
 
-        // Create associated person
-        let person = Person(
-            id: UUID(),
-            name: "Development \(authMode.rawValue.capitalized) User",
-            email: finalUsername
-        )
+        // First create the person
+        try await postgres.sql().raw(
+            """
+            INSERT INTO directory.people (name, email)
+            VALUES (\(bind: "Development \(authMode.rawValue.capitalized) User"), \(bind: finalUsername))
+            ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name
+            """
+        ).run()
 
-        user.person = person
+        // Create user with proper role enum casting
+        // Use unique sub per user by including username to avoid constraint violations
+        let uniqueSub = "dev-sub-\(authMode.rawValue)-\(finalUsername)"
+        try await postgres.sql().raw(
+            """
+            INSERT INTO auth.users (username, person_id, role, sub)
+            SELECT \(bind: finalUsername), p.id, \(bind: userRole.rawValue)::auth.user_role, \(bind: uniqueSub)
+            FROM directory.people p
+            WHERE p.email = \(bind: finalUsername)
+            ON CONFLICT (username) DO UPDATE SET 
+                role = EXCLUDED.role,
+                sub = EXCLUDED.sub
+            """
+        ).run()
 
-        return user
+        // Now fetch the created user with person loaded
+        guard
+            let createdUser = try await User.query(on: request.db)
+                .filter(\.$username == finalUsername)
+                .with(\.$person)
+                .first()
+        else {
+            throw Abort(.internalServerError, reason: "Failed to create development user")
+        }
+
+        return createdUser
     }
 
     /// Creates mock ALB headers for development authentication
@@ -301,24 +343,48 @@ public struct DevelopmentAuthMiddleware: AsyncMiddleware {
     ///   - authMode: The authentication mode
     /// - Returns: Dictionary of header names and values
     private func createMockALBHeaders(for user: User, authMode: AuthMode) -> [String: String] {
+        // Create mock JWT header
+        let header: [String: Any] = [
+            "alg": "RS256",
+            "typ": "JWT",
+            "kid": "dev-key-id",
+        ]
+
         // Create mock JWT payload
         let payload: [String: Any] = [
             "iss": "dev-cognito",
             "aud": ["dev-client"],
             "exp": Int(Date().addingTimeInterval(3600).timeIntervalSince1970),
+            "iat": Int(Date().timeIntervalSince1970),
             "sub": user.sub ?? user.username,
             "email": user.person?.email ?? user.username,
             "name": user.person?.name ?? "Development User",
             "username": user.username,
-            "cognito_groups": authMode.cognitoGroups,
+            "cognito:groups": authMode.cognitoGroups,
+            "custom:role": authMode.rawValue,
         ]
 
-        // Encode to base64 JSON
+        // Create mock JWT token (header.payload.signature format)
+        let headerData = try! JSONSerialization.data(withJSONObject: header)
         let payloadData = try! JSONSerialization.data(withJSONObject: payload)
+
+        let headerBase64 = headerData.base64EncodedString()
+            .replacingOccurrences(of: "=", with: "")
+            .replacingOccurrences(of: "+", with: "-")
+            .replacingOccurrences(of: "/", with: "_")
+
         let payloadBase64 = payloadData.base64EncodedString()
+            .replacingOccurrences(of: "=", with: "")
+            .replacingOccurrences(of: "+", with: "-")
+            .replacingOccurrences(of: "/", with: "_")
+
+        // Mock signature (not cryptographically valid, but sufficient for development)
+        let mockSignature = "mock-signature-for-dev"
+
+        let jwtToken = "\(headerBase64).\(payloadBase64).\(mockSignature)"
 
         return [
-            "x-amzn-oidc-data": payloadBase64,
+            "x-amzn-oidc-data": jwtToken,
             "x-amzn-oidc-identity": user.username,
             "x-amzn-oidc-accesstoken": "dev-access-token-\(authMode.rawValue)",
             "x-dev-auth-mode": authMode.rawValue,
@@ -338,7 +404,8 @@ public struct DevelopmentAuthMiddleware: AsyncMiddleware {
         if let authMode = authMode {
             response.headers.add(name: "x-dev-auth-mode", value: authMode.rawValue)
 
-            if let user = request.auth.get(User.self) {
+            // Only add user headers if we actually have a user (not for .none mode)
+            if authMode != .none, let user = request.auth.get(User.self) {
                 response.headers.add(name: "x-dev-auth-user", value: user.username)
                 response.headers.add(name: "x-dev-auth-role", value: user.role.rawValue)
             }
@@ -356,9 +423,9 @@ public struct DevelopmentAuthMiddleware: AsyncMiddleware {
 extension Application {
     /// Adds development authentication middleware with default configuration
     ///
-    /// Only adds the middleware in development environment
+    /// Only adds the middleware in development or testing environment
     public func addDevelopmentAuth() {
-        guard environment.isDevelopment else {
+        guard environment.isDevelopment || environment == .testing else {
             return
         }
 
@@ -371,7 +438,7 @@ extension Application {
     ///
     /// - Parameter config: Custom middleware configuration
     public func addDevelopmentAuth(config: DevelopmentAuthMiddleware.Configuration) {
-        guard environment.isDevelopment else {
+        guard environment.isDevelopment || environment == .testing else {
             return
         }
 

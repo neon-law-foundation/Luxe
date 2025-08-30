@@ -1,0 +1,25 @@
+name: Security Review
+
+permissions:
+  pull-requests: write
+  contents: read
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 2
+      
+      - name: Run Claude Security Review
+        uses: anthropics/claude-code-security-review@68982a6bf10d545e94dd0390af08306d94ef684c # main
+        with:
+          comment-pr: true
+          claude-api-key: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
