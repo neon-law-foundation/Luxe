@@ -25,7 +25,7 @@ struct TrifectaPageTests {
                 #expect(body.contains("Neon Law Foundation"))
                 #expect(body.contains("Sagebrush Services™"))
                 #expect(body.contains("support@sagebrush.services"))
-                #expect(body.contains("© 2025 Sagebrush. All rights reserved."))
+                #expect(body.contains("© 2025 Sagebrush Services™. All rights reserved."))
             }
         }
     }
