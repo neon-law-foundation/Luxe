@@ -248,7 +248,7 @@ public struct DevelopmentAuthMiddleware: AsyncMiddleware {
             logger.info("🚫 Auth mode is 'none', skipping authentication injection")
             return
         }
-        
+
         // Get or create mock user
         let user = try await getOrCreateDevelopmentUser(authMode: authMode, request: request)
 

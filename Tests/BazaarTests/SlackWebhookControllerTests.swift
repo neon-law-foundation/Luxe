@@ -479,7 +479,7 @@ func createTestUser(on database: any Database) async throws {
     // Generate unique identifiers to avoid conflicts
     let uniqueId = UUID().uuidString.prefix(8)
     let email = "testuser-\(uniqueId)@example.com"
-    
+
     // Use TestUtilities to properly create user with person
     // This handles all the foreign key constraints correctly
     _ = try await TestUtilities.createTestUser(
@@ -496,7 +496,7 @@ func createTestUser(on database: any Database) async throws {
 func createTestEntity(on database: any Database) async throws {
     // Generate unique identifier to avoid conflicts
     let uniqueId = UUID().uuidString.prefix(8)
-    
+
     // Create a test jurisdiction first
     let jurisdiction = LegalJurisdiction(
         name: "Delaware \(uniqueId)",
