@@ -109,6 +109,13 @@ public func configureApp(_ app: Application) async throws {
     let albAuthenticator = ALBHeaderAuthenticator(configuration: oidcConfig)
     let smartAuth = SmartAuthMiddleware(authenticator: albAuthenticator)
 
+    // Add development authentication middleware for easy auth mode switching in development and testing
+    if app.environment == .development || app.environment == .testing {
+        app.middleware.use(DevelopmentAuthMiddleware())
+        app.logger.info("🛠️ Development authentication middleware enabled")
+        app.logger.info("💡 Use ?auth=admin|staff|customer|none in URLs to test different auth modes")
+    }
+
     // Use SmartAuthMiddleware for all routes (replaces SessionMiddleware)
     // In testing environment, mock headers will be injected by test utilities
     app.middleware.use(smartAuth)
