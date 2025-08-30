@@ -10,7 +10,7 @@ struct ForLawyersPage: HTMLDocument {
         self.currentUser = currentUser
     }
 
-    var title: String { "AI-Powered Legal Services - Secure, Private, & Compliant | Sagebrush Services" }
+    var title: String { "AI-Powered Legal Services - Secure, Private, & Compliant | Sagebrush Services™" }
 
     var head: some HTML {
         HeaderComponent.sagebrushTheme()
@@ -322,7 +322,9 @@ struct ForLawyersPage: HTMLDocument {
 
                 div(.class("columns is-vcentered")) {
                     div(.class("column is-two-thirds")) {
-                        h3(.class("title is-3 has-text-info")) { "Sagebrush Deploys Your Custom Legal Portal" }
+                        h3(.class("title is-3 has-text-info")) {
+                            "Sagebrush Services™ Deploys Your Custom Legal Portal"
+                        }
                         div(.class("content is-large")) {
                             p {
                                 "We don't just set up your AWS infrastructure—we deploy a complete, white-labeled version of our legal AI platform directly inside YOUR AWS account. This means:"

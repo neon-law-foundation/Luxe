@@ -23,9 +23,9 @@ struct TrifectaPageTests {
                 #expect(body.contains("How the trifecta works"))
                 #expect(body.contains("Neon Law"))
                 #expect(body.contains("Neon Law Foundation"))
-                #expect(body.contains("Sagebrush Services"))
+                #expect(body.contains("Sagebrush Services™"))
                 #expect(body.contains("support@sagebrush.services"))
-                #expect(body.contains("© 2025 Sagebrush. All rights reserved."))
+                #expect(body.contains("© 2025 Sagebrush Services™. All rights reserved."))
             }
         }
     }
@@ -49,7 +49,7 @@ struct TrifectaPageTests {
                 #expect(body.contains("creating Sagebrush Standards"))
 
                 // Check for Sagebrush Services description
-                #expect(body.contains("Sagebrush Services is a Nevada corporation"))
+                #expect(body.contains("Sagebrush Services™ is a Nevada corporation"))
                 #expect(body.contains("Mailroom: Send your mail here"))
                 #expect(body.contains("Entity Management: File and renew"))
                 #expect(body.contains("Cap Tables: Manage how to share the pie"))
@@ -68,11 +68,11 @@ struct TrifectaPageTests {
                 let body = response.body.string
 
                 #expect(body.contains("This repository is licensed from Neon Law Foundation"))
-                #expect(body.contains("operations of running the software are managed by Sagebrush Services"))
-                #expect(body.contains("Continuous integration is NLF and continuous deployment is Sagebrush Services"))
-                #expect(body.contains("Sagebrush Services is where all non-legal-service work is billed from"))
+                #expect(body.contains("operations of running the software are managed by Sagebrush Services™"))
+                #expect(body.contains("Continuous integration is NLF and continuous deployment is Sagebrush Services™"))
+                #expect(body.contains("Sagebrush Services™ is where all non-legal-service work is billed from"))
                 #expect(body.contains("Neon Law is where legal advice is billed from"))
-                #expect(body.contains("Sagebrush Services and Neon Law pledge 10% of gross revenue"))
+                #expect(body.contains("Sagebrush Services™ and Neon Law pledge 10% of gross revenue"))
                 #expect(body.contains("Each entity has its own accounting ledger and bank accounts"))
             }
         }
